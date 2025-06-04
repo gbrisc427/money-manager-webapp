@@ -1,0 +1,62 @@
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"AutoImportSettings\">\r\n    <option name=\"autoReloadType\" value=\"SELECTIVE\" />\r\n  </component>\r\n  <component name=\"ChangeListManager\">\r\n    <list default=\"true\" id=\"e34babbe-229b-49c7-8a11-a48bd153beec\" name=\"Changes\" comment=\"CI corrección\" />\r\n    <option name=\"SHOW_DIALOG\" value=\"false\" />\r\n    <option name=\"HIGHLIGHT_CONFLICTS\" value=\"true\" />\r\n    <option name=\"HIGHLIGHT_NON_ACTIVE_CHANGELIST\" value=\"false\" />\r\n    <option name=\"LAST_RESOLUTION\" value=\"IGNORE\" />\r\n  </component>\r\n  <component name=\"Git.Settings\">\r\n    <option name=\"RECENT_BRANCH_BY_REPOSITORY\">\r\n      <map>\r\n        <entry key=\"$PROJECT_DIR$\" value=\"feature/MMW-8\" />\r\n      </map>\r\n    </option>\r\n    <option name=\"RECENT_GIT_ROOT_PATH\" value=\"$PROJECT_DIR$\" />\r\n  </component>\r\n  <component name=\"GitHubPullRequestSearchHistory\">{\r\n  &quot;lastFilter&quot;: {\r\n    &quot;state&quot;: &quot;OPEN&quot;,\r\n    &quot;assignee&quot;: &quot;gbrisc427&quot;\r\n  }\r\n}</component>\r\n  <component name=\"GithubPullRequestsUISettings\">{\r\n  &quot;selectedUrlAndAccountId&quot;: {\r\n    &quot;url&quot;: &quot;https://github.com/gbrisc427/money-manager-webapp.git&quot;,\r\n    &quot;accountId&quot;: &quot;bfd2bae2-507f-4737-94c3-1975d83e9666&quot;\r\n  }\r\n}</component>\r\n  <component name=\"ProjectCodeStyleSettingsMigration\">\r\n    <option name=\"version\" value=\"2\" />\r\n  </component>\r\n  <component name=\"ProjectColorInfo\">{\r\n  &quot;associatedIndex&quot;: 3\r\n}</component>\r\n  <component name=\"ProjectId\" id=\"2wtqRvrFzF50XU38tTvvLOVAess\" />\r\n  <component name=\"ProjectLevelVcsManager\" settingsEditedManually=\"true\" />\r\n  <component name=\"ProjectViewState\">\r\n    <option name=\"hideEmptyMiddlePackages\" value=\"true\" />\r\n    <option name=\"showLibraryContents\" value=\"true\" />\r\n  </component>\r\n  <component name=\"PropertiesComponent\"><![CDATA[{\r\n  \"keyToString\": {\r\n    \"Maven. [install].executor\": \"Run\",\r\n    \"Maven. [wrapper:wrapper].executor\": \"Run\",\r\n    \"RunOnceActivity.ShowReadmeOnStart\": \"true\",\r\n    \"git-widget-placeholder\": \"main\",\r\n    \"kotlin-language-version-configured\": \"true\",\r\n    \"last_opened_file_path\": \"C:/Users/gabri/OneDrive/Escritorio/money-manager-webapp\",\r\n    \"project.structure.last.edited\": \"Problems\",\r\n    \"project.structure.proportion\": \"0.0\",\r\n    \"project.structure.side.proportion\": \"0.2\"\r\n  }\r\n}]]></component>\r\n  <component name=\"RecentsManager\">\r\n    <key name=\"MoveFile.RECENT_KEYS\">\r\n      <recent name=\"C:\\Users\\gabri\\OneDrive\\Escritorio\\money-manager-webapp\\.idea\" />\r\n    </key>\r\n  </component>\r\n  <component name=\"RunAnythingCache\">\r\n    <option name=\"myCommands\">\r\n      <command value=\"mvn install\" />\r\n      <command value=\"mvn wrapper:wrapper \" />\r\n    </option>\r\n  </component>\r\n  <component name=\"SpellCheckerSettings\" RuntimeDictionaries=\"0\" Folders=\"0\" CustomDictionaries=\"0\" DefaultDictionary=\"application-level\" UseSingleDictionary=\"true\" transferred=\"true\" />\r\n  <component name=\"TaskManager\">\r\n    <task active=\"true\" id=\"Default\" summary=\"Default task\">\r\n      <changelist id=\"e34babbe-229b-49c7-8a11-a48bd153beec\" name=\"Changes\" comment=\"\" />\r\n      <created>1746871212216</created>\r\n      <option name=\"number\" value=\"Default\" />\r\n      <option name=\"presentableId\" value=\"Default\" />\r\n      <updated>1746871212216</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00001\" summary=\"Reposicionamiento de .gitignore\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1749025194235</created>\r\n      <option name=\"number\" value=\"00001\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00001\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1749025194235</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00002\" summary=\"CI corrección\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1749025306317</created>\r\n      <option name=\"number\" value=\"00002\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00002\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1749025306317</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00003\" summary=\"CI corrección\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1749025322182</created>\r\n      <option name=\"number\" value=\"00003\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00003\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1749025322182</updated>\r\n    </task>\r\n    <option name=\"localTasksCounter\" value=\"4\" />\r\n    <servers />\r\n  </component>\r\n  <component name=\"Vcs.Log.Tabs.Properties\">\r\n    <option name=\"TAB_STATES\">\r\n      <map>\r\n        <entry key=\"MAIN\">\r\n          <value>\r\n            <State>\r\n              <option name=\"FILTERS\">\r\n                <map>\r\n                  <entry key=\"branch\">\r\n                    <value>\r\n                      <list>\r\n                        <option value=\"main\" />\r\n                      </list>\r\n                    </value>\r\n                  </entry>\r\n                </map>\r\n              </option>\r\n            </State>\r\n          </value>\r\n        </entry>\r\n      </map>\r\n    </option>\r\n  </component>\r\n  <component name=\"VcsManagerConfiguration\">\r\n    <MESSAGE value=\"Reposicionamiento de .gitignore\" />\r\n    <MESSAGE value=\"CI corrección\" />\r\n    <option name=\"LAST_COMMIT_MESSAGE\" value=\"CI corrección\" />\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+--- a/.idea/workspace.xml	(revision 6c2d18b727a1a78a1dcc85ceec27e63ac5d1f016)
++++ b/.idea/workspace.xml	(date 1749025866642)
+@@ -4,7 +4,7 @@
+     <option name="autoReloadType" value="SELECTIVE" />
+   </component>
+   <component name="ChangeListManager">
+-    <list default="true" id="e34babbe-229b-49c7-8a11-a48bd153beec" name="Changes" comment="CI corrección" />
++    <list default="true" id="e34babbe-229b-49c7-8a11-a48bd153beec" name="Changes" comment="Estructura para el backend" />
+     <option name="SHOW_DIALOG" value="false" />
+     <option name="HIGHLIGHT_CONFLICTS" value="true" />
+     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+@@ -44,6 +44,7 @@
+   </component>
+   <component name="PropertiesComponent"><![CDATA[{
+   "keyToString": {
++    "Maven. [archetype:generate...].executor": "Run",
+     "Maven. [install].executor": "Run",
+     "Maven. [wrapper:wrapper].executor": "Run",
+     "RunOnceActivity.ShowReadmeOnStart": "true",
+@@ -64,6 +65,7 @@
+     <option name="myCommands">
+       <command value="mvn install" />
+       <command value="mvn wrapper:wrapper " />
++      <command value="mvn archetype:generate -DgroupId=com.example -DartifactId=backend -DarchetypeArtifactId=maven-archetype-quickstart -DinteractiveMode=false " />
+     </option>
+   </component>
+   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+@@ -99,7 +101,15 @@
+       <option name="project" value="LOCAL" />
+       <updated>1749025322182</updated>
+     </task>
+-    <option name="localTasksCounter" value="4" />
++    <task id="LOCAL-00004" summary="Estructura para el backend">
++      <option name="closed" value="true" />
++      <created>1749025819887</created>
++      <option name="number" value="00004" />
++      <option name="presentableId" value="LOCAL-00004" />
++      <option name="project" value="LOCAL" />
++      <updated>1749025819887</updated>
++    </task>
++    <option name="localTasksCounter" value="5" />
+     <servers />
+   </component>
+   <component name="Vcs.Log.Tabs.Properties">
+@@ -128,6 +138,7 @@
+   <component name="VcsManagerConfiguration">
+     <MESSAGE value="Reposicionamiento de .gitignore" />
+     <MESSAGE value="CI corrección" />
+-    <option name="LAST_COMMIT_MESSAGE" value="CI corrección" />
++    <MESSAGE value="Estructura para el backend" />
++    <option name="LAST_COMMIT_MESSAGE" value="Estructura para el backend" />
+   </component>
+ </project>
+\ No newline at end of file
