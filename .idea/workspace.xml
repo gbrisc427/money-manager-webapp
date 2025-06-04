@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e34babbe-229b-49c7-8a11-a48bd153beec" name="Changes" comment="Reposicionamiento de .gitignore" />
+    <list default="true" id="e34babbe-229b-49c7-8a11-a48bd153beec" name="Changes" comment="CI corrección" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -83,7 +83,23 @@
       <option name="project" value="LOCAL" />
       <updated>1749025194235</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="CI corrección">
+      <option name="closed" value="true" />
+      <created>1749025306317</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1749025306317</updated>
+    </task>
+    <task id="LOCAL-00003" summary="CI corrección">
+      <option name="closed" value="true" />
+      <created>1749025322182</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1749025322182</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -111,6 +127,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Reposicionamiento de .gitignore" />
-    <option name="LAST_COMMIT_MESSAGE" value="Reposicionamiento de .gitignore" />
+    <MESSAGE value="CI corrección" />
+    <option name="LAST_COMMIT_MESSAGE" value="CI corrección" />
   </component>
 </project>
