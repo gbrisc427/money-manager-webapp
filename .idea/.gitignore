@@ -17,4 +17,4 @@ yarn-error.log
 .DS_Store
 
 # Ignorar configuración local
-/src/main/resources/application.properties
+/backend/src/main/resources/application.properties
