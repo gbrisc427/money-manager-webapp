@@ -22,9 +22,11 @@ jobs:
           distribution: 'temurin'
           java-version: '21'
       - name: Build con Maven
-        run: ./mvnw clean install -DskipTests
+        run: mvn clean install -DskipTests
+
       - name: Run tests backend
-        run: ./mvnw test
+        run: mvn test
+
 
   build-frontend:
     runs-on: windows-latest
