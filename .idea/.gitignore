@@ -15,3 +15,6 @@ yarn-error.log
 # IDEs
 .vscode/
 .DS_Store
+
+# Ignorar configuración local
+/src/main/resources/application.properties
