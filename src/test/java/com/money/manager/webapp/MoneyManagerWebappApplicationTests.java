@@ -1,4 +1,4 @@
-package com.money.manager.webapp.money_manager_webapp;
+package com.money.manager.webapp;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

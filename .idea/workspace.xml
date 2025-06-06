@@ -4,8 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e34babbe-229b-49c7-8a11-a48bd153beec" name="Changes" comment="CI eliminado (hacer en un futuro)">
+    <list default="true" id="e34babbe-229b-49c7-8a11-a48bd153beec" name="Changes" comment="CAMBIO DE ESTRUCTURA DEL PROYECTO (GENERACIÓN SPRING BOOT)">
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/money-manager-webapp.iml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/money_manager/MoneyManagerWebappApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/money/manager/webapp/MoneyManagerWebappApplication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/money_manager/MoneyManagerWebappApplicationTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/money/manager/webapp/MoneyManagerWebappApplicationTests.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -33,6 +39,13 @@
     &quot;accountId&quot;: &quot;bfd2bae2-507f-4737-94c3-1975d83e9666&quot;
   }
 }</component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="mavenHomeTypeForPersistence" value="WRAPPER" />
+      </MavenGeneralSettings>
+    </option>
+  </component>
   <component name="ProjectCodeStyleSettingsMigration">
     <option name="version" value="2" />
   </component>
@@ -45,24 +58,28 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Maven. [archetype:generate...].executor&quot;: &quot;Run&quot;,
-    &quot;Maven. [install].executor&quot;: &quot;Run&quot;,
-    &quot;Maven. [wrapper:wrapper].executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/gabri/OneDrive/Escritorio/money-manager-webapp&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Problems&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.MoneyManagerWebappApplication.executor": "Run",
+    "Maven. [archetype:generate...].executor": "Run",
+    "Maven. [install].executor": "Run",
+    "Maven. [wrapper:wrapper].executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "main",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/gabri/OneDrive/Escritorio/money-manager-webapp",
+    "project.structure.last.edited": "Problems",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.2"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="C:\Users\gabri\OneDrive\Escritorio\money-manager-webapp\.idea" />
-      <recent name="C:\Users\gabri\OneDrive\Escritorio\money-manager-webapp" />
+      <recent name="C:\Users\gabri\OneDrive\Escritorio\money-manager-webapp\src\test\java\com\money\manager\webapp" />
+      <recent name="C:\Users\gabri\OneDrive\Escritorio\money-manager-webapp\src\main\java\com\money\manager\webapp" />
+      <recent name="C:\Users\gabri\OneDrive\Escritorio\money-manager-webapp\src\test\java\com\money_manager" />
+      <recent name="C:\Users\gabri\OneDrive\Escritorio\money-manager-webapp\src\test\java\com" />
+      <recent name="C:\Users\gabri\OneDrive\Escritorio\money-manager-webapp\src\main\java\com\money" />
     </key>
   </component>
   <component name="RunAnythingCache">
@@ -71,6 +88,26 @@
       <command value="mvn wrapper:wrapper " />
       <command value="mvn archetype:generate -DgroupId=com.example -DartifactId=backend -DarchetypeArtifactId=maven-archetype-quickstart -DinteractiveMode=false " />
     </option>
+  </component>
+  <component name="RunManager">
+    <configuration name="MoneyManagerWebappApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.money.manager.webapp.MoneyManagerWebappApplication" />
+      <module name="money-manager-webapp" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.money.manager.webapp.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Application.MoneyManagerWebappApplication" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
@@ -185,7 +222,15 @@
       <option name="project" value="LOCAL" />
       <updated>1749111957086</updated>
     </task>
-    <option name="localTasksCounter" value="14" />
+    <task id="LOCAL-00014" summary="CAMBIO DE ESTRUCTURA DEL PROYECTO (GENERACIÓN SPRING BOOT)">
+      <option name="closed" value="true" />
+      <created>1749233162257</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1749233162257</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -221,6 +266,7 @@
     <MESSAGE value="Aplication.propierties" />
     <MESSAGE value="Modificación .gitignore" />
     <MESSAGE value="CI eliminado (hacer en un futuro)" />
-    <option name="LAST_COMMIT_MESSAGE" value="CI eliminado (hacer en un futuro)" />
+    <MESSAGE value="CAMBIO DE ESTRUCTURA DEL PROYECTO (GENERACIÓN SPRING BOOT)" />
+    <option name="LAST_COMMIT_MESSAGE" value="CAMBIO DE ESTRUCTURA DEL PROYECTO (GENERACIÓN SPRING BOOT)" />
   </component>
 </project>
