@@ -4,8 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e34babbe-229b-49c7-8a11-a48bd153beec" name="Changes" comment="Modificación .gitignore">
-      <change beforePath="$PROJECT_DIR$/.github/workflows/ci.yml" beforeDir="false" afterPath="$PROJECT_DIR$/.github/workflows/ci.yml" afterDir="false" />
+    <list default="true" id="e34babbe-229b-49c7-8a11-a48bd153beec" name="Changes" comment="CI eliminado (hacer en un futuro)">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -178,7 +177,15 @@
       <option name="project" value="LOCAL" />
       <updated>1749111626302</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="CI eliminado (hacer en un futuro)">
+      <option name="closed" value="true" />
+      <created>1749111957085</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1749111957086</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -213,6 +220,7 @@
     <MESSAGE value="Dependencias de postgres y Spring" />
     <MESSAGE value="Aplication.propierties" />
     <MESSAGE value="Modificación .gitignore" />
-    <option name="LAST_COMMIT_MESSAGE" value="Modificación .gitignore" />
+    <MESSAGE value="CI eliminado (hacer en un futuro)" />
+    <option name="LAST_COMMIT_MESSAGE" value="CI eliminado (hacer en un futuro)" />
   </component>
 </project>
