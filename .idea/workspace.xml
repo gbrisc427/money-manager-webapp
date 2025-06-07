@@ -4,7 +4,17 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e34babbe-229b-49c7-8a11-a48bd153beec" name="Changes" comment="ESTRUCTURA BÁSICA TERMINADA - MWW-35&#10;(Inicializar proyecto Spring Boot + configuración básica)" />
+    <list default="true" id="e34babbe-229b-49c7-8a11-a48bd153beec" name="Changes" comment="CONEXIÓN POSTGRESQL + HIRAKICP MMW-38">
+      <change beforePath="$PROJECT_DIR$/.gitattributes" beforeDir="false" afterPath="$PROJECT_DIR$/money-manager-backend/.gitattributes" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mvnw" beforeDir="false" afterPath="$PROJECT_DIR$/money-manager-backend/mvnw" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mvnw.cmd" beforeDir="false" afterPath="$PROJECT_DIR$/money-manager-backend/mvnw.cmd" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/money-manager-backend/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/money/manager/webapp/MoneyManagerWebappApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/MoneyManagerWebappApplication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/money/manager/webapp/controller/HelloController.java" beforeDir="false" afterPath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/controller/HelloController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/money-manager-backend/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/money/manager/webapp/MoneyManagerWebappApplicationTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/money-manager-backend/src/test/java/com/money/manager/webapp/MoneyManagerWebappApplicationTests.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -57,28 +67,28 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Application.MoneyManagerWebappApplication.executor": "Run",
-    "Maven. [archetype:generate...].executor": "Run",
-    "Maven. [install].executor": "Run",
-    "Maven. [wrapper:wrapper].executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "main",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/gabri/OneDrive/Escritorio/money-manager-webapp",
-    "project.structure.last.edited": "Problems",
-    "project.structure.proportion": "0.0",
-    "project.structure.side.proportion": "0.2"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Application.MoneyManagerWebappApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Maven. [archetype:generate...].executor&quot;: &quot;Run&quot;,
+    &quot;Maven. [install].executor&quot;: &quot;Run&quot;,
+    &quot;Maven. [wrapper:wrapper].executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/gabri/OneDrive/Escritorio/money-manager-webapp&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Problems&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\gabri\OneDrive\Escritorio\money-manager-webapp\money-manager-backend" />
       <recent name="C:\Users\gabri\OneDrive\Escritorio\money-manager-webapp\src\test\java\com\money\manager\webapp" />
       <recent name="C:\Users\gabri\OneDrive\Escritorio\money-manager-webapp\src\main\java\com\money\manager\webapp" />
       <recent name="C:\Users\gabri\OneDrive\Escritorio\money-manager-webapp\src\test\java\com\money_manager" />
       <recent name="C:\Users\gabri\OneDrive\Escritorio\money-manager-webapp\src\test\java\com" />
-      <recent name="C:\Users\gabri\OneDrive\Escritorio\money-manager-webapp\src\main\java\com\money" />
     </key>
   </component>
   <component name="RunAnythingCache">
@@ -261,7 +271,15 @@
       <option name="project" value="LOCAL" />
       <updated>1749235927595</updated>
     </task>
-    <option name="localTasksCounter" value="19" />
+    <task id="LOCAL-00019" summary="CONEXIÓN POSTGRESQL + HIRAKICP MMW-38">
+      <option name="closed" value="true" />
+      <created>1749236576694</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1749236576694</updated>
+    </task>
+    <option name="localTasksCounter" value="20" />
     <servers />
   </component>
   <component name="UnknownFeatures">
@@ -305,6 +323,7 @@
     <MESSAGE value="Gitignore modificado" />
     <MESSAGE value="Conexión Base Datos Postgres" />
     <MESSAGE value="ESTRUCTURA BÁSICA TERMINADA - MWW-35&#10;(Inicializar proyecto Spring Boot + configuración básica)" />
-    <option name="LAST_COMMIT_MESSAGE" value="ESTRUCTURA BÁSICA TERMINADA - MWW-35&#10;(Inicializar proyecto Spring Boot + configuración básica)" />
+    <MESSAGE value="CONEXIÓN POSTGRESQL + HIRAKICP MMW-38" />
+    <option name="LAST_COMMIT_MESSAGE" value="CONEXIÓN POSTGRESQL + HIRAKICP MMW-38" />
   </component>
 </project>
