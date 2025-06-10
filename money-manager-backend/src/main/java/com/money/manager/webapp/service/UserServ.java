@@ -8,10 +8,14 @@ import org.springframework.stereotype.Service;
 
 
 @Service
-public class UserService {
+public class UserServ {
 
     @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+
+    public UserServ(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     public User registerUser(RegisterRequest request) {
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
