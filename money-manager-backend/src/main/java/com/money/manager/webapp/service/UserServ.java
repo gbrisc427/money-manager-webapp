@@ -1,6 +1,7 @@
 package com.money.manager.webapp.service;
 
 import com.money.manager.webapp.dto.RegisterRequest;
+import com.money.manager.webapp.exception.UserAlreadyExistsException;
 import com.money.manager.webapp.model.User;
 import com.money.manager.webapp.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,7 @@ public class UserServ {
 
     public User registerUser(RegisterRequest request) {
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
-            throw new RuntimeException("Ya existe un usuario registrado con ese correo.");
+            throw new UserAlreadyExistsException("El correo ya está registrado");
         }
 
         User newUser = User.builder()
