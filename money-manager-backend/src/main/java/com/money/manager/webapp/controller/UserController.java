@@ -3,6 +3,7 @@ package com.money.manager.webapp.controller;
 import com.money.manager.webapp.dto.RegisterRequest;
 import com.money.manager.webapp.model.User;
 import com.money.manager.webapp.service.UserServ;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,7 +19,7 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public User register(@RequestBody RegisterRequest request) {
+    public User register(@RequestBody  @Valid RegisterRequest request) {
         return userService.registerUser(request);
     }
 }
