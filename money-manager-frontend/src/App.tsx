@@ -1,25 +1,21 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React from "react";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import LandingPage from "./pages/LandingPage";
+import RegisterForm from "./components/RegisterForm";
 
-function App() {
-  const [mensaje, setMensaje] = useState('');
+const App: React.FC = () => (
+  <BrowserRouter>
+    <Routes>
+      {/* Redirige la raíz a /home */}
+      <Route path="/" element={<Navigate to="/home" replace />} />
 
-    useEffect(() => {
-      fetch('http://localhost:8081/api/hello')
-        .then(res => res.text())
-        .then(data => setMensaje(data))
-        .catch(err => console.error('Error al llamar al backend:', err));
-    }, []);
+      {/* Pantalla inicial /home */}
+      <Route path="/home" element={<LandingPage />} />
 
-    return (
-      <div>
-        <h1>Frontend React</h1>
-        <p>{mensaje}</p>
-      </div>
-    );
-  }
+      {/* Formulario de registro */}
+      <Route path="/register" element={<RegisterForm />} />
+    </Routes>
+  </BrowserRouter>
+);
 
-
-export default App
+export default App;
