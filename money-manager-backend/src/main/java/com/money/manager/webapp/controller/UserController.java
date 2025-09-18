@@ -6,7 +6,9 @@ import com.money.manager.webapp.dto.LoginRequest;
 import com.money.manager.webapp.dto.RegisterRequest;
 import com.money.manager.webapp.model.User;
 import com.money.manager.webapp.repository.UserRepository;
+import com.money.manager.webapp.security.TokenBlacklistService;
 import com.money.manager.webapp.service.UserServ;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -31,6 +33,9 @@ public class UserController {
     private final JwtUtils jwtUtils;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private TokenBlacklistService tokenBlacklistService;
 
 
     @Autowired
@@ -58,5 +63,23 @@ public class UserController {
         String token = jwtUtils.generateToken(ud);
         return ResponseEntity.ok(new AuthResponse(token, jwtUtils.getJwtExpirationMs()));
     }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpServletRequest request) {
+        String header = request.getHeader("Authorization");
+
+        if (header != null && header.startsWith("Bearer ")) {
+            String token = header.substring(7);
+
+            if (jwtUtils.validateToken(token)) {
+                long expiry = jwtUtils.getJwtExpirationMs();
+                tokenBlacklistService.isTokenBlacklisted(token);
+                return ResponseEntity.ok("Logout exitoso. Token invalidado.");
+            }
+            return ResponseEntity.badRequest().body("Token inválido.");
+        }
+        return ResponseEntity.badRequest().body("No se encontró token en la petición.");
+    }
+
 
 }

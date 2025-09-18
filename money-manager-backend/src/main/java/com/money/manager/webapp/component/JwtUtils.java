@@ -2,6 +2,7 @@ package com.money.manager.webapp.component;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,6 +22,7 @@ public class JwtUtils {
     @Value("${jwt.secret}")
     private String jwtSecret;
 
+    @Getter
     @Value("${jwt.expiration-ms}")
     private long jwtExpirationMs;
 
@@ -61,7 +63,4 @@ public class JwtUtils {
                 .getSubject();
     }
 
-    public long getJwtExpirationMs() {
-        return jwtExpirationMs;
-    }
 }
