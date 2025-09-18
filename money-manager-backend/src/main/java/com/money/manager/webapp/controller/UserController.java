@@ -1,12 +1,14 @@
 package com.money.manager.webapp.controller;
 
 import com.money.manager.webapp.component.JwtUtils;
+import com.money.manager.webapp.dto.AuthResponse;
 import com.money.manager.webapp.dto.LoginRequest;
 import com.money.manager.webapp.dto.RegisterRequest;
 import com.money.manager.webapp.model.User;
 import com.money.manager.webapp.repository.UserRepository;
 import com.money.manager.webapp.service.UserServ;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -31,6 +33,7 @@ public class UserController {
     private final PasswordEncoder passwordEncoder;
 
 
+    @Autowired
     public UserController(UserServ userService, AuthenticationManager authManager, JwtUtils jwtUtils,
                           UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userService = userService;
@@ -41,25 +44,19 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public User register(@RequestBody  @Valid RegisterRequest request) {
-        return userService.registerUser(request);
+    public  ResponseEntity<?>  register(@RequestBody  @Valid RegisterRequest request) {
+        userService.registerUser(request);
+        return ResponseEntity.ok().body("Usuario registrado correctamente");
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest req) {
-        try {
-            Authentication auth = authManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(req.getEmail(), req.getPassword()));
-            User user = userRepository.findByEmail(req.getEmail()).get();
-            String token = jwtUtils.generateToken((UserDetails) auth.getPrincipal(), user.getId());
-            Map<String,Object> body = Map.of(
-                    "token", token,
-                    "user", Map.of("id", user.getId(), "fullName", user.getFullName(), "email", user.getEmail())
-            );
-            return ResponseEntity.ok(body);
-        } catch (BadCredentialsException ex) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error","Credenciales inválidas"));
-        }
+    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest req) {
+        Authentication authentication = authManager.authenticate(
+                new UsernamePasswordAuthenticationToken(req.getEmail(), req.getPassword())
+        );
+        UserDetails ud = (UserDetails) authentication.getPrincipal();
+        String token = jwtUtils.generateToken(ud);
+        return ResponseEntity.ok(new AuthResponse(token, jwtUtils.getJwtExpirationMs()));
     }
 
 }

@@ -1,9 +1,9 @@
 package com.money.manager.webapp.component;
 
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -11,24 +11,29 @@ import org.springframework.stereotype.Component;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
+import io.github.cdimascio.dotenv.Dotenv;
 
 @Component
 public class JwtUtils {
+
+    private final Logger logger = LoggerFactory.getLogger(JwtUtils.class);
+
     @Value("${jwt.secret}")
     private String jwtSecret;
+
     @Value("${jwt.expiration-ms}")
     private long jwtExpirationMs;
 
     private Key getSigningKey() {
-        return Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
+        byte[] keyBytes = jwtSecret.getBytes(StandardCharsets.UTF_8);
+        return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String generateToken(UserDetails userDetails, Long userId) {
+    public String generateToken(UserDetails userDetails) {
         Date now = new Date();
         Date exp = new Date(now.getTime() + jwtExpirationMs);
         return Jwts.builder()
                 .setSubject(userDetails.getUsername())
-                .claim("id", userId)
                 .setIssuedAt(now)
                 .setExpiration(exp)
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
@@ -39,13 +44,24 @@ public class JwtUtils {
         try {
             Jwts.parser().setSigningKey(getSigningKey()).build().parseClaimsJws(token);
             return true;
+        } catch (ExpiredJwtException e) {
+            logger.warn("Token expirado: {}", e.getMessage());
         } catch (JwtException | IllegalArgumentException e) {
-            return false;
+            logger.warn("Token inválido: {}", e.getMessage());
         }
+        return false;
     }
 
     public String getUsernameFromToken(String token) {
-        return Jwts.parser().setSigningKey(getSigningKey()).build()
-                .parseClaimsJws(token).getBody().getSubject();
+        return Jwts.parser()
+                .setSigningKey(getSigningKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .getSubject();
+    }
+
+    public long getJwtExpirationMs() {
+        return jwtExpirationMs;
     }
 }

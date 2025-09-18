@@ -1,4 +1,4 @@
-package com.money.manager.webapp.service;
+package com.money.manager.webapp.security;
 
 import com.money.manager.webapp.model.User;
 import com.money.manager.webapp.repository.UserRepository;
@@ -26,7 +26,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         return new org.springframework.security.core.userdetails.User(
                 user.getEmail(),
                 user.getPassword(),
-                List.of() // Si no usas roles todavía, dejar lista vacía
+                List.of()
         );
     }
 }
