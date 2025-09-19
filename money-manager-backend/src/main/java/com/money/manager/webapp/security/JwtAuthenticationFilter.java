@@ -24,13 +24,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtUtils jwtUtils;
     private final CustomUserDetailsService userDetailsService;
     private final Logger logger = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
+    private final TokenBlacklistService tokenBlacklistService;
 
-    @Autowired
-    private TokenBlacklistService tokenBlacklistService;
-
-    public JwtAuthenticationFilter(JwtUtils jwtUtils, CustomUserDetailsService uds) {
+    public JwtAuthenticationFilter(JwtUtils jwtUtils, CustomUserDetailsService uds, TokenBlacklistService tokenBlacklistService) {
         this.jwtUtils = jwtUtils;
         this.userDetailsService = uds;
+        this.tokenBlacklistService = tokenBlacklistService;
     }
 
     @Override
@@ -59,6 +58,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             String username = jwtUtils.getUsernameFromToken(token);
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+            System.out.println("Nombre extraído del token: " + username);
 
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                     userDetails, null, userDetails.getAuthorities());

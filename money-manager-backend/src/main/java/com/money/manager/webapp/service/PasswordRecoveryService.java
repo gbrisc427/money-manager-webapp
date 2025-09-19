@@ -30,7 +30,7 @@ public class PasswordRecoveryService {
 
     @Transactional
     public void requestRecovery(String email) {
-        if (!userRepo.findByEmail(email).isPresent()) {
+        if (userRepo.findByEmail(email).isEmpty()) {
             throw new RuntimeException("Email no registrado");
         }
 

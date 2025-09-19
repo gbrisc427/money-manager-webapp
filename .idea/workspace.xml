@@ -4,13 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f7de1767-9991-481f-8d5b-6733416d9fb1" name="Changes" comment="LogOut + BlackList Token Rest Api TERMINADO">
-      <change afterPath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/controller/PasswordRecoveryController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/dto/ResetPasswordRequest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/model/PasswordRecovery.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/repository/PasswordRecoveryRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/service/PasswordRecoveryService.java" afterDir="false" />
+    <list default="true" id="f7de1767-9991-481f-8d5b-6733416d9fb1" name="Changes" comment="Resetear Contraseña Rest Api TERMINADO">
+      <change afterPath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/dto/UserProfileRequest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/service/UserProfileService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/config/SecurityConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/controller/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/controller/UserController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/model/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/model/User.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/security/JwtAuthenticationFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/security/JwtAuthenticationFilter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/service/PasswordRecoveryService.java" beforeDir="false" afterPath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/service/PasswordRecoveryService.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -209,7 +211,15 @@
       <option name="project" value="LOCAL" />
       <updated>1758223962699</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="Resetear Contraseña Rest Api TERMINADO">
+      <option name="closed" value="true" />
+      <created>1758285486354</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1758285486354</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="UnknownFeatures">
@@ -226,6 +236,7 @@
     <MESSAGE value="Inicio Sprint 2: Bloque Login Back-End&#10;Errores: Da fallo con la seguridad, bloquea el puerto 8081 del localhsot con el msg 403 Forbidden. Tampco detecta el JWD_SECRET del .env y no se despliega el backend (a menos que lo ponga directamente en `propierties)" />
     <MESSAGE value="Login con JWT terminado" />
     <MESSAGE value="LogOut + BlackList Token Rest Api TERMINADO" />
-    <option name="LAST_COMMIT_MESSAGE" value="LogOut + BlackList Token Rest Api TERMINADO" />
+    <MESSAGE value="Resetear Contraseña Rest Api TERMINADO" />
+    <option name="LAST_COMMIT_MESSAGE" value="Resetear Contraseña Rest Api TERMINADO" />
   </component>
 </project>

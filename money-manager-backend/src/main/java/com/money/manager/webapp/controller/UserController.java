@@ -4,9 +4,11 @@ import com.money.manager.webapp.component.JwtUtils;
 import com.money.manager.webapp.dto.AuthResponse;
 import com.money.manager.webapp.dto.LoginRequest;
 import com.money.manager.webapp.dto.RegisterRequest;
+import com.money.manager.webapp.dto.UserProfileRequest;
 import com.money.manager.webapp.model.User;
 import com.money.manager.webapp.repository.UserRepository;
 import com.money.manager.webapp.security.TokenBlacklistService;
+import com.money.manager.webapp.service.UserProfileService;
 import com.money.manager.webapp.service.UserServ;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -33,6 +35,7 @@ public class UserController {
     private final JwtUtils jwtUtils;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final UserProfileService userProfileService;
 
     @Autowired
     private TokenBlacklistService tokenBlacklistService;
@@ -40,12 +43,13 @@ public class UserController {
 
     @Autowired
     public UserController(UserServ userService, AuthenticationManager authManager, JwtUtils jwtUtils,
-                          UserRepository userRepository, PasswordEncoder passwordEncoder) {
+                          UserRepository userRepository, PasswordEncoder passwordEncoder, UserProfileService userProfileService) {
         this.userService = userService;
         this.authManager = authManager;
         this.jwtUtils = jwtUtils;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.userProfileService = userProfileService;
     }
 
     @PostMapping("/register")
@@ -81,5 +85,30 @@ public class UserController {
         return ResponseEntity.badRequest().body("No se encontró token en la petición.");
     }
 
+    @GetMapping("/profile")
+    public ResponseEntity<UserProfileRequest> getProfile(Authentication authentication) {
+        if (authentication == null) {
+            return ResponseEntity.status(401).build(); // JWT inválido o ausente
+        }
+        String email = authentication.getName();
+        return ResponseEntity.ok(userProfileService.getProfile(email));
+    }
+
+    @PatchMapping("/profile")
+    public ResponseEntity<UserProfileRequest> updateName(Authentication authentication, @RequestParam String name) {
+        String email = authentication.getName();
+        return ResponseEntity.ok(userProfileService.updateName(email, name));
+    }
+
+    @PatchMapping("/profile/name")
+    public ResponseEntity<?> updateUserName(Authentication authentication, @RequestBody Map<String, String> request) {
+        String email = authentication.getName();
+        String newName = request.get("newName"); // campo en el JSON
+        userProfileService.updateName(email, newName);
+        return ResponseEntity.ok(Map.of(
+                "message", "Nombre actualizado correctamente",
+                "name", newName
+        ));
+    }
 
 }
