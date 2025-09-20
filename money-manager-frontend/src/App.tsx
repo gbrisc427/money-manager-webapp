@@ -1,21 +1,18 @@
-import React from "react";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import LandingPage from "./pages/LandingPage";
-import RegisterForm from "./components/RegisterForm";
+import Register from "./pages/Register";
+import Login from "./pages/Login"; // la añadiremos pronto
 
-const App: React.FC = () => (
-  <BrowserRouter>
-    <Routes>
-      {/* Redirige la raíz a /home */}
-      <Route path="/" element={<Navigate to="/home" replace />} />
-
-      {/* Pantalla inicial /home */}
-      <Route path="/home" element={<LandingPage />} />
-
-      {/* Formulario de registro */}
-      <Route path="/register" element={<RegisterForm />} />
-    </Routes>
-  </BrowserRouter>
-);
+function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/login" element={<Login />} />
+      </Routes>
+    </BrowserRouter>
+  );
+}
 
 export default App;
