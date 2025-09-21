@@ -13,11 +13,10 @@ const Login: React.FC = () => {
     try {
       const data = await loginUser({ email, password });
 
-      // Guardamos el token en localStorage para futuras peticiones
-      localStorage.setItem("token", data.token);
-
-      setMessage("Login exitoso ✅");
-      setTimeout(() => navigate("/dashboard"), 1000); // redirige a dashboard (lo añadiremos después)
+      setMessage("Login exitoso");
+      localStorage.setItem("userEmail", email);
+      localStorage.setItem("accessToken", data.accessToken);
+      setTimeout(() => navigate("/dashboard"), 1000); 
     } catch (error) {
       setMessage("Error: credenciales incorrectas ❌");
     }
@@ -56,6 +55,12 @@ const Login: React.FC = () => {
               placeholder="********"
             />
           </div>
+          <p className="mt-2 text-center text-sm text-gray-600">
+            ¿Olvidaste tu contraseña?{" "}
+            <a href="/recover" className="text-blue-600 hover:underline">
+              Recuperar contraseña
+            </a>
+          </p>
           <button
             type="submit"
             className="w-full bg-indigo-600 text-white py-2 px-4 rounded-lg font-semibold hover:bg-indigo-700 transition duration-300"
