@@ -4,16 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f7de1767-9991-481f-8d5b-6733416d9fb1" name="Changes" comment="FrontEnd Estructura basica casi terminada">
+    <list default="true" id="f7de1767-9991-481f-8d5b-6733416d9fb1" name="Changes" comment="FrontEnd GESTIÓN USUARIOS TERMINADO&#10;FIN SPRINT 3">
+      <change afterPath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/controller/AccountController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/model/Account.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/repository/AccountRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/security/CustomUserDetails.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/service/AccountService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/money-manager-frontend/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/money-manager-frontend/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/money-manager-frontend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/money-manager-frontend/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/money-manager-frontend/src/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/money-manager-frontend/src/App.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/money-manager-frontend/src/pages/Dashboard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/money-manager-frontend/src/pages/Dashboard.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/money-manager-frontend/src/pages/Login.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/money-manager-frontend/src/pages/Login.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/money-manager-frontend/src/pages/Profile.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/money-manager-frontend/src/pages/Profile.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/money-manager-frontend/src/pages/Register.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/money-manager-frontend/src/pages/Register.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/money-manager-frontend/src/services/profileService.ts" beforeDir="false" afterPath="$PROJECT_DIR$/money-manager-frontend/src/services/profileService.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/security/CustomUserDetailsService.java" beforeDir="false" afterPath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/security/CustomUserDetailsService.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -244,7 +243,15 @@
       <option name="project" value="LOCAL" />
       <updated>1758452406759</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="FrontEnd GESTIÓN USUARIOS TERMINADO&#10;FIN SPRINT 3">
+      <option name="closed" value="true" />
+      <created>1758558328126</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1758558328126</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="UnknownFeatures">
@@ -265,6 +272,7 @@
     <MESSAGE value="Cambiar Nombre+ Obtener info del perfil Rest Api TERMINADO" />
     <MESSAGE value="Implemntacion Login en el FRONTEND" />
     <MESSAGE value="FrontEnd Estructura basica casi terminada" />
-    <option name="LAST_COMMIT_MESSAGE" value="FrontEnd Estructura basica casi terminada" />
+    <MESSAGE value="FrontEnd GESTIÓN USUARIOS TERMINADO&#10;FIN SPRINT 3" />
+    <option name="LAST_COMMIT_MESSAGE" value="FrontEnd GESTIÓN USUARIOS TERMINADO&#10;FIN SPRINT 3" />
   </component>
 </project>
