@@ -4,15 +4,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f7de1767-9991-481f-8d5b-6733416d9fb1" name="Changes" comment="Implemntacion Login en el FRONTEND">
+    <list default="true" id="f7de1767-9991-481f-8d5b-6733416d9fb1" name="Changes" comment="FrontEnd Estructura basica casi terminada">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/money-manager-frontend/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/money-manager-frontend/package-lock.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/money-manager-frontend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/money-manager-frontend/package.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/money-manager-frontend/src/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/money-manager-frontend/src/App.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/money-manager-frontend/src/components/RegisterForm.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/money-manager-frontend/src/pages/Dashboard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/money-manager-frontend/src/pages/Dashboard.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/money-manager-frontend/src/pages/Login.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/money-manager-frontend/src/pages/Login.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/money-manager-frontend/src/pages/Profile.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/money-manager-frontend/src/pages/Profile.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/money-manager-frontend/src/pages/Register.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/money-manager-frontend/src/pages/Register.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/money-manager-frontend/src/services/userService.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/money-manager-frontend/src/services/profileService.ts" beforeDir="false" afterPath="$PROJECT_DIR$/money-manager-frontend/src/services/profileService.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -235,7 +236,15 @@
       <option name="project" value="LOCAL" />
       <updated>1758362018542</updated>
     </task>
-    <option name="localTasksCounter" value="14" />
+    <task id="LOCAL-00014" summary="FrontEnd Estructura basica casi terminada">
+      <option name="closed" value="true" />
+      <created>1758452406759</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1758452406759</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="UnknownFeatures">
@@ -255,6 +264,7 @@
     <MESSAGE value="Resetear Contraseña Rest Api TERMINADO" />
     <MESSAGE value="Cambiar Nombre+ Obtener info del perfil Rest Api TERMINADO" />
     <MESSAGE value="Implemntacion Login en el FRONTEND" />
-    <option name="LAST_COMMIT_MESSAGE" value="Implemntacion Login en el FRONTEND" />
+    <MESSAGE value="FrontEnd Estructura basica casi terminada" />
+    <option name="LAST_COMMIT_MESSAGE" value="FrontEnd Estructura basica casi terminada" />
   </component>
 </project>

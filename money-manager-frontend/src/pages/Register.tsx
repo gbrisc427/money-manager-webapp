@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { registerUser } from "../services/registerService";
+import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
+
 
 const Register: React.FC = () => {
   const navigate = useNavigate();
@@ -11,10 +13,33 @@ const Register: React.FC = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
-  // Regex igual que en el backend
-  const passwordRegex =
-    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).+$/;
+  // Estados de validación en tiempo real
+  const [passwordValid, setPasswordValid] = useState(true);
+  const [passwordsMatch, setPasswordsMatch] = useState(true);
 
+  // Estados para mostrar/ocultar
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  // 🔹 Validación de contraseña
+  const validatePassword = (pwd: string) => {
+    const regex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/;
+    return regex.test(pwd);
+  };
+
+  const handlePasswordChange = (pwd: string) => {
+    setPassword(pwd);
+    setPasswordValid(validatePassword(pwd));
+    setPasswordsMatch(pwd === confirmPassword);
+  };
+
+  const handleConfirmPasswordChange = (confirm: string) => {
+    setConfirmPassword(confirm);
+    setPasswordsMatch(password === confirm);
+  };
+
+  // 🔹 Envío del formulario
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
@@ -25,19 +50,12 @@ const Register: React.FC = () => {
       return;
     }
 
-    if (password.length < 8) {
-      setError("La contraseña debe tener al menos 8 caracteres");
+    if (!passwordValid) {
+      setError("La contraseña no cumple los requisitos");
       return;
     }
 
-    if (!passwordRegex.test(password)) {
-      setError(
-        "La contraseña debe tener mayúsculas, minúsculas, un número y un símbolo"
-      );
-      return;
-    }
-
-    if (password !== confirmPassword) {
+    if (!passwordsMatch) {
       setError("Las contraseñas no coinciden");
       return;
     }
@@ -45,9 +63,7 @@ const Register: React.FC = () => {
     try {
       await registerUser({ fullName, email, password });
       setSuccess("Registro exitoso. Puedes iniciar sesión.");
-      setTimeout(() => {
-        navigate("/login");
-      }, 1500);
+      setTimeout(() => navigate("/login"), 1500);
     } catch (err: any) {
       setError(err.message || "Error al registrar");
     }
@@ -60,6 +76,7 @@ const Register: React.FC = () => {
           Crear cuenta
         </h1>
         <form onSubmit={handleSubmit} className="space-y-5">
+          {/* Nombre */}
           <div>
             <label
               htmlFor="name"
@@ -77,6 +94,8 @@ const Register: React.FC = () => {
               placeholder="Tu nombre"
             />
           </div>
+
+          {/* Email */}
           <div>
             <label
               htmlFor="email"
@@ -94,7 +113,9 @@ const Register: React.FC = () => {
               placeholder="ejemplo@correo.com"
             />
           </div>
-          <div>
+
+          {/* Contraseña */}
+          <div className="relative">
             <label
               htmlFor="password"
               className="block text-sm font-medium text-gray-700"
@@ -103,19 +124,35 @@ const Register: React.FC = () => {
             </label>
             <input
               id="password"
-              type="password"
+              type={showPassword ? "text" : "password"}
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => handlePasswordChange(e.target.value)}
               required
-              className="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+              className={`w-full mt-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 ${
+                passwordValid
+                  ? "focus:ring-indigo-500 border-gray-300"
+                  : "focus:ring-red-500 border-red-500"
+              }`}
               placeholder="********"
             />
-            <p className="text-xs text-gray-500 mt-1">
-              Mínimo 8 caracteres, debe incluir mayúscula, minúscula, número y
-              símbolo.
-            </p>
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-9 text-gray-500"
+              
+            >
+              {showPassword ? <AiOutlineEyeInvisible size={20} /> : <AiOutlineEye size={20} />}
+            </button>
+            {!passwordValid && (
+              <p className="text-xs text-red-500 mt-1">
+                La contraseña debe tener al menos 8 caracteres, una mayúscula,
+                minúscula, un número y un símbolo
+              </p>
+            )}
           </div>
-          <div>
+
+          {/* Confirmar contraseña */}
+          <div className="relative">
             <label
               htmlFor="confirmPassword"
               className="block text-sm font-medium text-gray-700"
@@ -124,14 +161,36 @@ const Register: React.FC = () => {
             </label>
             <input
               id="confirmPassword"
-              type="password"
+              type={showConfirmPassword ? "text" : "password"}
               value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
+              onChange={(e) =>
+                handleConfirmPasswordChange(e.target.value)
+              }
               required
-              className="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+              className={`w-full mt-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 ${
+                passwordsMatch
+                  ? "focus:ring-indigo-500 border-gray-300"
+                  : "focus:ring-red-500 border-red-500"
+              }`}
               placeholder="********"
             />
+            <button
+              type="button"
+              onClick={() =>
+                setShowConfirmPassword(!showConfirmPassword)
+              }
+              className="absolute right-3 top-9 text-gray-500"
+            >
+              {showConfirmPassword ? <AiOutlineEye size={20} /> : <AiOutlineEyeInvisible  size={20} />}
+            </button>
+            {!passwordsMatch && (
+              <p className="text-xs text-red-500 mt-1">
+                Las contraseñas no coinciden
+              </p>
+            )}
           </div>
+
+          {/* Botón */}
           <button
             type="submit"
             className="w-full bg-indigo-600 text-white py-2 px-4 rounded-lg font-semibold hover:bg-indigo-700 transition duration-300"
@@ -140,6 +199,7 @@ const Register: React.FC = () => {
           </button>
         </form>
 
+        {/* Mensajes */}
         {error && (
           <p className="mt-4 text-center text-sm text-red-600">{error}</p>
         )}

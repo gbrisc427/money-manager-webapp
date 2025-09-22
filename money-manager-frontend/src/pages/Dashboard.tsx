@@ -12,9 +12,6 @@ const Dashboard: React.FC = () => {
       try {
         const data = await getUserProfile();
         setProfile(data); 
-        if(profile?.name != null){
-            localStorage.setItem("name", profile.name);
-        }
       } catch (err) {
         console.error("Error obteniendo perfil", err);
       }
@@ -23,19 +20,31 @@ const Dashboard: React.FC = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-500 via-indigo-600 to-purple-700 p-6">
-      <header className="flex items-center gap-3">
-        <UserCircle className="w-10 h-10 text-white" />
-        <div
-          className="text-white font-semibold cursor-pointer hover:underline"
+    <div className="min-h-screen bg-[#f9f9f6] p-6">
+      <header className="flex items-center gap-2 justify-end">
+         <UserCircle 
+          className="w-10 h-10"
+          stroke="url(#grad)" 
           onClick={() => navigate("/profile")}
-        >
-          {profile ? profile.name || profile.email : "Cargando..."}
-        </div>
+        />
+        <svg width="0" height="0">
+          <defs>
+            <linearGradient id="grad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stopColor="#3b82f6" /> {/* blue-500 */}
+              <stop offset="50%" stopColor="#4f46e5" /> {/* indigo-600 */}
+              <stop offset="100%" stopColor="#9333ea" /> {/* purple-700 */}
+            </linearGradient>
+          </defs>
+        </svg>
       </header>
-      <main className="mt-6 text-white">
-        <h1 className="text-3xl font-bold">Bienvenido al Dashboard</h1>
-        <p className="mt-2">Aquí podrás gestionar tu cuenta y ver tus datos.</p>
+      <main className="mt-6">
+        {/* Título principal con degradado */}
+        <h1 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-br from-blue-500 via-indigo-600 to-purple-700">
+          Bienvenido {profile?.name} al Dashboard
+        </h1>
+        <p className="mt-2 text-gray-900">
+          Aquí podrás gestionar tu cuenta y ver tus datos.
+        </p>
       </main>
     </div>
   );
