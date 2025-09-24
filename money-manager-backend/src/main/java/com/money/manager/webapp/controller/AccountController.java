@@ -1,7 +1,8 @@
 package com.money.manager.webapp.controller;
 
 import com.money.manager.webapp.model.Account;
-import com.money.manager.webapp.security.CustomUserDetails;
+import com.money.manager.webapp.model.User;
+import com.money.manager.webapp.repository.UserRepository;
 import com.money.manager.webapp.service.AccountService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -9,20 +10,28 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/accounts")
 public class AccountController {
 
     private final AccountService accountService;
+    private final UserRepository userRepository;
 
-    public AccountController(AccountService accountService) {
+    public AccountController(AccountService accountService, UserRepository userRepository) {
         this.accountService = accountService;
+        this.userRepository = userRepository;
     }
 
     private Long getCurrentUserId() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        return ((CustomUserDetails) auth.getPrincipal()).getId();
+        userRepository.findByEmail(auth.getName());
+        Optional<User> user = Optional.empty();
+        if (userRepository.existsByEmail(auth.getName())){
+            user = userRepository.findByEmail(auth.getName());
+        }
+        return user.map(User::getId).orElse(null);
     }
 
     @PostMapping

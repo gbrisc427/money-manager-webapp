@@ -1,7 +1,6 @@
 package com.money.manager.webapp.security;
 
 import com.money.manager.webapp.component.JwtUtils;
-import io.jsonwebtoken.io.IOException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -35,7 +34,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
-                                    FilterChain filterChain) throws ServletException, IOException, java.io.IOException {
+                                    FilterChain filterChain) throws ServletException, java.io.IOException {
 
         String authHeader = request.getHeader("Authorization");
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
@@ -44,6 +43,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         String token = authHeader.substring(7);
+
         try {
             if (!jwtUtils.validateToken(token)) {
                 logger.debug("JWT no válido o expirado");
@@ -58,14 +58,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             String username = jwtUtils.getUsernameFromToken(token);
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-            System.out.println("Nombre extraído del token: " + username);
+            logger.debug("Token recibido: {}", token);
+            logger.debug("Usuario extraído: {}", username);
+            logger.debug("Authorities: {}", userDetails.getAuthorities());
 
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                     userDetails, null, userDetails.getAuthorities());
 
             authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            logger.debug("Autenticación establecida para usuario: {}", username);
+            logger.debug("Authentication en SecurityContext: {}", SecurityContextHolder.getContext().getAuthentication());
 
         } catch (UsernameNotFoundException ex) {
             logger.warn("Usuario no encontrado desde token: {}", ex.getMessage());
