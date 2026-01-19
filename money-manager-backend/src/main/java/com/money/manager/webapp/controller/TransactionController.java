@@ -1,58 +1,53 @@
 package com.money.manager.webapp.controller;
 
-import com.money.manager.webapp.model.Transaction;
+import com.money.manager.webapp.dto.TransactionRequest;
+import com.money.manager.webapp.dto.TransactionResponse;
 import com.money.manager.webapp.model.User;
 import com.money.manager.webapp.repository.UserRepository;
 import com.money.manager.webapp.service.TransactionService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/transactions")
+@RequiredArgsConstructor
 public class TransactionController {
 
     private final TransactionService transactionService;
     private final UserRepository userRepository;
 
-    public TransactionController(TransactionService transactionService, UserRepository userRepository) {
-        this.transactionService = transactionService;
-        this.userRepository = userRepository;
-    }
-
     private Long getCurrentUserId() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        userRepository.findByEmail(auth.getName());
-        Optional<User> user = Optional.empty();
-        if (userRepository.existsByEmail(auth.getName())){
-            user = userRepository.findByEmail(auth.getName());
-        }
-        return user.map(User::getId).orElse(null);
+        User user = userRepository.findByEmail(auth.getName())
+                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
+        return user.getId();
     }
 
-
-    @PostMapping("/new")
-    public ResponseEntity<Transaction> createIncome(@RequestParam Long accountId,
-                                                    @RequestBody Transaction transaction) {
-        return ResponseEntity.ok(transactionService.createTransaction(transaction, accountId));
+    @PostMapping
+    public ResponseEntity<TransactionResponse> createTransaction(@Valid @RequestBody TransactionRequest request) {
+        return ResponseEntity.ok(transactionService.createTransaction(request, getCurrentUserId()));
     }
 
     @GetMapping
-    public List<Transaction> getAllTransactions() {
-        return transactionService.getAllTransactions(getCurrentUserId());
+    public ResponseEntity<List<TransactionResponse>> getAllTransactions() {
+        return ResponseEntity.ok(transactionService.getAllTransactions(getCurrentUserId()));
     }
 
     @GetMapping("/account/{accountId}")
-    public List<Transaction> getTransactionsByAccount(@PathVariable Long accountId) {
-        return transactionService.getTransactionsByAccount(accountId, getCurrentUserId());
+    public ResponseEntity<List<TransactionResponse>> getTransactionsByAccount(@PathVariable Long accountId) {
+        return ResponseEntity.ok(transactionService.getTransactionsByAccount(accountId, getCurrentUserId()));
     }
 
     @DeleteMapping("/{id}")
-    public void deleteTransaction(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteTransaction(@PathVariable Long id) {
         transactionService.deleteTransaction(id, getCurrentUserId());
+        return ResponseEntity.noContent().build();
     }
 }
