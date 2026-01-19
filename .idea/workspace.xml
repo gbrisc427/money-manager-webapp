@@ -4,12 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f7de1767-9991-481f-8d5b-6733416d9fb1" name="Changes" comment="CRUD de Cuentas Bancarias (Crear, Modificar, Listar y Eliminar)">
+    <list default="true" id="f7de1767-9991-481f-8d5b-6733416d9fb1" name="Changes" comment="HelloController.java deleted">
+      <change afterPath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/controller/TransactionController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/model/Transaction.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/model/TransactionType.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/repository/TransactionRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/service/TransactionService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/config/SecurityConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/controller/AccountController.java" beforeDir="false" afterPath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/controller/AccountController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/security/CustomUserDetails.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/security/JwtAuthenticationFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/security/JwtAuthenticationFilter.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -19,6 +20,7 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
+        <option value="Enum" />
         <option value="Class" />
       </list>
     </option>
@@ -256,7 +258,31 @@
       <option name="project" value="LOCAL" />
       <updated>1758570976653</updated>
     </task>
-    <option name="localTasksCounter" value="17" />
+    <task id="LOCAL-00017" summary="CRUD de Cuentas Bancarias (Crear, Modificar, Listar y Eliminar) TERMINADO">
+      <option name="closed" value="true" />
+      <created>1758715026959</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1758715026959</updated>
+    </task>
+    <task id="LOCAL-00018" summary="Categorias Para Transacciones terminadas">
+      <option name="closed" value="true" />
+      <created>1768840196762</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1768840196762</updated>
+    </task>
+    <task id="LOCAL-00019" summary="HelloController.java deleted">
+      <option name="closed" value="true" />
+      <created>1768840217569</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1768840217569</updated>
+    </task>
+    <option name="localTasksCounter" value="20" />
     <servers />
   </component>
   <component name="UnknownFeatures">
@@ -279,17 +305,9 @@
     <MESSAGE value="FrontEnd Estructura basica casi terminada" />
     <MESSAGE value="FrontEnd GESTIÓN USUARIOS TERMINADO&#10;FIN SPRINT 3" />
     <MESSAGE value="CRUD de Cuentas Bancarias (Crear, Modificar, Listar y Eliminar)" />
-    <option name="LAST_COMMIT_MESSAGE" value="CRUD de Cuentas Bancarias (Crear, Modificar, Listar y Eliminar)" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/security/JwtAuthenticationFilter.java</url>
-          <line>47</line>
-          <option name="timeStamp" value="1" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
+    <MESSAGE value="CRUD de Cuentas Bancarias (Crear, Modificar, Listar y Eliminar) TERMINADO" />
+    <MESSAGE value="Categorias Para Transacciones terminadas" />
+    <MESSAGE value="HelloController.java deleted" />
+    <option name="LAST_COMMIT_MESSAGE" value="HelloController.java deleted" />
   </component>
 </project>
