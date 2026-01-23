@@ -21,6 +21,10 @@ public class Category {
     @Column(name = "name", nullable = false, length = 50)
     private String name;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "type", nullable = false)
+    private TransactionType type;
+
     @Column(name = "color", length = 7)
     private String color;
 

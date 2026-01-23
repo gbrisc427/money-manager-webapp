@@ -24,6 +24,7 @@ public class CategoryService {
     public Category createCategory(CategoryRequest request, Long userId) {
         Category category = Category.builder()
                 .name(request.getName())
+                .type(request.getType())
                 .color(request.getColor() != null ? request.getColor() : "#CCCCCC")
                 .userId(userId)
                 .build();
