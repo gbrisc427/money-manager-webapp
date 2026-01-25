@@ -8,6 +8,7 @@ import LandingPage from './pages/LandingPage';
 import Categories from './pages/Categories';   
 import Transactions from './pages/Transactions'; 
 import Accounts from './pages/Accounts';
+import AccountDetail from './pages/AccountDetail';
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
       <Route path="/categories" element={<Categories />} />     
       <Route path="/transactions" element={<Transactions />} /> 
       <Route path="/accounts" element={<Accounts/>} />
+      <Route path="/accounts/:id" element={<AccountDetail />} />
     </Routes>
   );
 }

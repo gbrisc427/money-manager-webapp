@@ -49,3 +49,22 @@ export const deleteAccount = async (id: number): Promise<void> => {
     throw new Error(`Error ${response.status}: No se pudo eliminar la cuenta`);
   }
 };
+
+export const getAccount = async (id: number): Promise<Account> => {
+  const response = await fetch(`${API_URL}/${id}`, {
+    method: "GET",
+    headers: getHeaders(),
+  });
+  if (!response.ok) throw new Error(`Error ${response.status}: No se pudo cargar la cuenta`);
+  return response.json();
+};
+
+export const updateAccount = async (id: number, account: Partial<Account>): Promise<Account> => {
+  const response = await fetch(`${API_URL}/${id}`, {
+    method: "PUT",
+    headers: getHeaders(),
+    body: JSON.stringify(account),
+  });
+  if (!response.ok) throw new Error(`Error ${response.status}: No se pudo actualizar la cuenta`);
+  return response.json();
+};

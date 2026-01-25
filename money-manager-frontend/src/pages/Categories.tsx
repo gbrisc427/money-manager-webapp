@@ -108,7 +108,7 @@ const Categories: React.FC = () => {
         {/* Listado */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {categories.map((cat) => (
-            <div key={cat.id} className="bg-white p-4 rounded-lg shadow-sm border border-gray-100 flex justify-between items-center border-l-4" style={{ borderLeftColor: cat.color }}>
+            <div key={cat.id} className="bg-white p-4 rounded-lg shadow-sm border border-gray-100 flex justify-between items-center border-l-12" style={{ borderLeftColor: cat.color }}>
               <div>
                 <p className="font-semibold text-gray-800">{cat.name}</p>
                 <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${cat.type === 'INCOME' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>

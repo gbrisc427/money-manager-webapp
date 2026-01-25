@@ -10,7 +10,7 @@ const API_URL = "/api/categories";
 
 
 const getHeaders = () => {
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("accessToken");
   return {
     "Content-Type": "application/json",
     "Authorization": `Bearer ${token}`,

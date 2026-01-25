@@ -62,7 +62,6 @@ const Accounts: React.FC = () => {
       </header>
 
       <div className="max-w-4xl mx-auto">
-        {/* Formulario de Creación */}
         <form onSubmit={handleSubmit} className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 mb-8 flex gap-4 items-end flex-wrap">
           <div className="flex-1 min-w-[200px]">
             <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Nombre de la Cuenta</label>
@@ -92,11 +91,11 @@ const Accounts: React.FC = () => {
           </button>
         </form>
 
-        {/* Listado de Cuentas */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {accounts.map((acc) => (
-            <div key={acc.id} className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex justify-between items-center relative overflow-hidden">
-              {/* Decoración de fondo */}
+            <div key={acc.id} 
+            onClick={() => navigate(`/accounts/${acc.id}`)}
+            className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex justify-between items-center relative overflow-hidden">
               <div className="absolute right-0 top-0 h-full w-2 bg-indigo-500"></div>
               
               <div className="flex items-center gap-4">
