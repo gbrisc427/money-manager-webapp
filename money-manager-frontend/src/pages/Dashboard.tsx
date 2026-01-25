@@ -1,14 +1,30 @@
 import React, { useEffect, useState } from "react";
-import { UserCircle, Plus, Wallet, CreditCard, ArrowRight } from "lucide-react";
+import { UserCircle, Plus, Wallet, CreditCard, ArrowRight, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { getUserProfile } from "../services/profileService";
-import { getAccounts } from "../services/accountService";
+import { getAccounts, createAccount } from "../services/accountService";
 import type { Account } from "../services/accountService";
 
 const Dashboard: React.FC = () => {
   const [profile, setProfile] = useState<{ name?: string; email?: string } | null>(null);
   const [accounts, setAccounts] = useState<Account[]>([]);
   const navigate = useNavigate();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [newAccount, setNewAccount] = useState({ name: "", type: "Efectivo" });
+
+  const handleCreateAccount = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newAccount.name) return;
+    try {
+      await createAccount(newAccount);
+      setNewAccount({ name: "", type: "Efectivo" }); 
+      setIsModalOpen(false);
+      const updatedAccounts = await getAccounts();
+      setAccounts(updatedAccounts);
+    } catch (error) {
+      console.error("Error creando cuenta", error);
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -26,12 +42,10 @@ const Dashboard: React.FC = () => {
     fetchData();
   }, []);
 
-  // Calcular saldo total sumando todas las cuentas
   const totalBalance = accounts.reduce((sum, acc) => sum + acc.balance, 0);
 
   return (
     <div className="min-h-screen bg-[#f9f9f6] p-6">
-      {/* HEADER: Perfil y Usuario */}
       <header className="flex items-center gap-2 justify-end mb-6">
          <div className="text-right mr-2 hidden sm:block">
             <p className="text-sm font-bold text-gray-700">{profile?.name}</p>
@@ -74,12 +88,13 @@ const Dashboard: React.FC = () => {
             </button>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+         <div className="flex gap-4 overflow-x-auto pb-4 snap-x">
+            
             {accounts.map((acc) => (
               <div 
                 key={acc.id} 
-                onClick={() => navigate(`/accounts/${acc.id}`)}
-                className="bg-white p-5 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all cursor-pointer group"
+                onClick={() => navigate(`/accounts/${acc.id}`)} 
+                className="min-w-[280px] bg-white p-5 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all cursor-pointer group snap-start"
               >
                 <div className="flex justify-between items-start mb-2">
                   <div className="p-2 bg-indigo-50 rounded-lg text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
@@ -97,14 +112,15 @@ const Dashboard: React.FC = () => {
             ))}
 
             <div 
-              onClick={() => navigate("/accounts")} 
-              className="bg-gray-50 p-5 rounded-xl border-2 border-dashed border-gray-300 flex flex-col justify-center items-center cursor-pointer hover:border-indigo-400 hover:bg-indigo-50 transition-all text-gray-400 hover:text-indigo-600 min-h-[140px]"
+              onClick={() => setIsModalOpen(true)} 
+              className="min-w-[200px] bg-gray-50 p-5 rounded-xl border-2 border-dashed border-gray-300 flex flex-col justify-center items-center cursor-pointer hover:border-indigo-400 hover:bg-indigo-50 transition-all text-gray-400 hover:text-indigo-600 min-h-[140px] snap-start"
             >
               <div className="p-3 bg-white rounded-full shadow-sm mb-2">
                 <Plus size={24} />
               </div>
-              <span className="font-medium">Nueva Cuenta</span>
+              <span className="font-medium whitespace-nowrap">Nueva Cuenta</span>
             </div>
+
           </div>
         </div>
 
@@ -139,6 +155,51 @@ const Dashboard: React.FC = () => {
 
         </div>
       </main>
+
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden animate-fade-in">
+            <div className="p-6 border-b border-gray-100 flex justify-between items-center">
+              <h3 className="text-xl font-bold text-gray-800">Crear Nueva Cuenta</h3>
+              <button onClick={() => setIsModalOpen(false)} className="p-2 hover:bg-gray-100 rounded-full text-gray-500">
+                <X size={20} />
+              </button>
+            </div>
+
+            <form onSubmit={handleCreateAccount} className="p-6 space-y-4">
+              <div>
+                <label className="block text-sm font-bold text-gray-600 mb-1">Nombre</label>
+                <input
+                  type="text"
+                  value={newAccount.name}
+                  onChange={(e) => setNewAccount({ ...newAccount, name: e.target.value })}
+                  className="w-full border border-gray-200 rounded-lg p-3 focus:ring-2 focus:ring-indigo-500 outline-none"
+                  placeholder="Ej: Ahorros Vacaciones"
+                  autoFocus
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-bold text-gray-600 mb-1">Tipo</label>
+                <select
+                  value={newAccount.type}
+                  onChange={(e) => setNewAccount({ ...newAccount, type: e.target.value })}
+                  className="w-full border border-gray-200 rounded-lg p-3 bg-white focus:ring-2 focus:ring-indigo-500 outline-none"
+                >
+                  <option value="Efectivo">Efectivo</option>
+                  <option value="Banco">Banco</option>
+                  <option value="Tarjeta">Tarjeta Crédito</option>
+                  <option value="Ahorro">Ahorro</option>
+                  <option value="Inversión">Inversión</option>
+                </select>
+              </div>
+              <div className="pt-2 flex gap-3">
+                <button type="button" onClick={() => setIsModalOpen(false)} className="flex-1 py-3 text-gray-600 font-medium hover:bg-gray-50 rounded-lg">Cancelar</button>
+                <button type="submit" className="flex-1 bg-indigo-600 text-white py-3 rounded-lg font-bold hover:bg-indigo-700 shadow-lg shadow-indigo-200">Crear Cuenta</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
