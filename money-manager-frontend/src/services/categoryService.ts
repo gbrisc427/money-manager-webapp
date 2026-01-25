@@ -1,3 +1,5 @@
+import { handleResponse } from "../utils/apiHandler";
+
 export interface Category {
   id: number;
   name: string;
@@ -23,11 +25,7 @@ export const getCategories = async (): Promise<Category[]> => {
     headers: getHeaders(),
   });
 
-  if (!response.ok) {
-    throw new Error(`Error ${response.status}: No se pudieron cargar las categorías`);
-  }
-
-  return response.json();
+  return handleResponse(response);
 };
 
 export const createCategory = async (category: Omit<Category, "id" | "userId">): Promise<Category> => {
@@ -37,11 +35,7 @@ export const createCategory = async (category: Omit<Category, "id" | "userId">):
     body: JSON.stringify(category),
   });
 
-  if (!response.ok) {
-    throw new Error(`Error ${response.status}: No se pudo crear la categoría`);
-  }
-
-  return response.json();
+  return handleResponse(response);
 };
 
 export const deleteCategory = async (id: number): Promise<void> => {
@@ -50,7 +44,5 @@ export const deleteCategory = async (id: number): Promise<void> => {
     headers: getHeaders(),
   });
 
-  if (!response.ok) {
-    throw new Error(`Error ${response.status}: No se pudo eliminar la categoría`);
-  }
+  return handleResponse(response);
 };

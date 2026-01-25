@@ -1,3 +1,4 @@
+import { handleResponse } from "../utils/apiHandler";
 
 export interface Transaction {
   id: number;
@@ -34,11 +35,7 @@ export const getTransactions = async (): Promise<Transaction[]> => {
     headers: getHeaders(),
   });
 
-  if (!response.ok) {
-    throw new Error(`Error ${response.status}: No se pudieron cargar las transacciones`);
-  }
-
-  return response.json();
+  return handleResponse(response);
 };
 
 export const createTransaction = async (transaction: TransactionRequest): Promise<Transaction> => {
@@ -49,16 +46,7 @@ export const createTransaction = async (transaction: TransactionRequest): Promis
     body: JSON.stringify(transaction),
   });
 
-  if (!response.ok) {
-    const errorText = await response.text();
-    try {
-        throw new Error(errorText); 
-    } catch {
-        throw new Error(`Error ${response.status}: ${errorText || 'Falló la creación'}`);
-    }
-  }
-
-  return response.json();
+  return handleResponse(response);
 };
 
 export const deleteTransaction = async (id: number): Promise<void> => {
@@ -67,9 +55,7 @@ export const deleteTransaction = async (id: number): Promise<void> => {
     headers: getHeaders(),
   });
 
-  if (!response.ok) {
-    throw new Error(`Error ${response.status}: No se pudo eliminar la transacción`);
-  }
+  return handleResponse(response);
 };
 
 export const getTransactionsByAccount = async (accountId: number): Promise<Transaction[]> => {
@@ -78,9 +64,5 @@ export const getTransactionsByAccount = async (accountId: number): Promise<Trans
     headers: getHeaders(),
   });
 
-  if (!response.ok) {
-    throw new Error(`Error ${response.status}: No se pudieron cargar los movimientos de la cuenta`);
-  }
-
-  return response.json();
+  return handleResponse(response);
 };

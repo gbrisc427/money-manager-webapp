@@ -1,3 +1,5 @@
+import { handleResponse } from "../utils/apiHandler";
+
 export interface Account {
   id: number;
   name: string;
@@ -21,11 +23,7 @@ export const getAccounts = async (): Promise<Account[]> => {
     headers: getHeaders(),
   });
 
-  if (!response.ok) {
-    throw new Error(`Error ${response.status}: No se pudieron cargar las cuentas`);
-  }
-
-  return response.json();
+  return handleResponse(response);
 };
 
 
@@ -35,8 +33,7 @@ export const createAccount = async (account: Omit<Account, "id">): Promise<Accou
     headers: getHeaders(),
     body: JSON.stringify(account),
   });
-  if (!response.ok) throw new Error("Error al crear cuenta");
-  return response.json();
+  return handleResponse(response);
 };
 
 export const deleteAccount = async (id: number): Promise<void> => {
@@ -45,9 +42,7 @@ export const deleteAccount = async (id: number): Promise<void> => {
     headers: getHeaders(),
   });
 
-  if (!response.ok) {
-    throw new Error(`Error ${response.status}: No se pudo eliminar la cuenta`);
-  }
+  return handleResponse(response);
 };
 
 export const getAccount = async (id: number): Promise<Account> => {
@@ -55,8 +50,7 @@ export const getAccount = async (id: number): Promise<Account> => {
     method: "GET",
     headers: getHeaders(),
   });
-  if (!response.ok) throw new Error(`Error ${response.status}: No se pudo cargar la cuenta`);
-  return response.json();
+  return handleResponse(response);
 };
 
 export const updateAccount = async (id: number, account: Partial<Account>): Promise<Account> => {
@@ -65,6 +59,5 @@ export const updateAccount = async (id: number, account: Partial<Account>): Prom
     headers: getHeaders(),
     body: JSON.stringify(account),
   });
-  if (!response.ok) throw new Error(`Error ${response.status}: No se pudo actualizar la cuenta`);
-  return response.json();
+  return handleResponse(response);
 };
