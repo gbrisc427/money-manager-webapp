@@ -39,13 +39,31 @@ const Dashboard: React.FC = () => {
       </header>
       <main className="mt-6">
         <h1 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-br from-blue-500 via-indigo-600 to-purple-700">
-          Bienvenido {profile?.name} al Dashboard
+          Bienvenido {profile?.name} al Dashboard!
         </h1>
-        <p className="my-6 text-gray-900">
+        <p className="mt-2 mb-6 text-gray-900">
           Aquí podrás gestionar tu cuenta y ver tus datos.
         </p>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grind gap-6">
+          
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6"> 
+
+          <div 
+              onClick={() => navigate("/accounts")} 
+              className="bg-white p-6 rounded-xl shadow-sm border border-emerald-100 cursor-pointer hover:shadow-md hover:border-emerald-300 transition-all group"
+            >
+              <div className="flex items-center gap-4 mb-2">
+                <div className="p-3 bg-emerald-100 rounded-lg group-hover:bg-emerald-600 group-hover:text-white transition-colors text-emerald-600">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 12V8H6a2 2 0 0 1-2-2c0-1.1.9-2 2-2h12v4"/><path d="M4 6v12a2 2 0 0 0 2 2h14v-4"/><path d="M18 12a2 2 0 0 0-2 2c0 1.1.9 2 2 2h4v-4h-4z"/></svg>
+                </div>
+                <h3 className="text-xl font-bold text-gray-800">Cuentas</h3>
+              </div>
+              <p className="text-gray-500 text-sm">Gestiona tus bancos y saldo en efectivo.</p>
+            </div>
+
           <div 
             onClick={() => navigate("/transactions")} 
             className="bg-white p-6 rounded-xl shadow-sm border border-indigo-100 cursor-pointer hover:shadow-md hover:border-indigo-300 transition-all group"
@@ -71,6 +89,7 @@ const Dashboard: React.FC = () => {
             </div>
             <p className="text-gray-500 text-sm">Organiza tus finanzas con etiquetas personalizadas.</p>
           </div>
+
         </div>
       </main>
     </div>

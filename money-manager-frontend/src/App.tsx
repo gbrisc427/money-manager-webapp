@@ -7,6 +7,7 @@ import Recover from './pages/Recover';
 import LandingPage from './pages/LandingPage';
 import Categories from './pages/Categories';   
 import Transactions from './pages/Transactions'; 
+import Accounts from './pages/Accounts';
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
       <Route path="/profile" element={<Profile />} />
       <Route path="/categories" element={<Categories />} />     
       <Route path="/transactions" element={<Transactions />} /> 
+      <Route path="/accounts" element={<Accounts/>} />
     </Routes>
   );
 }

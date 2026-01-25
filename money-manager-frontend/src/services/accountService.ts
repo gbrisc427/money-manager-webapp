@@ -38,3 +38,14 @@ export const createAccount = async (account: Omit<Account, "id">): Promise<Accou
   if (!response.ok) throw new Error("Error al crear cuenta");
   return response.json();
 };
+
+export const deleteAccount = async (id: number): Promise<void> => {
+  const response = await fetch(`${API_URL}/${id}`, {
+    method: "DELETE",
+    headers: getHeaders(),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Error ${response.status}: No se pudo eliminar la cuenta`);
+  }
+};
