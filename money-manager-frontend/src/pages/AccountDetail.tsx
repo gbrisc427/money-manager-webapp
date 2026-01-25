@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, Trash2, Save, Edit2, Plus, ArrowUpCircle, ArrowDownCircle, ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowLeft, Trash2, Save, Edit2, Plus, ArrowUpCircle, ArrowDownCircle, ChevronLeft, ChevronRight, CircleDollarSign  } from "lucide-react";
 import { getAccount, updateAccount, deleteAccount } from "../services/accountService";
 import type { Account } from "../services/accountService";
 import { getTransactionsByAccount, createTransaction, deleteTransaction } from "../services/transactionService";
@@ -127,7 +127,8 @@ const AccountDetail: React.FC = () => {
         <button onClick={() => navigate("/dashboard")} className="p-2 hover:bg-gray-200 rounded-full transition-colors">
           <ArrowLeft className="text-gray-600" />
         </button>
-        <h2 className="text-2xl font-bold text-gray-800">Detalles de Cuenta</h2>
+        <h2 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
+          <CircleDollarSign  className="text-indigo-600" /> Detalles de {account.name}</h2>
       </header>
 
       <div className="max-w-5xl mx-auto w-full grid grid-cols-1 lg:grid-cols-3 gap-6 flex-1 min-h-0">
