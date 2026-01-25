@@ -41,7 +41,7 @@ const Dashboard: React.FC = () => {
         <h1 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-br from-blue-500 via-indigo-600 to-purple-700">
           Bienvenido {profile?.name} al Dashboard
         </h1>
-        <p className="mt-2 text-gray-900">
+        <p className="my-6 text-gray-900">
           Aquí podrás gestionar tu cuenta y ver tus datos.
         </p>
 

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Plus, Trash2, ArrowLeft, ArrowUpCircle, ArrowDownCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-// Importamos SOLO funciones
 import { getTransactions, createTransaction, deleteTransaction } from "../services/transactionService";
 import { getCategories } from "../services/categoryService";
 import { getAccounts } from "../services/accountService";

@@ -16,7 +16,6 @@ const Profile: React.FC = () => {
   const [message, setMessage] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
-  // 🔹 Logout
   const handleLogout = async () => {
   try {
     const token = localStorage.getItem("accessToken");
@@ -31,7 +30,7 @@ const Profile: React.FC = () => {
 
     if (!response.ok) throw new Error("Error al cerrar sesión");
 
-    // Limpiar localStorage
+
     localStorage.removeItem("accessToken");
     localStorage.removeItem("userEmail");
     localStorage.removeItem("userName");
@@ -43,7 +42,8 @@ const Profile: React.FC = () => {
     alert(err.message || "Error al cerrar sesión");
   }
 };
-  // 🔹 Cargar perfil
+
+
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
 
@@ -70,7 +70,6 @@ const Profile: React.FC = () => {
       .catch((err) => setMessage(err.message));
   }, []);
 
-    // 🔹 Cambiar nombre
   const handleChangeName = async () => {
     try {
       const token = localStorage.getItem("accessToken");
@@ -98,7 +97,7 @@ const Profile: React.FC = () => {
     }
   };
 
-  // 🔹 Paso 1: solicitar código
+
   const handleRequestCode = async () => {
     try {
       const response = await fetch(
@@ -113,7 +112,7 @@ const Profile: React.FC = () => {
     }
   };
 
-  // 🔹 Paso 2: verificar código
+
   const handleVerifyCode = async () => {
     try {
       const response = await fetch(
@@ -128,7 +127,6 @@ const Profile: React.FC = () => {
     }
   };
 
-  // 🔹 Paso 3: resetear contraseña
   const handleResetPassword = async () => {
     try {
       const response = await fetch(
@@ -150,7 +148,6 @@ const Profile: React.FC = () => {
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-500 via-indigo-600 to-purple-700 px-4 relative">
-      {/* 🔹 Botón Logout arriba a la derecha */}
       <button
         onClick={handleLogout}
         className="absolute top-6 right-6 flex items-center gap-2 text-white hover:text-gray-700 transition"
@@ -160,7 +157,7 @@ const Profile: React.FC = () => {
         
       </button>
 
-      <div className="bg-white rounded-2xl shadow-lg p-8 w-full max-w-md">
+      <div className="bg-white rounded-2xl shadow-lg p-12 w-full max-w-md">
         <h1 className="text-3xl font-bold text-center text-indigo-700 mb-6">
           {email}
         </h1>
@@ -171,7 +168,6 @@ const Profile: React.FC = () => {
               {name}
             </p>
 
-            {/* Cambiar nombre */}
             <div>
               <label className="block text-sm font-medium text-gray-00">
                 Nuevo nombre
@@ -185,13 +181,12 @@ const Profile: React.FC = () => {
               />
               <button
                 onClick={handleChangeName}
-                className="mt-2 w-full bg-indigo-600 text-white py-2 px-4 rounded-lg font-semibold hover:bg-indigo-700 transition duration-300"
+                className="mt-6 w-full bg-indigo-600 text-white py-2 px-4 rounded-lg font-semibold hover:bg-indigo-700 transition duration-300"
               >
                 Actualizar nombre
               </button>
             </div>
 
-            {/* Cambiar contraseña */}
             <div>
               <button
                 onClick={() => setStep("requestCode")}
@@ -203,7 +198,6 @@ const Profile: React.FC = () => {
           </div>
         )}
 
-        {/* El resto de pasos de contraseña se quedan igual que los tenías */}
         {step === "requestCode" && (
           <div className="space-y-4">
             <p className="text-gray-700 text-center">
