@@ -54,7 +54,6 @@ const Dashboard: React.FC = () => {
       </header>
 
       <main className="max-w-5xl mx-auto">
-        {/* BIENVENIDA Y BALANCE TOTAL */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-800">
             Hola, <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">{profile?.name || 'Usuario'}</span>
@@ -65,7 +64,6 @@ const Dashboard: React.FC = () => {
           </p>
         </div>
 
-        {/* --- GRID DE CUENTAS --- */}
         <div className="mb-10">
           <div className="flex justify-between items-end mb-4">
             <h2 className="text-xl font-bold text-gray-800 flex items-center gap-2">
@@ -111,7 +109,7 @@ const Dashboard: React.FC = () => {
         </div>
 
         <h2 className="text-xl font-bold text-gray-800 mb-4">Accesos Rápidos</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6"> 
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12"> 
           
           <div 
             onClick={() => navigate("/transactions")} 
