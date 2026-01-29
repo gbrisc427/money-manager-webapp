@@ -5,13 +5,16 @@ import com.money.manager.webapp.dto.AuthResponse;
 import com.money.manager.webapp.dto.LoginRequest;
 import com.money.manager.webapp.dto.RegisterRequest;
 import com.money.manager.webapp.dto.UserProfileRequest;
+import com.money.manager.webapp.model.User;
 import com.money.manager.webapp.repository.UserRepository;
 import com.money.manager.webapp.security.TokenBlacklistService;
+import com.money.manager.webapp.service.RefreshTokenService;
 import com.money.manager.webapp.service.UserProfileService;
 import com.money.manager.webapp.service.UserServ;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -39,6 +42,9 @@ public class UserController {
     @Autowired
     private TokenBlacklistService tokenBlacklistService;
 
+    @Autowired
+    private RefreshTokenService refreshTokenService;
+
 
     @Autowired
     public UserController(UserServ userService, AuthenticationManager authManager, JwtUtils jwtUtils,
@@ -50,6 +56,8 @@ public class UserController {
         this.passwordEncoder = passwordEncoder;
         this.userProfileService = userProfileService;
     }
+
+
 
     @PostMapping("/register")
     public  ResponseEntity<?>  register(@RequestBody  @Valid RegisterRequest request) {
@@ -63,45 +71,77 @@ public class UserController {
                 new UsernamePasswordAuthenticationToken(req.getEmail(), req.getPassword())
         );
         UserDetails ud = (UserDetails) authentication.getPrincipal();
-        String token = jwtUtils.generateToken(ud);
+        User user =  userService.findByEmail(ud.getUsername());
 
-        ResponseCookie cookie = ResponseCookie.from("accessToken", token)
-                .httpOnly(true)
-                .secure(false) // Pon 'true' solo cuando tengas HTTPS en producción
-                .path("/")
-                .maxAge(jwtUtils.getJwtExpirationMs() / 1000)
-                .sameSite("Lax")
-                .build();
+
+        String accessToken = jwtUtils.generateToken(ud);
+        ResponseCookie accessCookie = ResponseCookie.from("accessToken", accessToken)
+                .httpOnly(true).secure(false).path("/").maxAge(15 * 60).sameSite("Lax").build();
+
+
+        com.money.manager.webapp.model.RefreshToken refreshToken = refreshTokenService.createRefreshToken(user.getId());
+        ResponseCookie refreshCookie = ResponseCookie.from("refreshToken", refreshToken.getToken())
+                .httpOnly(true).secure(false).path("/").maxAge( 24 * 60 * 60).sameSite("Lax").build();
 
         return ResponseEntity.ok()
-                .header(HttpHeaders.SET_COOKIE, cookie.toString())
-                .body(new AuthResponse(token, jwtUtils.getJwtExpirationMs()));
+                .header(HttpHeaders.SET_COOKIE, accessCookie.toString())
+                .header(HttpHeaders.SET_COOKIE, refreshCookie.toString())
+                .body("Login exitoso");
+    }
+
+    @PostMapping("/refresh-token")
+    public ResponseEntity<?> refreshToken(HttpServletRequest request) {
+
+        String refreshTokenStr = null;
+        if (request.getCookies() != null) {
+            for (jakarta.servlet.http.Cookie cookie : request.getCookies()) {
+                if ("refreshToken".equals(cookie.getName())) {
+                    refreshTokenStr = cookie.getValue();
+                    break;
+                }
+            }
+        }
+
+        if (refreshTokenStr == null) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Refresh Token es necesario");
+        }
+
+        return refreshTokenService.findByToken(refreshTokenStr)
+                .map(refreshTokenService::verifyExpiration)
+                .map(com.money.manager.webapp.model.RefreshToken::getUser)
+                .map(user -> {
+                    String newAccessToken = jwtUtils.generateToken(user.getEmail());
+                    ResponseCookie newAccessCookie = ResponseCookie.from("accessToken", newAccessToken)
+                            .httpOnly(true).secure(false).path("/").maxAge(15 * 60).sameSite("Lax").build();
+
+                    return ResponseEntity.ok()
+                            .header(HttpHeaders.SET_COOKIE, newAccessCookie.toString())
+                            .body("Token renovado");
+                })
+                .orElseThrow(() -> new RuntimeException("Refresh token no está en la base de datos"));
     }
 
     @PostMapping("/logout")
     public ResponseEntity<?> logout(HttpServletRequest request) {
-        String header = request.getHeader("Authorization");
 
-        ResponseCookie cookie = ResponseCookie.from("accessToken", "")
-                .httpOnly(true)
-                .secure(false)
-                .path("/")
-                .maxAge(0) // Expira inmediatamente
-                .build();
+        ResponseCookie accessCookie = ResponseCookie.from("accessToken", "").httpOnly(true).path("/").maxAge(0).build();
+        ResponseCookie refreshCookie = ResponseCookie.from("refreshToken", "").httpOnly(true).path("/").maxAge(0).build();
 
-        if (header != null && header.startsWith("Bearer ")) {
-            String token = header.substring(7);
-
-            if (jwtUtils.validateToken(token)) {
-                long expiry = jwtUtils.getJwtExpirationMs();
-                tokenBlacklistService.isTokenBlacklisted(token);
-                return ResponseEntity.ok()
-                        .header(HttpHeaders.SET_COOKIE, cookie.toString())
-                        .body("Logout exitoso");
+        if (request.getCookies() != null) {
+            for (jakarta.servlet.http.Cookie cookie : request.getCookies()) {
+                if ("refreshToken".equals(cookie.getName())) {
+                    String tokenVal = cookie.getValue();
+                    refreshTokenService.findByToken(tokenVal)
+                            .ifPresent(token -> refreshTokenService.deleteByUserId(token.getUser().getId()));
+                    break;
+                }
             }
-            return ResponseEntity.badRequest().body("Token inválido.");
         }
-        return ResponseEntity.badRequest().body("No se encontró token en la petición.");
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, accessCookie.toString())
+                .header(HttpHeaders.SET_COOKIE, refreshCookie.toString())
+                .body("Logout exitoso");
     }
 
     @GetMapping("/profile")
