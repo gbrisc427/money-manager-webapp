@@ -5,7 +5,6 @@ import com.money.manager.webapp.dto.AuthResponse;
 import com.money.manager.webapp.dto.LoginRequest;
 import com.money.manager.webapp.dto.RegisterRequest;
 import com.money.manager.webapp.dto.UserProfileRequest;
-import com.money.manager.webapp.model.User;
 import com.money.manager.webapp.repository.UserRepository;
 import com.money.manager.webapp.security.TokenBlacklistService;
 import com.money.manager.webapp.service.UserProfileService;
@@ -13,15 +12,15 @@ import com.money.manager.webapp.service.UserServ;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.ResponseCookie;
+import org.springframework.http.HttpHeaders;
 
 import java.util.Map;
 
@@ -65,12 +64,30 @@ public class UserController {
         );
         UserDetails ud = (UserDetails) authentication.getPrincipal();
         String token = jwtUtils.generateToken(ud);
-        return ResponseEntity.ok(new AuthResponse(token, jwtUtils.getJwtExpirationMs()));
+
+        ResponseCookie cookie = ResponseCookie.from("accessToken", token)
+                .httpOnly(true)
+                .secure(false) // Pon 'true' solo cuando tengas HTTPS en producción
+                .path("/")
+                .maxAge(jwtUtils.getJwtExpirationMs() / 1000)
+                .sameSite("Lax")
+                .build();
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, cookie.toString())
+                .body(new AuthResponse(token, jwtUtils.getJwtExpirationMs()));
     }
 
     @PostMapping("/logout")
     public ResponseEntity<?> logout(HttpServletRequest request) {
         String header = request.getHeader("Authorization");
+
+        ResponseCookie cookie = ResponseCookie.from("accessToken", "")
+                .httpOnly(true)
+                .secure(false)
+                .path("/")
+                .maxAge(0) // Expira inmediatamente
+                .build();
 
         if (header != null && header.startsWith("Bearer ")) {
             String token = header.substring(7);
@@ -78,7 +95,9 @@ public class UserController {
             if (jwtUtils.validateToken(token)) {
                 long expiry = jwtUtils.getJwtExpirationMs();
                 tokenBlacklistService.isTokenBlacklisted(token);
-                return ResponseEntity.ok("Logout exitoso. Token invalidado.");
+                return ResponseEntity.ok()
+                        .header(HttpHeaders.SET_COOKIE, cookie.toString())
+                        .body("Logout exitoso");
             }
             return ResponseEntity.badRequest().body("Token inválido.");
         }

@@ -6,7 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="f7de1767-9991-481f-8d5b-6733416d9fb1" name="Changes" comment=".">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/money-manager-frontend/src/services/accountService.ts" beforeDir="false" afterPath="$PROJECT_DIR$/money-manager-frontend/src/services/accountService.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/config/WebConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/config/WebConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/controller/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/controller/UserController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/security/JwtAuthenticationFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/security/JwtAuthenticationFilter.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
