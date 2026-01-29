@@ -1,4 +1,4 @@
-import API_URL from "../config/api";
+import { apiClient } from "../utils/apiClient";
 
 export interface RegisterDTO {
   fullName: string;
@@ -7,16 +7,8 @@ export interface RegisterDTO {
 }
 
 export async function registerUser(user: RegisterDTO) {
-  const response = await fetch(`${API_URL}/user/register`, {
+  return apiClient("/user/register", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(user),
   });
-
-  if (!response.ok) {
-    const data = await response.text();
-    throw new Error(data);
-  }
-
-  return await response.text();
 }

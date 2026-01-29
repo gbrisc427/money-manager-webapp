@@ -2,9 +2,8 @@ export const handleResponse = async (response: Response) => {
   
   if (response.status === 403) {
     
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("token");
-    
+    localStorage.removeItem("userEmail");
+    localStorage.removeItem("userName");
     
     alert("OPPS! Tu sesión ha expirado.\n\nPor seguridad, debes volver a identificarte.");
     
