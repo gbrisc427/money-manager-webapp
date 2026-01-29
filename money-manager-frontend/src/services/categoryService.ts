@@ -11,18 +11,13 @@ export interface Category {
 const API_URL = "/api/categories";
 
 
-const getHeaders = () => {
-  const token = localStorage.getItem("accessToken");
-  return {
-    "Content-Type": "application/json",
-    "Authorization": `Bearer ${token}`,
-  };
-};
-
 export const getCategories = async (): Promise<Category[]> => {
   const response = await fetch(API_URL, {
     method: "GET",
-    headers: getHeaders(),
+    headers: {
+        "Content-Type": "application/json" 
+    },
+    credentials: "include",
   });
 
   return handleResponse(response);
@@ -31,7 +26,10 @@ export const getCategories = async (): Promise<Category[]> => {
 export const createCategory = async (category: Omit<Category, "id" | "userId">): Promise<Category> => {
   const response = await fetch(API_URL, {
     method: "POST",
-    headers: getHeaders(),
+    headers: {
+        "Content-Type": "application/json" 
+    },
+    credentials: "include",
     body: JSON.stringify(category),
   });
 
@@ -41,7 +39,10 @@ export const createCategory = async (category: Omit<Category, "id" | "userId">):
 export const deleteCategory = async (id: number): Promise<void> => {
   const response = await fetch(`${API_URL}/${id}`, {
     method: "DELETE",
-    headers: getHeaders(),
+    headers: {
+        "Content-Type": "application/json" 
+    },
+    credentials: "include",
   });
 
   return handleResponse(response);

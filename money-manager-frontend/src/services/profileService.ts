@@ -1,10 +1,9 @@
-// src/services/profileService.ts
+
 import API_URL from "../config/api";
 
 export interface UserProfile {
   name?: string;
   email?: string;
-  // añade otros campos si tu API los devuelve
 }
 
 export async function getUserProfile(): Promise<UserProfile> {
@@ -14,12 +13,13 @@ export async function getUserProfile(): Promise<UserProfile> {
   const res = await fetch(`${API_URL}/user/profile`, {
     method: "GET",
     headers: {
-      "Authorization": `Bearer ${token}`,
-      "Accept": "application/json",
+        "Content-Type": "application/json",
+        "Accept": "application/json",
     },
+    credentials: "include",
   });
 
-  // leemos raw siempre para poder debuggear respuestas no-JSON
+ 
   const raw = await res.text();
   const contentType = res.headers.get("content-type") || "";
   let body: any = null;
@@ -36,7 +36,6 @@ export async function getUserProfile(): Promise<UserProfile> {
   }
 
   if (!res.ok) {
-    // extrae mensaje razonable
     const serverMessage =
       (body && (body.message || body.error || (typeof body === "string" ? body : null))) ||
       `HTTP ${res.status} ${res.statusText}`;

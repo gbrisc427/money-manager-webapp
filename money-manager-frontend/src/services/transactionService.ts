@@ -21,18 +21,14 @@ export interface TransactionRequest {
 
 const API_URL = "/api/transactions";
 
-const getHeaders = () => {
-  const token = localStorage.getItem("accessToken") || localStorage.getItem("token");
-  return {
-    "Content-Type": "application/json",
-    "Authorization": `Bearer ${token}`,
-  };
-};
 
 export const getTransactions = async (): Promise<Transaction[]> => {
   const response = await fetch(API_URL, {
     method: "GET",
-    headers: getHeaders(),
+    headers: {
+        "Content-Type": "application/json" 
+    },
+    credentials: "include",
   });
 
   return handleResponse(response);
@@ -42,7 +38,10 @@ export const createTransaction = async (transaction: TransactionRequest): Promis
   
   const response = await fetch(API_URL, { 
     method: "POST",
-    headers: getHeaders(),
+    headers: {
+        "Content-Type": "application/json" 
+    },
+    credentials: "include",
     body: JSON.stringify(transaction),
   });
 
@@ -52,7 +51,10 @@ export const createTransaction = async (transaction: TransactionRequest): Promis
 export const deleteTransaction = async (id: number): Promise<void> => {
   const response = await fetch(`${API_URL}/${id}`, {
     method: "DELETE",
-    headers: getHeaders(),
+    headers: {
+        "Content-Type": "application/json" 
+    },
+    credentials: "include",
   });
 
   return handleResponse(response);
@@ -61,7 +63,10 @@ export const deleteTransaction = async (id: number): Promise<void> => {
 export const getTransactionsByAccount = async (accountId: number): Promise<Transaction[]> => {
   const response = await fetch(`${API_URL}/account/${accountId}`, {
     method: "GET",
-    headers: getHeaders(),
+    headers: {
+        "Content-Type": "application/json" 
+    },
+    credentials: "include",
   });
 
   return handleResponse(response);

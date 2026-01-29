@@ -9,6 +9,7 @@ export async function loginUser(credentials: LoginDTO) {
   const response = await fetch(`${API_URL}/user/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
+    credentials: "include",
     body: JSON.stringify(credentials),
   });
 
@@ -16,5 +17,5 @@ export async function loginUser(credentials: LoginDTO) {
     throw new Error("Credenciales incorrectas");
   }
 
-  return await response.json(); // debería devolver token JWT + info usuario
+  return await response.json(); 
 }
