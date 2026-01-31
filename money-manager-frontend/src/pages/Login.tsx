@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
+import { loginUser } from "../services/authService";
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
@@ -11,14 +12,21 @@ const Login: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setMessage(""); 
+    
     try {
+      
+      await loginUser({ email, password });
 
       setMessage("Login exitoso");
       localStorage.setItem("userEmail", email);
+      
       setTimeout(() => navigate("/dashboard"), 1000);
-    } catch (error) {
+      
+    } catch (error: any) {
       console.error(error);
-      setMessage("Error: credenciales incorrectas ❌");
+      
+      setMessage(error.message || "Error: credenciales incorrectas ");
     }
   };
 

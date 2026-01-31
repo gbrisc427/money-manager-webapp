@@ -72,14 +72,18 @@ public class UserController {
         ResponseCookie accessCookie = ResponseCookie.from("accessToken", jwtUtils.generateToken(ud))
                 .httpOnly(true)
                 .secure(false)
+                .sameSite("Lax")
                 .path("/")
                 .maxAge(15 * 60)
                 .build();
 
         com.money.manager.webapp.model.RefreshToken refreshToken = refreshTokenService.createRefreshToken(user.getId());
+
+
         ResponseCookie refreshCookie = ResponseCookie.from("refreshToken", refreshToken.getToken())
                 .httpOnly(true)
                 .secure(false)
+                .sameSite("Lax")
                 .path("/")
                 .maxAge(24 * 60 * 60)
                 .build();
@@ -112,9 +116,11 @@ public class UserController {
                 .map(com.money.manager.webapp.model.RefreshToken::getUser)
                 .map(user -> {
                     String newAccessToken = jwtUtils.generateToken(user.getEmail());
-                    // CONFIGURACIÓN SIMPLIFICADA
+
                     ResponseCookie newAccessCookie = ResponseCookie.from("accessToken", newAccessToken)
                             .httpOnly(true)
+                            .secure(false)
+                            .sameSite("Lax")
                             .path("/")
                             .maxAge(15 * 60)
                             .build();
@@ -128,10 +134,12 @@ public class UserController {
 
     @PostMapping("/logout")
     public ResponseEntity<?> logout(HttpServletRequest request) {
+        // CORRECCIÓN: Añadido sameSite("Lax") para asegurar que se borran correctamente
         ResponseCookie accessCookie = ResponseCookie.from("accessToken", "")
                 .httpOnly(true)
                 .path("/")
                 .secure(false)
+                .sameSite("Lax")
                 .maxAge(0)
                 .build();
 
@@ -139,6 +147,7 @@ public class UserController {
                 .httpOnly(true)
                 .path("/")
                 .secure(false)
+                .sameSite("Lax")
                 .maxAge(0)
                 .build();
 
