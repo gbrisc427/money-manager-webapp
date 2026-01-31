@@ -1,6 +1,9 @@
 import { handleResponse } from "./apiHandler";
 import API_URL from "../config/api";
 
+let isRefreshing = false;
+let refreshPromise: Promise<Response> | null = null;
+
 export const apiClient = async (endpoint: string, options: RequestInit = {}) => {
   const url = endpoint.startsWith("http") ? endpoint : `${API_URL}${endpoint}`;
   
@@ -17,23 +20,26 @@ export const apiClient = async (endpoint: string, options: RequestInit = {}) => 
     credentials: "include" as RequestCredentials, 
   };
 
-  try {
+try {
     let response = await fetch(url, config);
 
     if (response.status === 403) {
-      try {
-        const refreshResponse = await fetch(`${API_URL}/user/refresh-token`, {
+      
+      if (!isRefreshing) {
+        isRefreshing = true;
+        refreshPromise = fetch(`${API_URL}/user/refresh-token`, {
           method: "POST",
           credentials: "include",
+        }).then(res => {
+          isRefreshing = false;
+          return res;
         });
+      }
 
-        if (refreshResponse.ok) {
-          response = await fetch(url, config);
-        } else {
-          throw new Error("Sesión caducada");
-        }
-      } catch (refreshError) {
-        return handleResponse(response); 
+      const refreshResponse = await refreshPromise;
+
+      if (refreshResponse && refreshResponse.ok) {
+        response = await fetch(url, config);
       }
     }
     

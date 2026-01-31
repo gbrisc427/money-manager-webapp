@@ -4,14 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f7de1767-9991-481f-8d5b-6733416d9fb1" name="Changes" comment="Cambios para reset de passw con correo">
+    <list default="true" id="f7de1767-9991-481f-8d5b-6733416d9fb1" name="Changes" comment="Corrección de errores">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/controller/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/controller/UserController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/money-manager-frontend/src/pages/Login.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/money-manager-frontend/src/pages/Login.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/money-manager-frontend/src/pages/Profile.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/money-manager-frontend/src/pages/Profile.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/money-manager-frontend/src/services/authService.ts" beforeDir="false" afterPath="$PROJECT_DIR$/money-manager-frontend/src/services/authService.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/money-manager-frontend/src/services/profileService.ts" beforeDir="false" afterPath="$PROJECT_DIR$/money-manager-frontend/src/services/profileService.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/money-manager-frontend/src/utils/apiHandler.ts" beforeDir="false" afterPath="$PROJECT_DIR$/money-manager-frontend/src/utils/apiHandler.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/money-manager-frontend/src/utils/apiClient.ts" beforeDir="false" afterPath="$PROJECT_DIR$/money-manager-frontend/src/utils/apiClient.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -340,7 +335,15 @@
       <option name="project" value="LOCAL" />
       <updated>1769856176550</updated>
     </task>
-    <option name="localTasksCounter" value="27" />
+    <task id="LOCAL-00027" summary="Corrección de errores">
+      <option name="closed" value="true" />
+      <created>1769858471496</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1769858471496</updated>
+    </task>
+    <option name="localTasksCounter" value="28" />
     <servers />
   </component>
   <component name="UnknownFeatures">
@@ -348,7 +351,6 @@
     <option featureType="com.intellij.fileTypeFactory" implementationName=".env" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Pequeños cambios" />
     <MESSAGE value="Entidad Usuario Creada" />
     <MESSAGE value="Registro de Usuarios - MMW - 8" />
     <MESSAGE value="Validar formato del correo y fuerza de la contraseña - MMW - 13" />
@@ -373,6 +375,7 @@
     <MESSAGE value="Gestión TOKEN mediante Cookie HttpOnly" />
     <MESSAGE value="Patrón Access Token + Refresh Token." />
     <MESSAGE value="Cambios para reset de passw con correo" />
-    <option name="LAST_COMMIT_MESSAGE" value="Cambios para reset de passw con correo" />
+    <MESSAGE value="Corrección de errores" />
+    <option name="LAST_COMMIT_MESSAGE" value="Corrección de errores" />
   </component>
 </project>
