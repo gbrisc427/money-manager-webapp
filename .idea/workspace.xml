@@ -6,7 +6,11 @@
   <component name="ChangeListManager">
     <list default="true" id="f7de1767-9991-481f-8d5b-6733416d9fb1" name="Changes" comment="Corrección de errores">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/money-manager-frontend/src/utils/apiClient.ts" beforeDir="false" afterPath="$PROJECT_DIR$/money-manager-frontend/src/utils/apiClient.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/config/SecurityConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/controller/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/controller/UserController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/money-manager-frontend/src/config/api.ts" beforeDir="false" afterPath="$PROJECT_DIR$/money-manager-frontend/src/config/api.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/money-manager-frontend/src/utils/apiHandler.ts" beforeDir="false" afterPath="$PROJECT_DIR$/money-manager-frontend/src/utils/apiHandler.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/money-manager-frontend/vite.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/money-manager-frontend/vite.config.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -65,23 +69,24 @@
     <option name="showLibraryContents" value="true" />
     <option name="showModules" value="false" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Application.MoneyManagerWebappApplication.executor&quot;: &quot;Run&quot;,
-    &quot;Maven. [clean,install].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.money-manager-webapp [clean,install].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.money-manager-webapp [clean].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.money-manager-webapp [compile,-X].executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;develop&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/gabri/OneDrive/Escritorio/money-manager-webapp&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.MoneyManagerWebappApplication.executor": "Run",
+    "Maven. [clean,install].executor": "Run",
+    "Maven.money-manager-webapp [clean,install...].executor": "Run",
+    "Maven.money-manager-webapp [clean,install].executor": "Run",
+    "Maven.money-manager-webapp [clean].executor": "Run",
+    "Maven.money-manager-webapp [compile,-X].executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "develop",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/gabri/OneDrive/Escritorio/money-manager-webapp",
+    "project.structure.last.edited": "Modules",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2",
+    "settings.editor.selected.configurable": "preferences.pluginManager"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CreateClassDialog.RecentsKey">
       <recent name="com.money.manager.webapp.service" />
@@ -96,6 +101,7 @@
       <command value="mvn clean" />
       <command value="mvn compile -X" />
       <command value="mvn clean install" />
+      <command value="mvn clean install -DskipTests" />
     </option>
   </component>
   <component name="RunManager">
@@ -343,7 +349,15 @@
       <option name="project" value="LOCAL" />
       <updated>1769858471496</updated>
     </task>
-    <option name="localTasksCounter" value="28" />
+    <task id="LOCAL-00028" summary="Corrección de errores">
+      <option name="closed" value="true" />
+      <created>1769859269008</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1769859269008</updated>
+    </task>
+    <option name="localTasksCounter" value="29" />
     <servers />
   </component>
   <component name="UnknownFeatures">

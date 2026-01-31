@@ -1,7 +1,6 @@
 package com.money.manager.webapp.controller;
 
 import com.money.manager.webapp.component.JwtUtils;
-import com.money.manager.webapp.dto.AuthResponse;
 import com.money.manager.webapp.dto.LoginRequest;
 import com.money.manager.webapp.dto.RegisterRequest;
 import com.money.manager.webapp.dto.UserProfileRequest;
@@ -45,7 +44,6 @@ public class UserController {
     @Autowired
     private RefreshTokenService refreshTokenService;
 
-
     @Autowired
     public UserController(UserServ userService, AuthenticationManager authManager, JwtUtils jwtUtils,
                           UserRepository userRepository, PasswordEncoder passwordEncoder, UserProfileService userProfileService) {
@@ -57,10 +55,8 @@ public class UserController {
         this.userProfileService = userProfileService;
     }
 
-
-
     @PostMapping("/register")
-    public  ResponseEntity<?>  register(@RequestBody  @Valid RegisterRequest request) {
+    public ResponseEntity<?> register(@RequestBody @Valid RegisterRequest request) {
         userService.registerUser(request);
         return ResponseEntity.ok().body(Collections.singletonMap("message", "Usuario registrado correctamente"));
     }
@@ -71,17 +67,22 @@ public class UserController {
                 new UsernamePasswordAuthenticationToken(req.getEmail(), req.getPassword())
         );
         UserDetails ud = (UserDetails) authentication.getPrincipal();
-        User user =  userService.findByEmail(ud.getUsername());
+        User user = userService.findByEmail(ud.getUsername());
 
-
-        String accessToken = jwtUtils.generateToken(ud);
-        ResponseCookie accessCookie = ResponseCookie.from("accessToken", accessToken)
-                .httpOnly(true).secure(false).path("/").maxAge(15 * 60).sameSite("Lax").build();
-
+        ResponseCookie accessCookie = ResponseCookie.from("accessToken", jwtUtils.generateToken(ud))
+                .httpOnly(true)
+                .secure(false)
+                .path("/")
+                .maxAge(15 * 60)
+                .build();
 
         com.money.manager.webapp.model.RefreshToken refreshToken = refreshTokenService.createRefreshToken(user.getId());
         ResponseCookie refreshCookie = ResponseCookie.from("refreshToken", refreshToken.getToken())
-                .httpOnly(true).secure(false).path("/").maxAge( 24 * 60 * 60).sameSite("Lax").build();
+                .httpOnly(true)
+                .secure(false)
+                .path("/")
+                .maxAge(24 * 60 * 60)
+                .build();
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, accessCookie.toString())
@@ -91,7 +92,6 @@ public class UserController {
 
     @PostMapping("/refresh-token")
     public ResponseEntity<?> refreshToken(HttpServletRequest request) {
-
         String refreshTokenStr = null;
         if (request.getCookies() != null) {
             for (jakarta.servlet.http.Cookie cookie : request.getCookies()) {
@@ -103,7 +103,8 @@ public class UserController {
         }
 
         if (refreshTokenStr == null) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Refresh Token es necesario");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(Collections.singletonMap("error", "Refresh Token necesario"));
         }
 
         return refreshTokenService.findByToken(refreshTokenStr)
@@ -111,32 +112,34 @@ public class UserController {
                 .map(com.money.manager.webapp.model.RefreshToken::getUser)
                 .map(user -> {
                     String newAccessToken = jwtUtils.generateToken(user.getEmail());
+                    // CONFIGURACIÓN SIMPLIFICADA
                     ResponseCookie newAccessCookie = ResponseCookie.from("accessToken", newAccessToken)
-                            .httpOnly(true).secure(false).path("/").maxAge(15 * 60).sameSite("Lax").build();
+                            .httpOnly(true)
+                            .path("/")
+                            .maxAge(15 * 60)
+                            .build();
 
                     return ResponseEntity.ok()
                             .header(HttpHeaders.SET_COOKIE, newAccessCookie.toString())
-                            .body("Token renovado");
+                            .body(Collections.singletonMap("message", "Token renovado"));
                 })
-                .orElseThrow(() -> new RuntimeException("Refresh token no está en la base de datos"));
+                .orElseThrow(() -> new RuntimeException("Refresh token no válido"));
     }
 
     @PostMapping("/logout")
     public ResponseEntity<?> logout(HttpServletRequest request) {
         ResponseCookie accessCookie = ResponseCookie.from("accessToken", "")
                 .httpOnly(true)
-                .secure(false)
                 .path("/")
+                .secure(false)
                 .maxAge(0)
-                .sameSite("Lax")
                 .build();
 
         ResponseCookie refreshCookie = ResponseCookie.from("refreshToken", "")
                 .httpOnly(true)
-                .secure(false)
                 .path("/")
+                .secure(false)
                 .maxAge(0)
-                .sameSite("Lax")
                 .build();
 
         if (request.getCookies() != null) {
@@ -158,28 +161,19 @@ public class UserController {
 
     @GetMapping("/profile")
     public ResponseEntity<UserProfileRequest> getProfile(Authentication authentication) {
-        if (authentication == null) {
-            return ResponseEntity.status(401).build(); // JWT inválido o ausente
-        }
-        String email = authentication.getName();
-        return ResponseEntity.ok(userProfileService.getProfile(email));
+        if (authentication == null) return ResponseEntity.status(401).build();
+        return ResponseEntity.ok(userProfileService.getProfile(authentication.getName()));
     }
 
     @PatchMapping("/profile")
     public ResponseEntity<UserProfileRequest> updateName(Authentication authentication, @RequestParam String name) {
-        String email = authentication.getName();
-        return ResponseEntity.ok(userProfileService.updateName(email, name));
+        return ResponseEntity.ok(userProfileService.updateName(authentication.getName(), name));
     }
 
     @PatchMapping("/profile/name")
     public ResponseEntity<?> updateUserName(Authentication authentication, @RequestBody Map<String, String> request) {
-        String email = authentication.getName();
-        String newName = request.get("newName"); // campo en el JSON
-        userProfileService.updateName(email, newName);
-        return ResponseEntity.ok(Map.of(
-                "message", "Nombre actualizado correctamente",
-                "name", newName
-        ));
+        String newName = request.get("newName");
+        userProfileService.updateName(authentication.getName(), newName);
+        return ResponseEntity.ok(Map.of("message", "Nombre actualizado", "name", newName));
     }
-
 }
