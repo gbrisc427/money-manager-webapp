@@ -1,25 +1,31 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { Routes, Route } from 'react-router-dom';
+import Login from './pages/Login';
+import Register from './pages/Register';
+import Dashboard from './pages/Dashboard';
+import Profile from './pages/Profile';
+import Recover from './pages/Recover';
+import LandingPage from './pages/LandingPage';
+import Categories from './pages/Categories';   
+import Transactions from './pages/Transactions'; 
+import Accounts from './pages/Accounts';
+import AccountDetail from './pages/AccountDetail';
 
 function App() {
-  const [mensaje, setMensaje] = useState('');
+  return (
+    <Routes>
+      <Route path="/" element={<LandingPage />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/recover" element={<Recover />} />
+      
+      <Route path="/dashboard" element={<Dashboard />} />
+      <Route path="/profile" element={<Profile />} />
+      <Route path="/categories" element={<Categories />} />     
+      <Route path="/transactions" element={<Transactions />} /> 
+      <Route path="/accounts" element={<Accounts/>} />
+      <Route path="/accounts/:id" element={<AccountDetail />} />
+    </Routes>
+  );
+}
 
-    useEffect(() => {
-      fetch('http://localhost:8081/api/hello')
-        .then(res => res.text())
-        .then(data => setMensaje(data))
-        .catch(err => console.error('Error al llamar al backend:', err));
-    }, []);
-
-    return (
-      <div>
-        <h1>Frontend React</h1>
-        <p>{mensaje}</p>
-      </div>
-    );
-  }
-
-
-export default App
+export default App;

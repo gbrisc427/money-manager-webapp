@@ -4,30 +4,51 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f7de1767-9991-481f-8d5b-6733416d9fb1" name="Changes" comment="Pequeños cambios">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+    <list default="true" id="f7de1767-9991-481f-8d5b-6733416d9fb1" name="Changes" comment="Corrección de errores">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/MoneyManagerWebappApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/MoneyManagerWebappApplication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/config/SecurityConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/controller/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/controller/UserController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/security/JwtAuthenticationFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/security/JwtAuthenticationFilter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/money-manager-frontend/src/pages/Login.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/money-manager-frontend/src/pages/Login.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Enum" />
+        <option value="Interface" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="main" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
-  "lastFilter": {
-    "state": "OPEN",
-    "assignee": "gbrisc427"
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;gbrisc427&quot;
   }
-}]]></component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/gbrisc427/money-manager-webapp.git",
-    "accountId": "bfd2bae2-507f-4737-94c3-1975d83e9666"
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/gbrisc427/money-manager-webapp.git&quot;,
+    &quot;accountId&quot;: &quot;bfd2bae2-507f-4737-94c3-1975d83e9666&quot;
   }
-}]]></component>
+}</component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/money-manager-backend/src/main/resources/application.properties" root0="FORCE_HIGHLIGHTING" />
+  </component>
   <component name="MavenImportPreferences">
     <option name="generalSettings">
       <MavenGeneralSettings>
@@ -38,27 +59,71 @@
   <component name="ProjectCodeStyleSettingsMigration">
     <option name="version" value="2" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "customColor": "",
-  "associatedIndex": 3
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 3
+}</component>
   <component name="ProjectId" id="2yHAHEqnUa8x6jp7vke5TZuxD4M" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
     <option name="showModules" value="false" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "main",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/gabri/OneDrive/Escritorio/money-manager-webapp",
-    "project.structure.last.edited": "Problems",
-    "project.structure.proportion": "0.0",
-    "project.structure.side.proportion": "0.2"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Application.MoneyManagerWebappApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Maven. [clean,install].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.money-manager-webapp [clean,install...].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.money-manager-webapp [clean,install].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.money-manager-webapp [clean].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.money-manager-webapp [compile,-X].executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;develop&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/gabri/OneDrive/Escritorio/money-manager-webapp&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;
   }
-}]]></component>
+}</component>
+  <component name="RecentsManager">
+    <key name="CreateClassDialog.RecentsKey">
+      <recent name="com.money.manager.webapp.service" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\gabri\OneDrive\Escritorio\money-manager-webapp\money-manager-frontend\src\pages" />
+      <recent name="C:\Users\gabri\OneDrive\Escritorio\money-manager-webapp" />
+    </key>
+  </component>
+  <component name="RunAnythingCache">
+    <option name="myCommands">
+      <command value="mvn clean" />
+      <command value="mvn compile -X" />
+      <command value="mvn clean install" />
+      <command value="mvn clean install -DskipTests" />
+    </option>
+  </component>
+  <component name="RunManager">
+    <configuration name="MoneyManagerWebappApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.money.manager.webapp.MoneyManagerWebappApplication" />
+      <module name="money-manager-webapp" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.money.manager.webapp.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Application.MoneyManagerWebappApplication" />
+      </list>
+    </recent_temporary>
+  </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -76,11 +141,263 @@
       <option name="project" value="LOCAL" />
       <updated>1749481243235</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Pequeños cambios">
+      <option name="closed" value="true" />
+      <created>1749481451297</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1749481451297</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Entidad Usuario Creada">
+      <option name="closed" value="true" />
+      <created>1749483121513</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1749483121513</updated>
+    </task>
+    <task id="LOCAL-00004" summary="Registro de Usuarios - MMW - 8">
+      <option name="closed" value="true" />
+      <created>1749568144351</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1749568144351</updated>
+    </task>
+    <task id="LOCAL-00005" summary="Validar formato del correo y fuerza de la contraseña - MMW - 13">
+      <option name="closed" value="true" />
+      <created>1749627127919</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1749627127919</updated>
+    </task>
+    <task id="LOCAL-00006" summary="Modificación para intento de registro con email ya registrado de status 400 - MMW - 14">
+      <option name="closed" value="true" />
+      <created>1749627693659</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1749627693659</updated>
+    </task>
+    <task id="LOCAL-00007" summary="Estructura inicial FrontEnd">
+      <option name="closed" value="true" />
+      <created>1749717625570</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1749717625570</updated>
+    </task>
+    <task id="LOCAL-00008" summary="Inicio Sprint 2: Bloque Login Back-End&#10;Errores: Da fallo con la seguridad, bloquea el puerto 8081 del localhsot con el msg 403 Forbidden. Tampco detecta el JWD_SECRET del .env y no se despliega el backend (a menos que lo ponga directamente en `propierties)">
+      <option name="closed" value="true" />
+      <created>1754837204997</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1754837204997</updated>
+    </task>
+    <task id="LOCAL-00009" summary="Login con JWT terminado">
+      <option name="closed" value="true" />
+      <created>1758213761729</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1758213761729</updated>
+    </task>
+    <task id="LOCAL-00010" summary="LogOut + BlackList Token Rest Api TERMINADO">
+      <option name="closed" value="true" />
+      <created>1758223962699</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1758223962699</updated>
+    </task>
+    <task id="LOCAL-00011" summary="Resetear Contraseña Rest Api TERMINADO">
+      <option name="closed" value="true" />
+      <created>1758285486354</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1758285486354</updated>
+    </task>
+    <task id="LOCAL-00012" summary="Cambiar Nombre+ Obtener info del perfil Rest Api TERMINADO">
+      <option name="closed" value="true" />
+      <created>1758300030051</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1758300030051</updated>
+    </task>
+    <task id="LOCAL-00013" summary="Implemntacion Login en el FRONTEND">
+      <option name="closed" value="true" />
+      <created>1758362018542</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1758362018542</updated>
+    </task>
+    <task id="LOCAL-00014" summary="FrontEnd Estructura basica casi terminada">
+      <option name="closed" value="true" />
+      <created>1758452406759</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1758452406759</updated>
+    </task>
+    <task id="LOCAL-00015" summary="FrontEnd GESTIÓN USUARIOS TERMINADO&#10;FIN SPRINT 3">
+      <option name="closed" value="true" />
+      <created>1758558328126</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1758558328126</updated>
+    </task>
+    <task id="LOCAL-00016" summary="CRUD de Cuentas Bancarias (Crear, Modificar, Listar y Eliminar)">
+      <option name="closed" value="true" />
+      <created>1758570976652</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1758570976653</updated>
+    </task>
+    <task id="LOCAL-00017" summary="CRUD de Cuentas Bancarias (Crear, Modificar, Listar y Eliminar) TERMINADO">
+      <option name="closed" value="true" />
+      <created>1758715026959</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1758715026959</updated>
+    </task>
+    <task id="LOCAL-00018" summary="Categorias Para Transacciones terminadas">
+      <option name="closed" value="true" />
+      <created>1768840196762</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1768840196762</updated>
+    </task>
+    <task id="LOCAL-00019" summary="HelloController.java deleted">
+      <option name="closed" value="true" />
+      <created>1768840217569</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1768840217569</updated>
+    </task>
+    <task id="LOCAL-00020" summary="Avances modulo transacciones">
+      <option name="closed" value="true" />
+      <created>1768840695900</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1768840695900</updated>
+    </task>
+    <task id="LOCAL-00021" summary="Transacciones Terminado">
+      <option name="closed" value="true" />
+      <created>1768841123288</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1768841123288</updated>
+    </task>
+    <task id="LOCAL-00022" summary="Corrección errores backend - Categorias">
+      <option name="closed" value="true" />
+      <created>1769186777349</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1769186777349</updated>
+    </task>
+    <task id="LOCAL-00023" summary=".">
+      <option name="closed" value="true" />
+      <created>1769186843630</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1769186843630</updated>
+    </task>
+    <task id="LOCAL-00024" summary="Gestión TOKEN mediante Cookie HttpOnly">
+      <option name="closed" value="true" />
+      <created>1769716139863</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1769716139863</updated>
+    </task>
+    <task id="LOCAL-00025" summary="Patrón Access Token + Refresh Token.">
+      <option name="closed" value="true" />
+      <created>1769718751838</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1769718751838</updated>
+    </task>
+    <task id="LOCAL-00026" summary="Cambios para reset de passw con correo">
+      <option name="closed" value="true" />
+      <created>1769856176550</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1769856176550</updated>
+    </task>
+    <task id="LOCAL-00027" summary="Corrección de errores">
+      <option name="closed" value="true" />
+      <created>1769858471496</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1769858471496</updated>
+    </task>
+    <task id="LOCAL-00028" summary="Corrección de errores">
+      <option name="closed" value="true" />
+      <created>1769859269008</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1769859269008</updated>
+    </task>
+    <task id="LOCAL-00029" summary="Corrección de errores">
+      <option name="closed" value="true" />
+      <created>1769862554960</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1769862554960</updated>
+    </task>
+    <option name="localTasksCounter" value="30" />
     <servers />
   </component>
+  <component name="UnknownFeatures">
+    <option featureType="com.intellij.fileTypeFactory" implementationName=".gitattributes" />
+    <option featureType="com.intellij.fileTypeFactory" implementationName=".env" />
+  </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Pequeños cambios" />
-    <option name="LAST_COMMIT_MESSAGE" value="Pequeños cambios" />
+    <MESSAGE value="Entidad Usuario Creada" />
+    <MESSAGE value="Registro de Usuarios - MMW - 8" />
+    <MESSAGE value="Validar formato del correo y fuerza de la contraseña - MMW - 13" />
+    <MESSAGE value="Modificación para intento de registro con email ya registrado de status 400 - MMW - 14" />
+    <MESSAGE value="Estructura inicial FrontEnd" />
+    <MESSAGE value="Inicio Sprint 2: Bloque Login Back-End&#10;Errores: Da fallo con la seguridad, bloquea el puerto 8081 del localhsot con el msg 403 Forbidden. Tampco detecta el JWD_SECRET del .env y no se despliega el backend (a menos que lo ponga directamente en `propierties)" />
+    <MESSAGE value="Login con JWT terminado" />
+    <MESSAGE value="LogOut + BlackList Token Rest Api TERMINADO" />
+    <MESSAGE value="Resetear Contraseña Rest Api TERMINADO" />
+    <MESSAGE value="Cambiar Nombre+ Obtener info del perfil Rest Api TERMINADO" />
+    <MESSAGE value="Implemntacion Login en el FRONTEND" />
+    <MESSAGE value="FrontEnd Estructura basica casi terminada" />
+    <MESSAGE value="FrontEnd GESTIÓN USUARIOS TERMINADO&#10;FIN SPRINT 3" />
+    <MESSAGE value="CRUD de Cuentas Bancarias (Crear, Modificar, Listar y Eliminar)" />
+    <MESSAGE value="CRUD de Cuentas Bancarias (Crear, Modificar, Listar y Eliminar) TERMINADO" />
+    <MESSAGE value="Categorias Para Transacciones terminadas" />
+    <MESSAGE value="HelloController.java deleted" />
+    <MESSAGE value="Avances modulo transacciones" />
+    <MESSAGE value="Transacciones Terminado" />
+    <MESSAGE value="Corrección errores backend - Categorias" />
+    <MESSAGE value="." />
+    <MESSAGE value="Gestión TOKEN mediante Cookie HttpOnly" />
+    <MESSAGE value="Patrón Access Token + Refresh Token." />
+    <MESSAGE value="Cambios para reset de passw con correo" />
+    <MESSAGE value="Corrección de errores" />
+    <option name="LAST_COMMIT_MESSAGE" value="Corrección de errores" />
   </component>
 </project>
