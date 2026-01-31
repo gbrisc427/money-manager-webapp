@@ -17,10 +17,19 @@ export const handleResponse = async (response: Response) => {
 
   if (!response.ok) {
     const errorText = await response.text();
-    throw new Error(errorText || `Error ${response.status}`);
+    try {
+        const jsonError = JSON.parse(errorText);
+        throw new Error(jsonError.message || errorText);
+    } catch {
+        throw new Error(errorText || `Error ${response.status}`);
+    }
   }
 
 
   const text = await response.text();
-  return text ? JSON.parse(text) : {};
+  try {
+    return text ? JSON.parse(text) : {};
+  } catch (err) {
+    return { message: text };
+  }
 };

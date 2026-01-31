@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { loginUser } from "../services/authService";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 
 const Login: React.FC = () => {
@@ -13,13 +12,12 @@ const Login: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const data = await loginUser({ email, password });
 
       setMessage("Login exitoso");
       localStorage.setItem("userEmail", email);
-      localStorage.setItem("accessToken", data.accessToken);
       setTimeout(() => navigate("/dashboard"), 1000);
     } catch (error) {
+      console.error(error);
       setMessage("Error: credenciales incorrectas ❌");
     }
   };

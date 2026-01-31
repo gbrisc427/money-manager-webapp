@@ -6,6 +6,12 @@ export interface UserProfile {
 }
 
 export async function getUserProfile(): Promise<UserProfile> {
-  // apiClient maneja internamente la lectura de la respuesta JSON
   return apiClient("/user/profile", { method: "GET" }) as Promise<UserProfile>;
+}
+
+export async function updateUserName(newName: string) {
+  return apiClient("/user/profile/name", {
+    method: "PATCH",
+    body: JSON.stringify({ newName }), 
+  });
 }

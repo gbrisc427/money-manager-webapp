@@ -11,3 +11,9 @@ export async function loginUser(credentials: LoginDTO) {
     body: JSON.stringify(credentials),
   });
 }
+
+export async function logoutUser() {
+  return apiClient("/user/logout", {
+    method: "POST",
+  });
+}

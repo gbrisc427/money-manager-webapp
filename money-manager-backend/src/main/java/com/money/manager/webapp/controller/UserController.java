@@ -25,11 +25,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.HttpHeaders;
 
+import java.util.Collections;
 import java.util.Map;
 
 @RestController
 @RequestMapping("/api/user")
-@CrossOrigin(origins = "*")
 public class UserController {
 
     private final UserServ userService;
@@ -62,7 +62,7 @@ public class UserController {
     @PostMapping("/register")
     public  ResponseEntity<?>  register(@RequestBody  @Valid RegisterRequest request) {
         userService.registerUser(request);
-        return ResponseEntity.ok().body("Usuario registrado correctamente");
+        return ResponseEntity.ok().body(Collections.singletonMap("message", "Usuario registrado correctamente"));
     }
 
     @PostMapping("/login")
@@ -86,7 +86,7 @@ public class UserController {
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, accessCookie.toString())
                 .header(HttpHeaders.SET_COOKIE, refreshCookie.toString())
-                .body("Login exitoso");
+                .body(Collections.singletonMap("message", "Login exitoso"));
     }
 
     @PostMapping("/refresh-token")
@@ -123,9 +123,21 @@ public class UserController {
 
     @PostMapping("/logout")
     public ResponseEntity<?> logout(HttpServletRequest request) {
+        ResponseCookie accessCookie = ResponseCookie.from("accessToken", "")
+                .httpOnly(true)
+                .secure(false)
+                .path("/")
+                .maxAge(0)
+                .sameSite("Lax")
+                .build();
 
-        ResponseCookie accessCookie = ResponseCookie.from("accessToken", "").httpOnly(true).path("/").maxAge(0).build();
-        ResponseCookie refreshCookie = ResponseCookie.from("refreshToken", "").httpOnly(true).path("/").maxAge(0).build();
+        ResponseCookie refreshCookie = ResponseCookie.from("refreshToken", "")
+                .httpOnly(true)
+                .secure(false)
+                .path("/")
+                .maxAge(0)
+                .sameSite("Lax")
+                .build();
 
         if (request.getCookies() != null) {
             for (jakarta.servlet.http.Cookie cookie : request.getCookies()) {
@@ -141,7 +153,7 @@ public class UserController {
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, accessCookie.toString())
                 .header(HttpHeaders.SET_COOKIE, refreshCookie.toString())
-                .body("Logout exitoso");
+                .body(Collections.singletonMap("message", "Logout exitoso"));
     }
 
     @GetMapping("/profile")
