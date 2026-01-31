@@ -5,11 +5,14 @@ import com.money.manager.webapp.repository.PasswordRecoveryRepository;
 import com.money.manager.webapp.repository.UserRepository;
 import com.money.manager.webapp.model.User;
 import jakarta.transaction.Transactional;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 import java.util.Random;
 
 @Service
@@ -18,6 +21,9 @@ public class PasswordRecoveryService {
     private final PasswordRecoveryRepository recoveryRepo;
     private final UserRepository userRepo;
     private final PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private JavaMailSender mailSender;
 
     public PasswordRecoveryService(PasswordRecoveryRepository recoveryRepo,
                                    UserRepository userRepo,
@@ -47,8 +53,27 @@ public class PasswordRecoveryService {
 
         recoveryRepo.save(recovery);
 
-        // Aquí mandarías el correo con JavaMailSender
-        System.out.println("Código enviado al correo (" + email + "): " + code);
+        sendEmail(email, code);
+    }
+
+    private void sendEmail(String to, String code) {
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setFrom("noreply@moneymanager.com"); // O tu correo real
+            message.setTo(to);
+            message.setSubject("Recuperación de Contraseña - Money Manager");
+            message.setText("Hola,\n\n" +
+                    "Has solicitado restablecer tu contraseña.\n" +
+                    "Tu código de verificación es: " + code + "\n\n" +
+                    "Este código expira en 10 minutos.\n" +
+                    "Si no has sido tú, ignora este mensaje.");
+
+            mailSender.send(message);
+            System.out.println("Correo enviado a " + to);
+        } catch (Exception e) {
+            System.err.println("Error enviando correo: " + e.getMessage());
+            throw new RuntimeException("Error al enviar el correo de recuperación");
+        }
     }
 
     // Paso 2: Verificar código
@@ -89,6 +114,6 @@ public class PasswordRecoveryService {
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepo.save(user);
 
-        recoveryRepo.deleteByEmail(email); // limpio el proceso
+        recoveryRepo.deleteByEmail(email);
     }
 }

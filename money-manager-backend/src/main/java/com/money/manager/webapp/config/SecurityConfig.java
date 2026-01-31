@@ -1,19 +1,16 @@
 package com.money.manager.webapp.config;
 
 import com.money.manager.webapp.component.JwtUtils;
-import com.money.manager.webapp.security.JwtAuthenticationFilter;
 import com.money.manager.webapp.security.CustomUserDetailsService;
+import com.money.manager.webapp.security.JwtAuthenticationFilter;
 import com.money.manager.webapp.security.TokenBlacklistService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -24,12 +21,9 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
 
-
-
 @Configuration
 @EnableMethodSecurity
 public class SecurityConfig {
-
 
     private final CustomUserDetailsService uds;
     private final JwtUtils jwtProvider;
@@ -46,21 +40,37 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf().disable() // Para APIs REST; si usas cookies HttpOnly, ajustar protección CSRF
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-                .authorizeHttpRequests()
-                .requestMatchers("/api/user/**").permitAll()
-                .anyRequest().authenticated();
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
 
-        http.addFilterBefore(new JwtAuthenticationFilter(jwtProvider, uds,  tokenBlacklistService),
+                .csrf(csrf -> csrf.disable())
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/user/login", "/api/user/register", "/api/user/recover/**", "/api/user/refresh-token").permitAll()
+                        .anyRequest().authenticated()
+                );
+
+        http.addFilterBefore(new JwtAuthenticationFilter(jwtProvider, uds, tokenBlacklistService),
                 UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+
+        configuration.setAllowedOrigins(List.of("http://localhost:5173"));
+
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
+        configuration.setAllowedHeaders(List.of("*"));
+        configuration.setAllowCredentials(true); // Permitir Cookies
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 
     @Bean
@@ -71,5 +81,4 @@ public class SecurityConfig {
                 .and()
                 .build();
     }
-
 }
