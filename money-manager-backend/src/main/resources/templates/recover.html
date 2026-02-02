@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Recuperar Contraseña</title>
+    <style>
+        body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #f6f6f9; margin: 0; padding: 0; }
+        .container { max-width: 600px; margin: 40px auto; background: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .header { background: linear-gradient(135deg, #ef4444, #f87171); padding: 40px 20px; text-align: center; }
+        .header h1 { color: white; margin: 0; font-size: 28px; font-weight: 700; }
+        .content { padding: 40px 30px; color: #374151; line-height: 1.6; text-align: center; }
+        .code-box { background-color: #f3f4f6; padding: 20px; font-size: 32px; font-weight: 800; letter-spacing: 5px; color: #1f2937; border-radius: 8px; margin: 30px 0; display: inline-block; border: 2px dashed #d1d5db; }
+        .footer { background-color: #f9fafb; padding: 20px; text-align: center; font-size: 12px; color: #9ca3af; border-top: 1px solid #f3f4f6; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>Recuperación de Acceso</h1>
+    </div>
+    <div class="content">
+        <p>Hola,</p>
+        <p>Hemos recibido una solicitud para restablecer tu contraseña. Usa el siguiente código de verificación:</p>
+
+        <div class="code-box" th:text="${code}">000000</div>
+
+        <p style="font-size: 14px; color: #6b7280;">Este código expirará en <strong>10 minutos</strong>.</p>
+        <p style="font-size: 14px; color: #6b7280;">Si no has solicitado este cambio, puedes ignorar este correo.</p>
+    </div>
+    <div class="footer">
+        <p>&copy; 2026 Money Manager Webapp.</p>
+    </div>
+</div>
+</body>
+</html>

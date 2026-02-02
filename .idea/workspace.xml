@@ -4,12 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f7de1767-9991-481f-8d5b-6733416d9fb1" name="Changes" comment="Correcciones finales, V.1 TERMINADA CON ÉXITO">
-      <change afterPath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/service/EmailService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/money-manager-backend/src/main/resources/templates/welcome.html" afterDir="false" />
+    <list default="true" id="f7de1767-9991-481f-8d5b-6733416d9fb1" name="Changes" comment="Correo de bienvenida al registrarse">
+      <change afterPath="$PROJECT_DIR$/money-manager-backend/src/main/resources/templates/recover.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/money-manager-backend/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/money-manager-backend/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/service/UserServ.java" beforeDir="false" afterPath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/service/UserServ.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/MoneyManagerWebappApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/MoneyManagerWebappApplication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/service/EmailService.java" beforeDir="false" afterPath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/service/EmailService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/service/PasswordRecoveryService.java" beforeDir="false" afterPath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/service/PasswordRecoveryService.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -372,7 +372,15 @@
       <option name="project" value="LOCAL" />
       <updated>1769873787178</updated>
     </task>
-    <option name="localTasksCounter" value="31" />
+    <task id="LOCAL-00031" summary="Correo de bienvenida al registrarse">
+      <option name="closed" value="true" />
+      <created>1770068285297</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1770068285297</updated>
+    </task>
+    <option name="localTasksCounter" value="32" />
     <servers />
   </component>
   <component name="UnknownFeatures">
@@ -380,7 +388,6 @@
     <option featureType="com.intellij.fileTypeFactory" implementationName=".env" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Registro de Usuarios - MMW - 8" />
     <MESSAGE value="Validar formato del correo y fuerza de la contraseña - MMW - 13" />
     <MESSAGE value="Modificación para intento de registro con email ya registrado de status 400 - MMW - 14" />
     <MESSAGE value="Estructura inicial FrontEnd" />
@@ -405,6 +412,7 @@
     <MESSAGE value="Cambios para reset de passw con correo" />
     <MESSAGE value="Corrección de errores" />
     <MESSAGE value="Correcciones finales, V.1 TERMINADA CON ÉXITO" />
-    <option name="LAST_COMMIT_MESSAGE" value="Correcciones finales, V.1 TERMINADA CON ÉXITO" />
+    <MESSAGE value="Correo de bienvenida al registrarse" />
+    <option name="LAST_COMMIT_MESSAGE" value="Correo de bienvenida al registrarse" />
   </component>
 </project>

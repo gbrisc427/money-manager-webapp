@@ -47,6 +47,10 @@ public class EmailService {
         }
     }
 
+    public void sendRecoveryEmail(String to, String code) {
+        sendHtmlEmail(to, "Recuperación de Contraseña - Money Manager", "recover", Map.of("code", code));
+    }
+
     public void sendWelcomeEmail(String to, String name) {
         sendHtmlEmail(to, "¡Bienvenido a Money Manager!", "welcome", Map.of("name", name));
     }
