@@ -20,9 +20,12 @@ public class UserServ {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    public UserServ(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    private final EmailService emailService;
+
+    public UserServ(UserRepository userRepository, PasswordEncoder passwordEncoder, EmailService emailService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.emailService = emailService;
     }
 
     public User registerUser(RegisterRequest request) {
@@ -35,6 +38,9 @@ public class UserServ {
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .build();
+
+        User savedUser = userRepository.save(newUser);
+        emailService.sendWelcomeEmail(savedUser.getEmail(), savedUser.getFullName());
 
         return userRepository.save(newUser);
     }
