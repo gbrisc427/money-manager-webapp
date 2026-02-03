@@ -1,10 +1,13 @@
 package com.money.manager.webapp.service;
 
+import com.money.manager.webapp.dto.CategoryStatRequest;
+import com.money.manager.webapp.dto.MonthlyStatRequest;
 import com.money.manager.webapp.dto.TransactionRequest;
 import com.money.manager.webapp.dto.TransactionResponse;
 import com.money.manager.webapp.model.Account;
 import com.money.manager.webapp.model.Transaction;
 import com.money.manager.webapp.model.TransactionType;
+import com.money.manager.webapp.model.User;
 import com.money.manager.webapp.repository.AccountRepository;
 import com.money.manager.webapp.repository.CategoryRepository;
 import com.money.manager.webapp.repository.TransactionRepository;
@@ -13,8 +16,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -24,6 +31,7 @@ public class TransactionService {
     private final TransactionRepository transactionRepository;
     private final AccountRepository accountRepository;
     private final CategoryRepository categoryRepository;
+    private final UserServ userService;
 
     @Transactional(readOnly = true)
     public List<TransactionResponse> getAllTransactions(Long userId) {
@@ -104,5 +112,50 @@ public class TransactionService {
                 .accountName(t.getAccount().getName())
                 .categoryId(t.getCategoryId())
                 .build();
+    }
+
+    public List<CategoryStatRequest> getExpensesByCategoryStats(String email) {
+        User user = userService.findByEmail(email);
+        return transactionRepository.findExpensesByCategory(user.getId());
+    }
+
+    public List<MonthlyStatRequest> getLast6MonthsStats(String email) {
+        User user = userService.findByEmail(email);
+
+        LocalDate sixMonthsAgo = LocalDate.now().minusMonths(5).withDayOfMonth(1);
+
+        List<Transaction> transactions = transactionRepository.findTransactionsAfterDate(user.getId(), sixMonthsAgo);
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM");
+
+        Map<String, MonthlyStatRequest> statsMap = transactions.stream()
+                .collect(Collectors.groupingBy(
+                        t -> t.getDate().format(formatter),
+                        Collectors.collectingAndThen(Collectors.toList(), list -> {
+                            double income = list.stream()
+                                    .filter(t -> t.getType().toString().equals("INCOME"))
+                                    .mapToDouble(t -> t.getAmount().doubleValue())
+                                    .sum();
+
+                            double expense = list.stream()
+                                    .filter(t -> t.getType().toString().equals("EXPENSE"))
+                                    .mapToDouble(t -> t.getAmount().doubleValue())
+                                    .sum();
+
+                            return new MonthlyStatRequest(list.get(0).getDate().format(formatter), income, expense);
+                        })
+                ));
+
+        List<MonthlyStatRequest> result = new ArrayList<>();
+        LocalDate current = sixMonthsAgo;
+        LocalDate now = LocalDate.now().withDayOfMonth(1);
+
+        while (!current.isAfter(now)) {
+            String monthKey = current.format(formatter);
+            result.add(statsMap.getOrDefault(monthKey, new MonthlyStatRequest(monthKey, 0.0, 0.0)));
+            current = current.plusMonths(1);
+        }
+
+        return result;
     }
 }

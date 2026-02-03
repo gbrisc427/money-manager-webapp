@@ -1,5 +1,7 @@
 package com.money.manager.webapp.controller;
 
+import com.money.manager.webapp.dto.CategoryStatRequest;
+import com.money.manager.webapp.dto.MonthlyStatRequest;
 import com.money.manager.webapp.dto.TransactionRequest;
 import com.money.manager.webapp.dto.TransactionResponse;
 import com.money.manager.webapp.model.User;
@@ -49,5 +51,15 @@ public class TransactionController {
     public ResponseEntity<Void> deleteTransaction(@PathVariable Long id) {
         transactionService.deleteTransaction(id, getCurrentUserId());
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/stats/categories")
+    public ResponseEntity<List<CategoryStatRequest>> getCategoryStats(Authentication authentication) {
+        return ResponseEntity.ok(transactionService.getExpensesByCategoryStats(authentication.getName()));
+    }
+
+    @GetMapping("/stats/monthly")
+    public ResponseEntity<List<MonthlyStatRequest>> getMonthlyStats(Authentication authentication) {
+        return ResponseEntity.ok(transactionService.getLast6MonthsStats(authentication.getName()));
     }
 }
