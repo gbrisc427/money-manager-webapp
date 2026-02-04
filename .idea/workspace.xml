@@ -4,14 +4,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f7de1767-9991-481f-8d5b-6733416d9fb1" name="Changes" comment="Mejora correo recuperación de contraseña">
-      <change afterPath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/dto/CategoryStatRequest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/dto/MonthlyStatRequest.java" afterDir="false" />
+    <list default="true" id="f7de1767-9991-481f-8d5b-6733416d9fb1" name="Changes" comment="Mejora del DahBoard - Llamadas al backend">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/controller/TransactionController.java" beforeDir="false" afterPath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/controller/TransactionController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/dto/CategoryStatRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/dto/CategoryStatRequest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/model/Transaction.java" beforeDir="false" afterPath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/model/Transaction.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/repository/TransactionRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/repository/TransactionRepository.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/service/TransactionService.java" beforeDir="false" afterPath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/service/TransactionService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/money-manager-frontend/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/money-manager-frontend/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/money-manager-frontend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/money-manager-frontend/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/money-manager-frontend/src/pages/Dashboard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/money-manager-frontend/src/pages/Dashboard.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/money-manager-frontend/src/services/transactionService.ts" beforeDir="false" afterPath="$PROJECT_DIR$/money-manager-frontend/src/services/transactionService.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -390,7 +392,15 @@
       <option name="project" value="LOCAL" />
       <updated>1770068587991</updated>
     </task>
-    <option name="localTasksCounter" value="33" />
+    <task id="LOCAL-00033" summary="Mejora del DahBoard - Llamadas al backend">
+      <option name="closed" value="true" />
+      <created>1770149955588</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1770149955588</updated>
+    </task>
+    <option name="localTasksCounter" value="34" />
     <servers />
   </component>
   <component name="UnknownFeatures">
@@ -398,7 +408,6 @@
     <option featureType="com.intellij.fileTypeFactory" implementationName=".env" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Modificación para intento de registro con email ya registrado de status 400 - MMW - 14" />
     <MESSAGE value="Estructura inicial FrontEnd" />
     <MESSAGE value="Inicio Sprint 2: Bloque Login Back-End&#10;Errores: Da fallo con la seguridad, bloquea el puerto 8081 del localhsot con el msg 403 Forbidden. Tampco detecta el JWD_SECRET del .env y no se despliega el backend (a menos que lo ponga directamente en `propierties)" />
     <MESSAGE value="Login con JWT terminado" />
@@ -423,6 +432,7 @@
     <MESSAGE value="Correcciones finales, V.1 TERMINADA CON ÉXITO" />
     <MESSAGE value="Correo de bienvenida al registrarse" />
     <MESSAGE value="Mejora correo recuperación de contraseña" />
-    <option name="LAST_COMMIT_MESSAGE" value="Mejora correo recuperación de contraseña" />
+    <MESSAGE value="Mejora del DahBoard - Llamadas al backend" />
+    <option name="LAST_COMMIT_MESSAGE" value="Mejora del DahBoard - Llamadas al backend" />
   </component>
 </project>

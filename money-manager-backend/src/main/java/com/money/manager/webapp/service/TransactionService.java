@@ -122,7 +122,8 @@ public class TransactionService {
     public List<MonthlyStatRequest> getLast6MonthsStats(String email) {
         User user = userService.findByEmail(email);
 
-        LocalDate sixMonthsAgo = LocalDate.now().minusMonths(5).withDayOfMonth(1);
+        LocalDate sixMonthsAgoDate = LocalDate.now().minusMonths(5).withDayOfMonth(1);
+        LocalDateTime sixMonthsAgo = sixMonthsAgoDate.atStartOfDay();
 
         List<Transaction> transactions = transactionRepository.findTransactionsAfterDate(user.getId(), sixMonthsAgo);
 
@@ -147,7 +148,7 @@ public class TransactionService {
                 ));
 
         List<MonthlyStatRequest> result = new ArrayList<>();
-        LocalDate current = sixMonthsAgo;
+        LocalDate current = sixMonthsAgoDate;
         LocalDate now = LocalDate.now().withDayOfMonth(1);
 
         while (!current.isAfter(now)) {

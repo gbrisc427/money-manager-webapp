@@ -1,13 +1,25 @@
 import React, { useEffect, useState } from "react";
-import { UserCircle, Plus, Wallet, CreditCard, ArrowRight, X } from "lucide-react";
+import { UserCircle, Plus, Wallet, CreditCard, ArrowRight, X, PieChart as PieIcon, BarChart3 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { 
+  PieChart, Pie, Cell, ResponsiveContainer, Tooltip as RechartsTooltip, Legend,
+  BarChart, Bar, XAxis, YAxis, CartesianGrid
+} from "recharts";
+
 import { getUserProfile } from "../services/profileService";
 import { getAccounts, createAccount } from "../services/accountService";
 import type { Account } from "../services/accountService";
+import { getCategoryStats, getMonthlyStats } from "../services/transactionService";
+import type { CategoryStat, MonthlyStat } from "../services/transactionService";
 
 const Dashboard: React.FC = () => {
   const [profile, setProfile] = useState<{ name?: string; email?: string } | null>(null);
   const [accounts, setAccounts] = useState<Account[]>([]);
+  
+  // Estados para gráficos
+  const [categoryStats, setCategoryStats] = useState<CategoryStat[]>([]);
+  const [monthlyStats, setMonthlyStats] = useState<MonthlyStat[]>([]);
+
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newAccount, setNewAccount] = useState({ name: "", type: "Efectivo" });
@@ -29,12 +41,16 @@ const Dashboard: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [profileData, accountsData] = await Promise.all([
+        const [profileData, accountsData, catData, monthData] = await Promise.all([
           getUserProfile(),
-          getAccounts()
+          getAccounts(),
+          getCategoryStats(),
+          getMonthlyStats()
         ]);
         setProfile(profileData);
         setAccounts(accountsData);
+        setCategoryStats(catData);
+        setMonthlyStats(monthData);
       } catch (err) {
         console.error("Error cargando datos del dashboard", err);
       }
@@ -43,6 +59,11 @@ const Dashboard: React.FC = () => {
   }, []);
 
   const totalBalance = accounts.reduce((sum, acc) => sum + acc.balance, 0);
+
+const currencyFormatter = (value: number | string | undefined) => {
+    if (value === undefined || value === null) return "$0.00";
+    return `$${Number(value).toFixed(2)}`;
+  };
 
   return (
     <div className="min-h-screen bg-[#f9f9f6] p-6">
@@ -67,7 +88,8 @@ const Dashboard: React.FC = () => {
         </svg>
       </header>
 
-      <main className="max-w-5xl mx-auto">
+      <main className="max-w-6xl mx-auto">
+        {/* SECCIÓN DE BIENVENIDA Y SALDO */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-800">
             Hola, <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">{profile?.name || 'Usuario'}</span>
@@ -78,6 +100,69 @@ const Dashboard: React.FC = () => {
           </p>
         </div>
 
+        {/* SECCIÓN DE GRÁFICOS (NUEVO) */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-10">
+          
+          {/* GRÁFICO DE BARRAS: INGRESOS VS GASTOS */}
+          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+            <h3 className="text-lg font-bold text-gray-700 mb-4 flex items-center gap-2">
+              <BarChart3 className="text-indigo-500" size={20}/> Balance Mensual
+            </h3>
+            <div className="h-[300px] w-full">
+              {monthlyStats.length > 0 ? (
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={monthlyStats} margin={{ top: 20, right: 30, left: 0, bottom: 5 }}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
+                    <XAxis dataKey="month" tick={{fontSize: 12}} axisLine={false} tickLine={false} />
+                    <YAxis tick={{fontSize: 12}} axisLine={false} tickLine={false} tickFormatter={(val) => `$${val}`} />
+                    <RechartsTooltip cursor={{fill: '#f9f9f9'}}formatter={(value: number | undefined) => [`$${Number(value || 0).toFixed(2)}`]} />
+                    <Legend />
+                    <Bar name="Ingresos" dataKey="income" fill="#10b981" radius={[4, 4, 0, 0]} barSize={20} />
+                    <Bar name="Gastos" dataKey="expense" fill="#ef4444" radius={[4, 4, 0, 0]} barSize={20} />
+                  </BarChart>
+                </ResponsiveContainer>
+              ) : (
+                <div className="h-full flex items-center justify-center text-gray-400 text-sm">No hay datos suficientes</div>
+              )}
+            </div>
+          </div>
+
+          {/* GRÁFICO DE PASTEL: GASTOS POR CATEGORÍA */}
+          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+            <h3 className="text-lg font-bold text-gray-700 mb-4 flex items-center gap-2">
+              <PieIcon className="text-pink-500" size={20}/> Distribución de Gastos
+            </h3>
+            <div className="h-[300px] w-full flex items-center justify-center">
+              {categoryStats.length > 0 ? (
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={categoryStats}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={60}
+                      outerRadius={80}
+                      paddingAngle={5}
+                      dataKey="totalAmount"
+                      nameKey="categoryName"
+                    >
+                      {categoryStats.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color || '#cccccc'} stroke="none" />
+                      ))}
+                    </Pie>
+                    <RechartsTooltip formatter={currencyFormatter} />
+                    <Legend layout="vertical" verticalAlign="middle" align="right" wrapperStyle={{fontSize: '12px'}}/>
+                  </PieChart>
+                </ResponsiveContainer>
+              ) : (
+                <div className="h-full flex items-center justify-center text-gray-400 text-sm">No hay gastos registrados</div>
+              )}
+            </div>
+          </div>
+
+        </div>
+
+        {/* LISTA DE CUENTAS */}
         <div className="mb-10">
           <div className="flex justify-between items-end mb-4">
             <h2 className="text-xl font-bold text-gray-800 flex items-center gap-2">
@@ -89,7 +174,6 @@ const Dashboard: React.FC = () => {
           </div>
 
          <div className="flex gap-4 overflow-x-auto pb-4 snap-x">
-            
             {accounts.map((acc) => (
               <div 
                 key={acc.id} 
@@ -120,17 +204,13 @@ const Dashboard: React.FC = () => {
               </div>
               <span className="font-medium whitespace-nowrap">Nueva Cuenta</span>
             </div>
-
           </div>
         </div>
 
+        {/* ACCESOS RÁPIDOS */}
         <h2 className="text-xl font-bold text-gray-800 mb-4">Accesos Rápidos</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12"> 
-          
-          <div 
-            onClick={() => navigate("/transactions")} 
-            className="bg-white p-6 rounded-xl shadow-sm border border-indigo-100 cursor-pointer hover:shadow-md hover:border-indigo-300 transition-all group flex items-center gap-4"
-          >
+          <div onClick={() => navigate("/transactions")} className="bg-white p-6 rounded-xl shadow-sm border border-indigo-100 cursor-pointer hover:shadow-md hover:border-indigo-300 transition-all group flex items-center gap-4">
             <div className="p-4 bg-indigo-100 rounded-full group-hover:bg-indigo-600 group-hover:text-white transition-colors text-indigo-600">
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
             </div>
@@ -140,10 +220,7 @@ const Dashboard: React.FC = () => {
             </div>
           </div>
 
-          <div 
-            onClick={() => navigate("/categories")} 
-            className="bg-white p-6 rounded-xl shadow-sm border border-blue-100 cursor-pointer hover:shadow-md hover:border-blue-300 transition-all group flex items-center gap-4"
-          >
+          <div onClick={() => navigate("/categories")} className="bg-white p-6 rounded-xl shadow-sm border border-blue-100 cursor-pointer hover:shadow-md hover:border-blue-300 transition-all group flex items-center gap-4">
             <div className="p-4 bg-blue-100 rounded-full group-hover:bg-blue-600 group-hover:text-white transition-colors text-blue-600">
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
             </div>
@@ -152,10 +229,10 @@ const Dashboard: React.FC = () => {
               <p className="text-gray-500 text-sm">Organiza tus etiquetas.</p>
             </div>
           </div>
-
         </div>
       </main>
 
+      {/* MODAL CREAR CUENTA */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
           <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden animate-fade-in">

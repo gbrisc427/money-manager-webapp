@@ -19,6 +19,18 @@ export interface TransactionRequest {
   date?: string;
 }
 
+export interface CategoryStat {
+  categoryName: string;
+  color: string;
+  totalAmount: number;
+}
+
+export interface MonthlyStat {
+  month: string;
+  income: number;
+  expense: number;
+}
+
 export const getTransactions = async (): Promise<Transaction[]> => {
   return apiClient("/transactions", { method: "GET" });
 };
@@ -36,4 +48,12 @@ export const deleteTransaction = async (id: number): Promise<void> => {
 
 export const getTransactionsByAccount = async (accountId: number): Promise<Transaction[]> => {
   return apiClient(`/transactions/account/${accountId}`, { method: "GET" });
+};
+
+export const getCategoryStats = async (): Promise<CategoryStat[]> => {
+  return apiClient("/transactions/stats/categories", { method: "GET" });
+};
+
+export const getMonthlyStats = async (): Promise<MonthlyStat[]> => {
+  return apiClient("/transactions/stats/monthly", { method: "GET" });
 };
