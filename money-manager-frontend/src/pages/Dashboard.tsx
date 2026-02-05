@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { 
   UserCircle, Plus, Wallet, CreditCard, ArrowRight, X, 
-  PieChart as PieIcon, BarChart3, Landmark, CircleDollarSign, Target, Trash2 
+  PieChart as PieIcon, BarChart3, Landmark, CircleDollarSign, Target, Trash2,
+  Trophy, TrendingUp 
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { 
@@ -14,52 +15,53 @@ import { getAccounts, createAccount } from "../services/accountService";
 import type { Account } from "../services/accountService";
 import { getCategoryStats, getMonthlyStats } from "../services/transactionService";
 import type { CategoryStat, MonthlyStat } from "../services/transactionService";
-import { getBudgets, createBudget, deleteBudget } from "../services/budgetService"; // <--- NUEVO
-import type { Budget } from "../services/budgetService"; // <--- NUEVO
-import { getCategories } from "../services/categoryService"; // <--- NUEVO
-import type { Category } from "../services/categoryService"; // <--- NUEVO
+import { getBudgets, createBudget, deleteBudget } from "../services/budgetService";
+import type { Budget } from "../services/budgetService";
+import { getCategories } from "../services/categoryService";
+import type { Category } from "../services/categoryService";
+import { getGoals, createGoal, addFundsToGoal, deleteGoal } from "../services/goalService";
+import type { SavingsGoal } from "../services/goalService";
 
 const Dashboard: React.FC = () => {
   const [profile, setProfile] = useState<{ name?: string; email?: string } | null>(null);
   const [accounts, setAccounts] = useState<Account[]>([]);
   
-  // Estados para gráficos y presupuestos
   const [categoryStats, setCategoryStats] = useState<CategoryStat[]>([]);
   const [monthlyStats, setMonthlyStats] = useState<MonthlyStat[]>([]);
-  const [budgets, setBudgets] = useState<Budget[]>([]); // <--- NUEVO
-  const [categories, setCategories] = useState<Category[]>([]); // <--- NUEVO
+  const [budgets, setBudgets] = useState<Budget[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [goals, setGoals] = useState<SavingsGoal[]>([]);
 
   const navigate = useNavigate();
   
-  // MODAL CREAR CUENTA
+  // MODALES
   const [isAccountModalOpen, setIsAccountModalOpen] = useState(false);
-  const [newAccount, setNewAccount] = useState({
-    name: "",
-    type: "Banco",
-    balance: "" as string | number
-  });
-
-  // MODAL CREAR PRESUPUESTO (NUEVO)
   const [isBudgetModalOpen, setIsBudgetModalOpen] = useState(false);
-  const [newBudget, setNewBudget] = useState({
-    categoryId: 0,
-    amount: "" as string | number
-  });
+  const [isGoalModalOpen, setIsGoalModalOpen] = useState(false);
+  
+  const [isAddFundsModalOpen, setIsAddFundsModalOpen] = useState(false);
+  const [selectedGoalId, setSelectedGoalId] = useState<number | null>(null);
+  const [fundsAmount, setFundsAmount] = useState("");
 
-  // --- CARGA DE DATOS ---
+  // ESTADOS FORMULARIOS
+  const [newAccount, setNewAccount] = useState({ name: "", type: "Banco", balance: "" as string | number });
+  const [newBudget, setNewBudget] = useState({ categoryId: 0, amount: "" as string | number });
+  const [newGoal, setNewGoal] = useState({ name: "", targetAmount: "" as string | number, color: "#10b981" });
+
   useEffect(() => {
     loadDashboardData();
   }, []);
 
   const loadDashboardData = async () => {
       try {
-        const [profileData, accountsData, catStatsData, monthData, budgetsData, allCats] = await Promise.all([
+        const [profileData, accountsData, catStatsData, monthData, budgetsData, allCats, goalsData] = await Promise.all([
           getUserProfile(),
           getAccounts(),
           getCategoryStats(),
           getMonthlyStats(),
-          getBudgets(),     // <--- Cargar presupuestos
-          getCategories()   // <--- Cargar categorías (para el select del modal)
+          getBudgets(),
+          getCategories(),
+          getGoals()
         ]);
         setProfile(profileData);
         setAccounts(accountsData);
@@ -67,12 +69,12 @@ const Dashboard: React.FC = () => {
         setMonthlyStats(monthData);
         setBudgets(budgetsData);
         setCategories(allCats);
+        setGoals(goalsData);
       } catch (err) {
-        console.error("Error cargando datos del dashboard", err);
+        console.error("Error cargando datos", err);
       }
   };
 
-  // --- HANDLERS CUENTAS ---
   const handleCreateAccount = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newAccount.name || newAccount.balance === "") return;
@@ -91,20 +93,14 @@ const Dashboard: React.FC = () => {
     }
   };
 
-  // --- HANDLERS PRESUPUESTOS (NUEVO) ---
   const handleCreateBudget = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newBudget.categoryId || !newBudget.amount) return;
     try {
-        await createBudget({
-            categoryId: Number(newBudget.categoryId),
-            amount: Number(newBudget.amount)
-        });
+        await createBudget({ categoryId: Number(newBudget.categoryId), amount: Number(newBudget.amount) });
         setNewBudget({ categoryId: 0, amount: "" });
         setIsBudgetModalOpen(false);
-        // Recargar solo los presupuestos para actualizar barras
-        const updatedBudgets = await getBudgets();
-        setBudgets(updatedBudgets);
+        setBudgets(await getBudgets());
     } catch (error) {
         console.error("Error creando presupuesto", error);
     }
@@ -112,14 +108,46 @@ const Dashboard: React.FC = () => {
 
   const handleDeleteBudget = async (id: number) => {
       if(!confirm("¿Eliminar este límite de gasto?")) return;
-      try {
-          await deleteBudget(id);
-          const updatedBudgets = await getBudgets();
-          setBudgets(updatedBudgets);
-      } catch (error) {
-          console.error(error);
-      }
+      try { await deleteBudget(id); setBudgets(await getBudgets()); } catch (error) { console.error(error); }
   }
+
+  const handleCreateGoal = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newGoal.name || !newGoal.targetAmount) return;
+    try {
+        await createGoal({
+            name: newGoal.name,
+            targetAmount: Number(newGoal.targetAmount),
+            color: newGoal.color,
+            currentAmount: 0
+        });
+        setNewGoal({ name: "", targetAmount: "", color: "#10b981" });
+        setIsGoalModalOpen(false);
+        setGoals(await getGoals());
+    } catch (error) { console.error(error); }
+  };
+
+  const handleAddFunds = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedGoalId || !fundsAmount) return;
+    try {
+        await addFundsToGoal(selectedGoalId, Number(fundsAmount));
+        setFundsAmount("");
+        setSelectedGoalId(null);
+        setIsAddFundsModalOpen(false);
+        setGoals(await getGoals());
+    } catch (error) { console.error(error); }
+  };
+
+  const handleDeleteGoal = async (id: number) => {
+      if(!confirm("¿Borrar esta meta de ahorro?")) return;
+      try { await deleteGoal(id); setGoals(await getGoals()); } catch (error) { console.error(error); }
+  }
+
+  const openAddFundsModal = (id: number) => {
+      setSelectedGoalId(id);
+      setIsAddFundsModalOpen(true);
+  };
 
   const totalBalance = accounts.reduce((sum, acc) => sum + acc.balance, 0);
 
@@ -128,7 +156,6 @@ const Dashboard: React.FC = () => {
     return `$${Number(value).toFixed(2)}`;
   };
 
-  // Función para color de barra de progreso
   const getProgressColor = (percentage: number) => {
       if (percentage >= 100) return "bg-red-500";
       if (percentage >= 75) return "bg-yellow-500";
@@ -159,7 +186,7 @@ const Dashboard: React.FC = () => {
       </header>
 
       <main className="max-w-6xl mx-auto">
-        {/* SECCIÓN DE BIENVENIDA Y SALDO */}
+        {/* SECCIÓN 1: BIENVENIDA Y SALDO */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-800">
             Hola, <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">{profile?.name || 'Usuario'}</span>
@@ -170,7 +197,49 @@ const Dashboard: React.FC = () => {
           </p>
         </div>
 
-        {/* SECCIÓN DE GRÁFICOS */}
+        {/* SECCIÓN 2: LISTA DE CUENTAS (MOVIDO AQUÍ) */}
+        <div className="mb-10">
+          <div className="flex justify-between items-end mb-4">
+            <h2 className="text-xl font-bold text-gray-800 flex items-center gap-2">
+              <Wallet className="text-indigo-500" size={20}/> Mis Cuentas
+            </h2>
+            <button onClick={() => navigate("/accounts")} className="text-sm text-indigo-600 hover:underline flex items-center">
+              Ver todas <ArrowRight size={14} className="ml-1"/>
+            </button>
+          </div>
+
+         <div className="flex gap-4 overflow-x-auto pb-4 snap-x">
+            {accounts.map((acc) => (
+              <div 
+                key={acc.id} 
+                onClick={() => navigate(`/accounts/${acc.id}`)} 
+                className="min-w-[280px] bg-white p-5 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all cursor-pointer group snap-start"
+              >
+                <div className="flex justify-between items-start mb-2">
+                  <div className="p-2 bg-indigo-50 rounded-lg text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+                    <CreditCard size={20} />
+                  </div>
+                  <span className="text-xs font-medium px-2 py-1 bg-gray-100 text-gray-600 rounded-full">
+                    {acc.type}
+                  </span>
+                </div>
+                <h3 className="font-bold text-gray-700 truncate">{acc.name}</h3>
+                <p className={`text-xl font-bold mt-1 ${acc.balance >= 0 ? 'text-gray-900' : 'text-red-600'}`}>
+                  ${acc.balance.toFixed(2)}
+                </p>
+              </div>
+            ))}
+            <div 
+              onClick={() => setIsAccountModalOpen(true)} 
+              className="min-w-[200px] bg-gray-50 p-5 rounded-xl border-2 border-dashed border-gray-300 flex flex-col justify-center items-center cursor-pointer hover:border-indigo-400 hover:bg-indigo-50 transition-all text-gray-400 hover:text-indigo-600 min-h-[140px] snap-start"
+            >
+              <div className="p-3 bg-white rounded-full shadow-sm mb-2"><Plus size={24} /></div>
+              <span className="font-medium whitespace-nowrap">Nueva Cuenta</span>
+            </div>
+          </div>
+        </div>
+
+        {/* SECCIÓN 3: GRÁFICOS */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-10">
           <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
             <h3 className="text-lg font-bold text-gray-700 mb-4 flex items-center gap-2">
@@ -228,7 +297,7 @@ const Dashboard: React.FC = () => {
           </div>
         </div>
 
-        {/* --- NUEVA SECCIÓN: PRESUPUESTOS (BUDGETS) --- */}
+        {/* SECCIÓN 4: OBJETIVOS DE GASTO (PRESUPUESTOS) */}
         <div className="mb-10">
             <div className="flex justify-between items-center mb-4">
                 <h2 className="text-xl font-bold text-gray-800 flex items-center gap-2">
@@ -244,19 +313,15 @@ const Dashboard: React.FC = () => {
 
             {budgets.length === 0 ? (
                 <div className="bg-white p-8 rounded-xl border border-dashed border-gray-300 text-center text-gray-400">
-                    No tienes presupuestos definidos. ¡Crea uno para controlar tus gastos!
+                    No tienes presupuestos definidos.
                 </div>
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {budgets.map(b => (
                         <div key={b.id} className="bg-white p-5 rounded-xl shadow-sm border border-gray-100 relative group">
-                            <button 
-                                onClick={() => handleDeleteBudget(b.id)}
-                                className="absolute top-3 right-3 text-gray-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
-                            >
+                            <button onClick={() => handleDeleteBudget(b.id)} className="absolute top-3 right-3 text-gray-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity">
                                 <Trash2 size={16}/>
                             </button>
-
                             <div className="flex justify-between items-end mb-2">
                                 <div>
                                     <div className="text-xs font-bold text-gray-400 uppercase mb-1">Categoría</div>
@@ -270,69 +335,72 @@ const Dashboard: React.FC = () => {
                                     <div className="text-xs text-gray-500">de ${b.limitAmount.toFixed(0)}</div>
                                 </div>
                             </div>
-                            
-                            {/* Barra de Progreso */}
                             <div className="w-full bg-gray-100 rounded-full h-3 overflow-hidden">
-                                <div 
-                                    className={`h-full rounded-full transition-all duration-500 ${getProgressColor(b.percentage)}`} 
-                                    style={{ width: `${Math.min(b.percentage, 100)}%` }}
-                                ></div>
+                                <div className={`h-full rounded-full transition-all duration-500 ${getProgressColor(b.percentage)}`} style={{ width: `${Math.min(b.percentage, 100)}%` }}></div>
                             </div>
-                            <div className="text-right mt-1 text-xs font-bold text-gray-400">
-                                {b.percentage.toFixed(0)}%
-                            </div>
+                            <div className="text-right mt-1 text-xs font-bold text-gray-400">{b.percentage.toFixed(0)}%</div>
                         </div>
                     ))}
                 </div>
             )}
         </div>
 
-        {/* LISTA DE CUENTAS */}
+        {/* SECCIÓN 5: METAS DE AHORRO */}
         <div className="mb-10">
-          <div className="flex justify-between items-end mb-4">
-            <h2 className="text-xl font-bold text-gray-800 flex items-center gap-2">
-              <Wallet className="text-indigo-500" size={20}/> Mis Cuentas
-            </h2>
-            <button onClick={() => navigate("/accounts")} className="text-sm text-indigo-600 hover:underline flex items-center">
-              Ver todas <ArrowRight size={14} className="ml-1"/>
-            </button>
-          </div>
-
-         <div className="flex gap-4 overflow-x-auto pb-4 snap-x">
-            {accounts.map((acc) => (
-              <div 
-                key={acc.id} 
-                onClick={() => navigate(`/accounts/${acc.id}`)} 
-                className="min-w-[280px] bg-white p-5 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all cursor-pointer group snap-start"
-              >
-                <div className="flex justify-between items-start mb-2">
-                  <div className="p-2 bg-indigo-50 rounded-lg text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
-                    <CreditCard size={20} />
-                  </div>
-                  <span className="text-xs font-medium px-2 py-1 bg-gray-100 text-gray-600 rounded-full">
-                    {acc.type}
-                  </span>
-                </div>
-                <h3 className="font-bold text-gray-700 truncate">{acc.name}</h3>
-                <p className={`text-xl font-bold mt-1 ${acc.balance >= 0 ? 'text-gray-900' : 'text-red-600'}`}>
-                  ${acc.balance.toFixed(2)}
-                </p>
-              </div>
-            ))}
-
-            <div 
-              onClick={() => setIsAccountModalOpen(true)} 
-              className="min-w-[200px] bg-gray-50 p-5 rounded-xl border-2 border-dashed border-gray-300 flex flex-col justify-center items-center cursor-pointer hover:border-indigo-400 hover:bg-indigo-50 transition-all text-gray-400 hover:text-indigo-600 min-h-[140px] snap-start"
-            >
-              <div className="p-3 bg-white rounded-full shadow-sm mb-2">
-                <Plus size={24} />
-              </div>
-              <span className="font-medium whitespace-nowrap">Nueva Cuenta</span>
+            <div className="flex justify-between items-center mb-4">
+                <h2 className="text-xl font-bold text-gray-800 flex items-center gap-2">
+                    <Trophy className="text-yellow-500" size={20}/> Metas de Ahorro
+                </h2>
+                <button 
+                    onClick={() => setIsGoalModalOpen(true)}
+                    className="text-sm font-bold text-green-600 bg-green-50 px-3 py-2 rounded-lg hover:bg-green-100 transition-colors flex items-center gap-1"
+                >
+                    <Plus size={16}/> Nueva Meta
+                </button>
             </div>
-          </div>
+
+            {goals.length === 0 ? (
+                <div className="bg-white p-8 rounded-xl border border-dashed border-gray-300 text-center text-gray-400">
+                    Aún no tienes metas de ahorro. ¡Crea una para ese viaje soñado!
+                </div>
+            ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {goals.map(g => {
+                        const percent = Math.min((g.currentAmount / g.targetAmount) * 100, 100);
+                        return (
+                            <div key={g.id} className="bg-white p-5 rounded-xl shadow-sm border border-gray-100 relative group overflow-hidden">
+                                <div className="absolute bottom-0 left-0 h-1 bg-green-500 transition-all duration-1000" style={{width: `${percent}%`}}></div>
+                                
+                                <div className="flex justify-between items-start mb-4">
+                                    <div className="p-3 rounded-full bg-green-50 text-green-600">
+                                        <Trophy size={20}/>
+                                    </div>
+                                    <div className="flex gap-2">
+                                        <button onClick={() => openAddFundsModal(g.id)} className="p-2 text-indigo-600 hover:bg-indigo-50 rounded-full" title="Añadir dinero">
+                                            <TrendingUp size={18}/>
+                                        </button>
+                                        <button onClick={() => handleDeleteGoal(g.id)} className="p-2 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-full">
+                                            <Trash2 size={18}/>
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <h3 className="text-lg font-bold text-gray-800 mb-1">{g.name}</h3>
+                                <div className="flex justify-between items-end mb-2">
+                                    <div className="text-3xl font-bold text-gray-800">${g.currentAmount.toFixed(0)}</div>
+                                    <div className="text-sm text-gray-400 font-medium mb-1"> / ${g.targetAmount.toFixed(0)}</div>
+                                </div>
+                                <div className="text-xs font-bold text-green-600 uppercase tracking-wider">
+                                    {percent.toFixed(0)}% Completado
+                                </div>
+                            </div>
+                        );
+                    })}
+                </div>
+            )}
         </div>
 
-        {/* ACCESOS RÁPIDOS */}
+        {/* SECCIÓN 6: ACCESOS RÁPIDOS */}
         <h2 className="text-xl font-bold text-gray-800 mb-4">Accesos Rápidos</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12"> 
           <div onClick={() => navigate("/transactions")} className="bg-white p-6 rounded-xl shadow-sm border border-indigo-100 cursor-pointer hover:shadow-md hover:border-indigo-300 transition-all group flex items-center gap-4">
@@ -344,7 +412,6 @@ const Dashboard: React.FC = () => {
               <p className="text-gray-500 text-sm">Registra ingresos y gastos.</p>
             </div>
           </div>
-
           <div onClick={() => navigate("/categories")} className="bg-white p-6 rounded-xl shadow-sm border border-blue-100 cursor-pointer hover:shadow-md hover:border-blue-300 transition-all group flex items-center gap-4">
             <div className="p-4 bg-blue-100 rounded-full group-hover:bg-blue-600 group-hover:text-white transition-colors text-blue-600">
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
@@ -357,46 +424,28 @@ const Dashboard: React.FC = () => {
         </div>
       </main>
 
-      {/* --- MODAL CREAR CUENTA --- */}
+      {/* --- MODALES (CUENTAS, PRESUPUESTOS, METAS...) --- */}
       {isAccountModalOpen && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
           <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden animate-fade-in">
             <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50">
               <h3 className="text-xl font-bold text-gray-800">Crear Cuenta</h3>
-              <button onClick={() => setIsAccountModalOpen(false)} className="text-gray-400 hover:text-gray-600">
-                <X size={20} />
-              </button>
+              <button onClick={() => setIsAccountModalOpen(false)} className="text-gray-400 hover:text-gray-600"><X size={20} /></button>
             </div>
-
             <form onSubmit={handleCreateAccount} className="p-6 space-y-5">
               <div>
                 <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Nombre</label>
                 <div className="relative">
                     <Wallet className="absolute left-3 top-3 text-gray-400" size={18}/>
-                    <input
-                    type="text"
-                    required
-                    value={newAccount.name}
-                    onChange={(e) => setNewAccount({ ...newAccount, name: e.target.value })}
-                    className="w-full border border-gray-200 rounded-lg p-3 pl-10 outline-none focus:ring-2 focus:ring-indigo-500"
-                    placeholder="Ej: Ahorros"
-                    />
+                    <input type="text" required value={newAccount.name} onChange={(e) => setNewAccount({ ...newAccount, name: e.target.value })} className="w-full border border-gray-200 rounded-lg p-3 pl-10 outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Ej: Ahorros"/>
                 </div>
               </div>
               <div>
                 <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Tipo</label>
                 <div className="relative">
                     <Landmark className="absolute left-3 top-3 text-gray-400" size={18}/>
-                    <select
-                        className="w-full border border-gray-200 rounded-lg p-3 pl-10 outline-none focus:ring-2 focus:ring-indigo-500 bg-white"
-                        value={newAccount.type}
-                        onChange={(e) => setNewAccount({ ...newAccount, type: e.target.value })}
-                    >
-                        <option value="Banco">Banco</option>
-                        <option value="Efectivo">Efectivo</option>
-                        <option value="Tarjeta">Tarjeta Crédito</option>
-                        <option value="Ahorro">Ahorro</option>
-                        <option value="Inversión">Inversión</option>
+                    <select className="w-full border border-gray-200 rounded-lg p-3 pl-10 outline-none focus:ring-2 focus:ring-indigo-500 bg-white" value={newAccount.type} onChange={(e) => setNewAccount({ ...newAccount, type: e.target.value })}>
+                        <option value="Banco">Banco</option><option value="Efectivo">Efectivo</option><option value="Tarjeta">Tarjeta Crédito</option><option value="Ahorro">Ahorro</option><option value="Inversión">Inversión</option>
                     </select>
                 </div>
               </div>
@@ -404,75 +453,93 @@ const Dashboard: React.FC = () => {
                 <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Saldo Inicial</label>
                 <div className="relative">
                     <CircleDollarSign className="absolute left-3 top-3 text-gray-400" size={18}/>
-                    <input
-                    type="number"
-                    step="0.01"
-                    required
-                    value={newAccount.balance}
-                    onChange={(e) => setNewAccount({ ...newAccount, balance: e.target.value })}
-                    className="w-full border border-gray-200 rounded-lg p-3 pl-10 outline-none focus:ring-2 focus:ring-indigo-500 font-mono"
-                    placeholder="0.00"
-                    />
+                    <input type="number" step="0.01" required value={newAccount.balance} onChange={(e) => setNewAccount({ ...newAccount, balance: e.target.value })} className="w-full border border-gray-200 rounded-lg p-3 pl-10 outline-none focus:ring-2 focus:ring-indigo-500 font-mono" placeholder="0.00"/>
                 </div>
               </div>
-              <button type="submit" className="w-full bg-indigo-600 text-white py-4 rounded-xl font-bold hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-200 mt-2">
-                Crear Cuenta
-              </button>
+              <button type="submit" className="w-full bg-indigo-600 text-white py-4 rounded-xl font-bold hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-200 mt-2">Crear Cuenta</button>
             </form>
           </div>
         </div>
       )}
 
-      {/* --- MODAL CREAR PRESUPUESTO --- */}
+      {/* MODAL PRESUPUESTOS (Igual que antes) */}
       {isBudgetModalOpen && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
           <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden animate-fade-in">
             <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50">
               <h3 className="text-xl font-bold text-gray-800">Definir Límite de Gasto</h3>
-              <button onClick={() => setIsBudgetModalOpen(false)} className="text-gray-400 hover:text-gray-600">
-                <X size={20} />
-              </button>
+              <button onClick={() => setIsBudgetModalOpen(false)} className="text-gray-400 hover:text-gray-600"><X size={20} /></button>
             </div>
-
             <form onSubmit={handleCreateBudget} className="p-6 space-y-5">
               <div>
                  <p className="text-sm text-gray-500 mb-4">Elige una categoría y define cuánto quieres gastar como máximo al mes.</p>
                  <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Categoría</label>
-                 <select 
-                    className="w-full border border-gray-200 rounded-lg p-3 outline-none focus:ring-2 focus:ring-indigo-500 bg-white"
-                    value={newBudget.categoryId}
-                    onChange={(e) => setNewBudget({ ...newBudget, categoryId: Number(e.target.value) })}
-                 >
+                 <select className="w-full border border-gray-200 rounded-lg p-3 outline-none focus:ring-2 focus:ring-indigo-500 bg-white" value={newBudget.categoryId} onChange={(e) => setNewBudget({ ...newBudget, categoryId: Number(e.target.value) })}>
                     <option value={0}>Selecciona categoría...</option>
-                    {categories.filter(c => c.type === 'EXPENSE').map(cat => (
-                        <option key={cat.id} value={cat.id}>{cat.name}</option>
-                    ))}
+                    {categories.filter(c => c.type === 'EXPENSE').map(cat => (<option key={cat.id} value={cat.id}>{cat.name}</option>))}
                  </select>
               </div>
-
               <div>
                 <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Límite Mensual</label>
                 <div className="relative">
                     <CircleDollarSign className="absolute left-3 top-3 text-gray-400" size={18}/>
-                    <input
-                    type="number"
-                    step="0.01"
-                    required
-                    value={newBudget.amount}
-                    onChange={(e) => setNewBudget({ ...newBudget, amount: e.target.value })}
-                    className="w-full border border-gray-200 rounded-lg p-3 pl-10 outline-none focus:ring-2 focus:ring-indigo-500 font-mono"
-                    placeholder="Ej: 200.00"
-                    />
+                    <input type="number" step="0.01" required value={newBudget.amount} onChange={(e) => setNewBudget({ ...newBudget, amount: e.target.value })} className="w-full border border-gray-200 rounded-lg p-3 pl-10 outline-none focus:ring-2 focus:ring-indigo-500 font-mono" placeholder="Ej: 200.00"/>
                 </div>
               </div>
-
-              <button type="submit" className="w-full bg-indigo-600 text-white py-4 rounded-xl font-bold hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-200 mt-2">
-                Guardar Presupuesto
-              </button>
+              <button type="submit" className="w-full bg-indigo-600 text-white py-4 rounded-xl font-bold hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-200 mt-2">Guardar Presupuesto</button>
             </form>
           </div>
         </div>
       )}
+
+      {/* MODAL METAS (Igual que antes) */}
+      {isGoalModalOpen && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden animate-fade-in">
+            <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+              <h3 className="text-xl font-bold text-gray-800">Nueva Meta de Ahorro</h3>
+              <button onClick={() => setIsGoalModalOpen(false)} className="text-gray-400 hover:text-gray-600"><X size={20} /></button>
+            </div>
+            <form onSubmit={handleCreateGoal} className="p-6 space-y-5">
+              <div>
+                <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Nombre del Objetivo</label>
+                <input type="text" required value={newGoal.name} onChange={(e) => setNewGoal({ ...newGoal, name: e.target.value })} className="w-full border border-gray-200 rounded-lg p-3 outline-none focus:ring-2 focus:ring-green-500" placeholder="Ej: Viaje a Japón"/>
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Cantidad Objetivo</label>
+                <div className="relative">
+                    <CircleDollarSign className="absolute left-3 top-3 text-gray-400" size={18}/>
+                    <input type="number" step="0.01" required value={newGoal.targetAmount} onChange={(e) => setNewGoal({ ...newGoal, targetAmount: e.target.value })} className="w-full border border-gray-200 rounded-lg p-3 pl-10 outline-none focus:ring-2 focus:ring-green-500 font-mono" placeholder="0.00"/>
+                </div>
+              </div>
+              <button type="submit" className="w-full bg-green-600 text-white py-4 rounded-xl font-bold hover:bg-green-700 transition-all shadow-lg shadow-green-200 mt-2">Crear Meta</button>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL AÑADIR FONDOS (Igual que antes) */}
+      {isAddFundsModalOpen && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm overflow-hidden animate-fade-in">
+            <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+              <h3 className="text-xl font-bold text-gray-800">Añadir Ahorros</h3>
+              <button onClick={() => setIsAddFundsModalOpen(false)} className="text-gray-400 hover:text-gray-600"><X size={20} /></button>
+            </div>
+            <form onSubmit={handleAddFunds} className="p-6 space-y-5">
+              <div>
+                <p className="text-sm text-gray-500 mb-4">¿Cuánto dinero quieres destinar a esta meta hoy?</p>
+                <div className="relative">
+                    <CircleDollarSign className="absolute left-3 top-3 text-gray-400" size={18}/>
+                    <input type="number" step="0.01" required value={fundsAmount} onChange={(e) => setFundsAmount(e.target.value)} className="w-full border border-gray-200 rounded-lg p-3 pl-10 outline-none focus:ring-2 focus:ring-indigo-500 font-mono text-xl font-bold text-gray-800" placeholder="0.00" autoFocus/>
+                </div>
+              </div>
+              <button type="submit" className="w-full bg-indigo-600 text-white py-4 rounded-xl font-bold hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-200 mt-2">Añadir Fondos</button>
+            </form>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };
