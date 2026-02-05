@@ -4,9 +4,11 @@ import org.springframework.boot.SpringApplication;
 import io.github.cdimascio.dotenv.Dotenv;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
 @EnableAsync
+@EnableScheduling
 public class MoneyManagerWebappApplication {
 
 	public static void main(String[] args) {

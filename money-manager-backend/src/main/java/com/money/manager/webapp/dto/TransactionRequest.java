@@ -7,7 +7,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Data
 public class TransactionRequest {
@@ -21,7 +21,7 @@ public class TransactionRequest {
     @NotNull(message = "El tipo de transacción es obligatorio")
     private TransactionType type;
 
-    private LocalDateTime date;
+    private LocalDate date;
 
     @NotNull(message = "La cuenta es obligatoria")
     private Long accountId;

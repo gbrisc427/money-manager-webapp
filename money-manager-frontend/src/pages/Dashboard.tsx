@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { UserCircle, Plus, Wallet, CreditCard, ArrowRight, X, PieChart as PieIcon, BarChart3 } from "lucide-react";
+import { 
+  UserCircle, Plus, Wallet, CreditCard, ArrowRight, X, 
+  PieChart as PieIcon, BarChart3, Landmark, CircleDollarSign 
+} from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { 
   PieChart, Pie, Cell, ResponsiveContainer, Tooltip as RechartsTooltip, Legend,
@@ -21,16 +24,30 @@ const Dashboard: React.FC = () => {
   const [monthlyStats, setMonthlyStats] = useState<MonthlyStat[]>([]);
 
   const navigate = useNavigate();
+  
+  // MODAL CREAR CUENTA
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [newAccount, setNewAccount] = useState({ name: "", type: "Efectivo" });
+  const [newAccount, setNewAccount] = useState({
+    name: "",
+    type: "Banco",
+    balance: "" as string | number // Añadido campo de saldo
+  });
 
   const handleCreateAccount = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newAccount.name) return;
+    if (!newAccount.name || newAccount.balance === "") return;
+
     try {
-      await createAccount(newAccount);
-      setNewAccount({ name: "", type: "Efectivo" }); 
+      await createAccount({
+        name: newAccount.name,
+        type: newAccount.type,
+        balance: Number(newAccount.balance)
+      });
+      
+      setNewAccount({ name: "", type: "Banco", balance: "" }); 
       setIsModalOpen(false);
+      
+      // Recargar datos
       const updatedAccounts = await getAccounts();
       setAccounts(updatedAccounts);
     } catch (error) {
@@ -60,7 +77,7 @@ const Dashboard: React.FC = () => {
 
   const totalBalance = accounts.reduce((sum, acc) => sum + acc.balance, 0);
 
-const currencyFormatter = (value: number | string | undefined) => {
+  const currencyFormatter = (value: number | string | undefined) => {
     if (value === undefined || value === null) return "$0.00";
     return `$${Number(value).toFixed(2)}`;
   };
@@ -100,10 +117,10 @@ const currencyFormatter = (value: number | string | undefined) => {
           </p>
         </div>
 
-        {/* SECCIÓN DE GRÁFICOS (NUEVO) */}
+        {/* SECCIÓN DE GRÁFICOS */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-10">
           
-          {/* GRÁFICO DE BARRAS: INGRESOS VS GASTOS */}
+          {/* GRÁFICO DE BARRAS */}
           <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
             <h3 className="text-lg font-bold text-gray-700 mb-4 flex items-center gap-2">
               <BarChart3 className="text-indigo-500" size={20}/> Balance Mensual
@@ -115,7 +132,7 @@ const currencyFormatter = (value: number | string | undefined) => {
                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
                     <XAxis dataKey="month" tick={{fontSize: 12}} axisLine={false} tickLine={false} />
                     <YAxis tick={{fontSize: 12}} axisLine={false} tickLine={false} tickFormatter={(val) => `$${val}`} />
-                    <RechartsTooltip cursor={{fill: '#f9f9f9'}}formatter={(value: number | undefined) => [`$${Number(value || 0).toFixed(2)}`]} />
+                    <RechartsTooltip cursor={{fill: '#f9f9f9'}} formatter={(value: number | undefined) => [`$${Number(value || 0).toFixed(2)}`]} />
                     <Legend />
                     <Bar name="Ingresos" dataKey="income" fill="#10b981" radius={[4, 4, 0, 0]} barSize={20} />
                     <Bar name="Gastos" dataKey="expense" fill="#ef4444" radius={[4, 4, 0, 0]} barSize={20} />
@@ -127,7 +144,7 @@ const currencyFormatter = (value: number | string | undefined) => {
             </div>
           </div>
 
-          {/* GRÁFICO DE PASTEL: GASTOS POR CATEGORÍA */}
+          {/* GRÁFICO DE PASTEL */}
           <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
             <h3 className="text-lg font-bold text-gray-700 mb-4 flex items-center gap-2">
               <PieIcon className="text-pink-500" size={20}/> Distribución de Gastos
@@ -232,47 +249,75 @@ const currencyFormatter = (value: number | string | undefined) => {
         </div>
       </main>
 
-      {/* MODAL CREAR CUENTA */}
+      {/* --- MODAL NUEVA CUENTA (Diseño Moderno) --- */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
           <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden animate-fade-in">
-            <div className="p-6 border-b border-gray-100 flex justify-between items-center">
-              <h3 className="text-xl font-bold text-gray-800">Crear Nueva Cuenta</h3>
-              <button onClick={() => setIsModalOpen(false)} className="p-2 hover:bg-gray-100 rounded-full text-gray-500">
+            <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+              <h3 className="text-xl font-bold text-gray-800">Crear Cuenta</h3>
+              <button onClick={() => setIsModalOpen(false)} className="text-gray-400 hover:text-gray-600">
                 <X size={20} />
               </button>
             </div>
 
-            <form onSubmit={handleCreateAccount} className="p-6 space-y-4">
+            <form onSubmit={handleCreateAccount} className="p-6 space-y-5">
+              
+              {/* Nombre */}
               <div>
-                <label className="block text-sm font-bold text-gray-600 mb-1">Nombre</label>
-                <input
-                  type="text"
-                  value={newAccount.name}
-                  onChange={(e) => setNewAccount({ ...newAccount, name: e.target.value })}
-                  className="w-full border border-gray-200 rounded-lg p-3 focus:ring-2 focus:ring-indigo-500 outline-none"
-                  placeholder="Ej: Ahorros Vacaciones"
-                  autoFocus
-                />
+                <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Nombre de la cuenta</label>
+                <div className="relative">
+                    <Wallet className="absolute left-3 top-3 text-gray-400" size={18}/>
+                    <input
+                    type="text"
+                    required
+                    value={newAccount.name}
+                    onChange={(e) => setNewAccount({ ...newAccount, name: e.target.value })}
+                    className="w-full border border-gray-200 rounded-lg p-3 pl-10 outline-none focus:ring-2 focus:ring-indigo-500"
+                    placeholder="Ej: Banco Santander, Hucha..."
+                    />
+                </div>
               </div>
+
+              {/* Tipo */}
               <div>
-                <label className="block text-sm font-bold text-gray-600 mb-1">Tipo</label>
-                <select
-                  value={newAccount.type}
-                  onChange={(e) => setNewAccount({ ...newAccount, type: e.target.value })}
-                  className="w-full border border-gray-200 rounded-lg p-3 bg-white focus:ring-2 focus:ring-indigo-500 outline-none"
-                >
-                  <option value="Efectivo">Efectivo</option>
-                  <option value="Banco">Banco</option>
-                  <option value="Tarjeta">Tarjeta Crédito</option>
-                  <option value="Ahorro">Ahorro</option>
-                  <option value="Inversión">Inversión</option>
-                </select>
+                <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Tipo</label>
+                <div className="relative">
+                    <Landmark className="absolute left-3 top-3 text-gray-400" size={18}/>
+                    <select
+                        className="w-full border border-gray-200 rounded-lg p-3 pl-10 outline-none focus:ring-2 focus:ring-indigo-500 bg-white"
+                        value={newAccount.type}
+                        onChange={(e) => setNewAccount({ ...newAccount, type: e.target.value })}
+                    >
+                        <option value="Banco">Banco</option>
+                        <option value="Efectivo">Efectivo</option>
+                        <option value="Tarjeta">Tarjeta de Crédito</option>
+                        <option value="Ahorro">Cuenta de Ahorro</option>
+                        <option value="Inversión">Inversión</option>
+                    </select>
+                </div>
               </div>
-              <div className="pt-2 flex gap-3">
-                <button type="button" onClick={() => setIsModalOpen(false)} className="flex-1 py-3 text-gray-600 font-medium hover:bg-gray-50 rounded-lg">Cancelar</button>
-                <button type="submit" className="flex-1 bg-indigo-600 text-white py-3 rounded-lg font-bold hover:bg-indigo-700 shadow-lg shadow-indigo-200">Crear Cuenta</button>
+
+              {/* Saldo Inicial */}
+              <div>
+                <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Saldo Inicial</label>
+                <div className="relative">
+                    <CircleDollarSign className="absolute left-3 top-3 text-gray-400" size={18}/>
+                    <input
+                    type="number"
+                    step="0.01"
+                    required
+                    value={newAccount.balance}
+                    onChange={(e) => setNewAccount({ ...newAccount, balance: e.target.value })}
+                    className="w-full border border-gray-200 rounded-lg p-3 pl-10 outline-none focus:ring-2 focus:ring-indigo-500 font-mono"
+                    placeholder="0.00"
+                    />
+                </div>
               </div>
+
+              <button type="submit" className="w-full bg-indigo-600 text-white py-4 rounded-xl font-bold hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-200 mt-2">
+                Crear Cuenta
+              </button>
+
             </form>
           </div>
         </div>

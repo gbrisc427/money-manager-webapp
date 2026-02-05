@@ -59,11 +59,18 @@ public class TransactionService {
             throw new RuntimeException("Categoría no encontrada");
         }
 
+        LocalDateTime transactionDate;
+        if (request.getDate() != null) {
+            transactionDate = request.getDate().atStartOfDay();
+        } else {
+            transactionDate = LocalDateTime.now();
+        }
+
         Transaction transaction = Transaction.builder()
                 .description(request.getDescription())
                 .amount(request.getAmount())
                 .type(request.getType())
-                .date(request.getDate() != null ? request.getDate() : LocalDateTime.now())
+                .date(transactionDate)
                 .account(account)
                 .categoryId(request.getCategoryId())
                 .userId(userId)

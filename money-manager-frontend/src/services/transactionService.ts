@@ -31,6 +31,15 @@ export interface MonthlyStat {
   expense: number;
 }
 
+export interface RecurringTransaction {
+  id: number;
+  description: string;
+  amount: number;
+  active: boolean;
+  nextPaymentDate: string;
+  type: "INCOME" | "EXPENSE";
+}
+
 export const getTransactions = async (): Promise<Transaction[]> => {
   return apiClient("/transactions", { method: "GET" });
 };
@@ -56,4 +65,21 @@ export const getCategoryStats = async (): Promise<CategoryStat[]> => {
 
 export const getMonthlyStats = async (): Promise<MonthlyStat[]> => {
   return apiClient("/transactions/stats/monthly", { method: "GET" });
+};
+
+export const createRecurringTransaction = async (transaction: TransactionRequest): Promise<void> => {
+  return apiClient("/transactions/recurring", {
+    method: "POST",
+    body: JSON.stringify(transaction),
+  });
+};
+
+export const getRecurringTransactions = async (): Promise<RecurringTransaction[]> => {
+  return apiClient("/transactions/recurring");
+};
+
+export const cancelRecurringTransaction = async (id: number): Promise<void> => {
+  return apiClient(`/transactions/recurring/${id}`, {
+    method: "DELETE",
+  });
 };
