@@ -4,13 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f7de1767-9991-481f-8d5b-6733416d9fb1" name="Changes" comment="Implementación presupuestos de gastos">
-      <change afterPath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/controller/SavingsGoalController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/model/SavingsGoal.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/repository/SavingsGoalRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/service/SavingsGoalService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-    </list>
+    <list default="true" id="f7de1767-9991-481f-8d5b-6733416d9fb1" name="Changes" comment="Implementación metas de ahorro" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -420,7 +414,15 @@
       <option name="project" value="LOCAL" />
       <updated>1770285814324</updated>
     </task>
-    <option name="localTasksCounter" value="37" />
+    <task id="LOCAL-00037" summary="Implementación metas de ahorro">
+      <option name="closed" value="true" />
+      <created>1770286432308</created>
+      <option name="number" value="00037" />
+      <option name="presentableId" value="LOCAL-00037" />
+      <option name="project" value="LOCAL" />
+      <updated>1770286432308</updated>
+    </task>
+    <option name="localTasksCounter" value="38" />
     <servers />
   </component>
   <component name="UnknownFeatures">
@@ -428,7 +430,6 @@
     <option featureType="com.intellij.fileTypeFactory" implementationName=".env" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="LogOut + BlackList Token Rest Api TERMINADO" />
     <MESSAGE value="Resetear Contraseña Rest Api TERMINADO" />
     <MESSAGE value="Cambiar Nombre+ Obtener info del perfil Rest Api TERMINADO" />
     <MESSAGE value="Implemntacion Login en el FRONTEND" />
@@ -453,6 +454,7 @@
     <MESSAGE value="Mejora del DahBoard - Corrección de Errores" />
     <MESSAGE value="Implementación transacciones recurrentes +  Cambios visuales" />
     <MESSAGE value="Implementación presupuestos de gastos" />
-    <option name="LAST_COMMIT_MESSAGE" value="Implementación presupuestos de gastos" />
+    <MESSAGE value="Implementación metas de ahorro" />
+    <option name="LAST_COMMIT_MESSAGE" value="Implementación metas de ahorro" />
   </component>
 </project>

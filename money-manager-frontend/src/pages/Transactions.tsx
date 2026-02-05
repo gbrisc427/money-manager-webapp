@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { 
   Plus, Search, ArrowUpCircle, ArrowDownCircle, 
-  Trash2, Repeat, ArrowLeft, DollarSign, Clock, XCircle 
+  Trash2, Repeat, ArrowLeft, DollarSign, Clock, XCircle, Tag 
 } from "lucide-react";
 import { 
   getTransactions, createTransaction, deleteTransaction, 
@@ -11,7 +11,7 @@ import {
 import type { Transaction, TransactionRequest, RecurringTransaction } from "../services/transactionService";
 import { getAccounts } from "../services/accountService";
 import type { Account } from "../services/accountService";
-import { getCategories } from "../services/categoryService";
+import { getCategories, createCategory } from "../services/categoryService"; // <--- Importamos createCategory
 import type { Category } from "../services/categoryService";
 
 const Transactions: React.FC = () => {
@@ -33,6 +33,14 @@ const Transactions: React.FC = () => {
     date: new Date().toISOString().split('T')[0]
   });
   const [isRecurring, setIsRecurring] = useState(false);
+
+  // --- MODAL AÑADIR CATEGORÍA RÁPIDA (NUEVO) ---
+  const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
+  const [newQuickCategory, setNewQuickCategory] = useState({
+    name: "",
+    type: "EXPENSE" as "INCOME" | "EXPENSE",
+    color: "#3b82f6"
+  });
 
   // Modal y Estado para Gestionar Recurrentes
   const [isRecurringModalOpen, setIsRecurringModalOpen] = useState(false);
@@ -71,6 +79,27 @@ const Transactions: React.FC = () => {
     }
   };
 
+  // --- LÓGICA CREAR CATEGORÍA RÁPIDA ---
+  const handleQuickCreateCategory = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newQuickCategory.name) return;
+    try {
+        await createCategory(newQuickCategory);
+        const updatedCats = await getCategories();
+        setCategories(updatedCats);
+        setIsCategoryModalOpen(false);
+        
+        // Seleccionar automáticamente la nueva
+        const created = updatedCats.find(c => c.name === newQuickCategory.name && c.type === newQuickCategory.type);
+        if (created) {
+            setNewTransaction(prev => ({ ...prev, categoryId: created.id }));
+        }
+        setNewQuickCategory({ name: "", type: "EXPENSE", color: "#3b82f6" });
+    } catch (error) {
+        console.error("Error creando categoría rápida", error);
+    }
+  };
+
   // Cargar lista de recurrentes al abrir su modal
   const openRecurringModal = async () => {
     try {
@@ -101,13 +130,15 @@ const Transactions: React.FC = () => {
         type: type,
         categoryId: validCategories.length > 0 ? validCategories[0].id : 0
     }));
+    // Sincronizar tipo para categoría rápida
+    setNewQuickCategory(prev => ({ ...prev, type: type }));
   };
 
   const handleCreateTransaction = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       if (newTransaction.categoryId === 0) {
-        return; // Salimos silenciosamente si no hay categoría
+        return; 
       }
       if (isRecurring) {
         await createRecurringTransaction(newTransaction);
@@ -289,9 +320,6 @@ const Transactions: React.FC = () => {
                     </table>
                 )}
             </div>
-            <div className="p-4 bg-gray-50 text-center text-xs text-gray-400">
-                Las suscripciones canceladas dejarán de generar movimientos automáticamente.
-            </div>
           </div>
         </div>
       )}
@@ -299,7 +327,7 @@ const Transactions: React.FC = () => {
       {/* --- MODAL CREAR MOVIMIENTO --- */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden animate-fade-in">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden animate-fade-in relative">
             <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50">
               <h3 className="text-xl font-bold text-gray-800">Registrar Movimiento</h3>
               <button onClick={() => setIsModalOpen(false)} className="text-gray-400 hover:text-gray-600">✕</button>
@@ -388,7 +416,17 @@ const Transactions: React.FC = () => {
                     </select>
                 </div>
                 <div>
-                    <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Categoría</label>
+                    <div className="flex justify-between items-center mb-1">
+                        <label className="block text-xs font-bold text-gray-500 uppercase">Categoría</label>
+                        {/* Botón Acceso Rápido */}
+                        <button 
+                            type="button"
+                            onClick={() => setIsCategoryModalOpen(true)}
+                            className="text-indigo-600 text-xs font-bold hover:underline flex items-center gap-1 hover:bg-indigo-50 px-2 py-0.5 rounded transition-colors"
+                        >
+                            <Plus size={12}/> Nueva
+                        </button>
+                    </div>
                     <select
                         className="w-full border border-gray-200 rounded-lg p-3 outline-none focus:ring-2 focus:ring-indigo-500 bg-white"
                         value={newTransaction.categoryId}
@@ -410,6 +448,67 @@ const Transactions: React.FC = () => {
               </button>
 
             </form>
+
+            {/* --- MODAL ANIDADO: CREAR CATEGORÍA RÁPIDA --- */}
+            {isCategoryModalOpen && (
+                <div className="absolute inset-0 bg-white z-10 animate-fade-in flex flex-col">
+                    <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+                        <h3 className="text-lg font-bold text-gray-800 flex items-center gap-2">
+                            <Tag size={18} className="text-blue-500"/> Nueva Categoría
+                        </h3>
+                        <button onClick={() => setIsCategoryModalOpen(false)} className="text-gray-400 hover:text-gray-600">✕</button>
+                    </div>
+                    <form onSubmit={handleQuickCreateCategory} className="p-6 flex-1 flex flex-col gap-4">
+                        
+                        <div className="p-3 bg-blue-50 text-blue-700 rounded-lg text-sm mb-2">
+                            Estás creando una categoría de <strong>{newQuickCategory.type === 'INCOME' ? 'Ingreso' : 'Gasto'}</strong>.
+                        </div>
+
+                        <div>
+                            <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Nombre</label>
+                            <input
+                                type="text"
+                                required
+                                autoFocus
+                                value={newQuickCategory.name}
+                                onChange={(e) => setNewQuickCategory({ ...newQuickCategory, name: e.target.value })}
+                                className="w-full border border-gray-200 rounded-lg p-3 outline-none focus:ring-2 focus:ring-blue-500"
+                                placeholder="Ej: Regalos, Transporte..."
+                            />
+                        </div>
+
+                        <div>
+                            <label className="block text-xs font-bold text-gray-500 uppercase mb-2">Color</label>
+                            <div className="flex items-center gap-4">
+                                <input 
+                                    type="color" 
+                                    value={newQuickCategory.color}
+                                    onChange={(e) => setNewQuickCategory({...newQuickCategory, color: e.target.value})}
+                                    className="h-10 w-20 p-1 rounded border cursor-pointer"
+                                />
+                                <span className="text-sm text-gray-400">Elige un color identificativo.</span>
+                            </div>
+                        </div>
+
+                        <div className="mt-auto pt-4 flex gap-3">
+                            <button 
+                                type="button" 
+                                onClick={() => setIsCategoryModalOpen(false)}
+                                className="flex-1 py-3 text-gray-500 font-bold hover:bg-gray-100 rounded-xl"
+                            >
+                                Cancelar
+                            </button>
+                            <button 
+                                type="submit" 
+                                className="flex-1 bg-blue-600 text-white py-3 rounded-xl font-bold hover:bg-blue-700 shadow-lg shadow-blue-200"
+                            >
+                                Guardar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            )}
+
           </div>
         </div>
       )}
