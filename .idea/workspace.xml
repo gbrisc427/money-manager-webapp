@@ -4,7 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f7de1767-9991-481f-8d5b-6733416d9fb1" name="Changes" comment="Implementación metas de ahorro" />
+    <list default="true" id="f7de1767-9991-481f-8d5b-6733416d9fb1" name="Changes" comment="Cambios para añadir categorías">
+      <change afterPath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/controller/ExportController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/service/ExportService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/money-manager-backend/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/money-manager-backend/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/money-manager-frontend/src/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/money-manager-frontend/src/App.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/money-manager-frontend/src/pages/Profile.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/money-manager-frontend/src/pages/Profile.tsx" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -422,7 +429,15 @@
       <option name="project" value="LOCAL" />
       <updated>1770286432308</updated>
     </task>
-    <option name="localTasksCounter" value="38" />
+    <task id="LOCAL-00038" summary="Cambios para añadir categorías">
+      <option name="closed" value="true" />
+      <created>1770287210244</created>
+      <option name="number" value="00038" />
+      <option name="presentableId" value="LOCAL-00038" />
+      <option name="project" value="LOCAL" />
+      <updated>1770287210244</updated>
+    </task>
+    <option name="localTasksCounter" value="39" />
     <servers />
   </component>
   <component name="UnknownFeatures">
@@ -430,7 +445,6 @@
     <option featureType="com.intellij.fileTypeFactory" implementationName=".env" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Resetear Contraseña Rest Api TERMINADO" />
     <MESSAGE value="Cambiar Nombre+ Obtener info del perfil Rest Api TERMINADO" />
     <MESSAGE value="Implemntacion Login en el FRONTEND" />
     <MESSAGE value="FrontEnd Estructura basica casi terminada" />
@@ -455,6 +469,7 @@
     <MESSAGE value="Implementación transacciones recurrentes +  Cambios visuales" />
     <MESSAGE value="Implementación presupuestos de gastos" />
     <MESSAGE value="Implementación metas de ahorro" />
-    <option name="LAST_COMMIT_MESSAGE" value="Implementación metas de ahorro" />
+    <MESSAGE value="Cambios para añadir categorías" />
+    <option name="LAST_COMMIT_MESSAGE" value="Cambios para añadir categorías" />
   </component>
 </project>

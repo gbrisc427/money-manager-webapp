@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
-import { LogOut, User, ArrowLeft } from "lucide-react";
+import { LogOut, User, ArrowLeft, ArrowRight, Download } from "lucide-react";
 import { getUserProfile, updateUserName } from "../services/profileService";
 import { logoutUser } from "../services/authService";
 import { requestRecoveryCode, verifyRecoveryCode, resetPassword } from "../services/recoverService";
@@ -158,6 +158,22 @@ const Profile: React.FC = () => {
                     </button>
                   </div>
                 </div>
+
+                <button 
+                        onClick={() => navigate("/export")}
+                        className="w-full flex items-center justify-between p-4 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors group"
+                    >
+                        <div className="flex items-center gap-3">
+                            <div className="bg-indigo-50 p-2 rounded-lg text-indigo-600">
+                                <Download size={20}/>
+                            </div>
+                            <div className="text-left">
+                                <p className="font-bold text-gray-700">Exportar mis datos</p>
+                                <p className="text-xs text-gray-500">Descarga tus movimientos en Excel</p>
+                            </div>
+                        </div>
+                        <ArrowRight size={18} className="text-gray-400 group-hover:text-indigo-600 transition-colors"/>
+                    </button>
 
                 <hr className="border-gray-100" />
 
