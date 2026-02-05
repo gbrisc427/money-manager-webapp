@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
-import { LogOut, User, ArrowLeft, ArrowRight, Download } from "lucide-react";
-import { getUserProfile, updateUserName } from "../services/profileService";
+import { LogOut, User, ArrowLeft, ArrowRight, Download, Trash2, AlertTriangle, X } from "lucide-react";
+import { getUserProfile, updateUserName, deleteUserAccount } from "../services/profileService";
 import { logoutUser } from "../services/authService";
 import { requestRecoveryCode, verifyRecoveryCode, resetPassword } from "../services/recoverService";
 
@@ -19,6 +19,10 @@ const Profile: React.FC = () => {
   const [message, setMessage] = useState("");
   const [isError, setIsError] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+
+  // Estados para Modal de Eliminar Cuenta
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [deleteConfirmationText, setDeleteConfirmationText] = useState("");
 
   useEffect(() => {
     const loadProfile = async () => {
@@ -44,6 +48,22 @@ const Profile: React.FC = () => {
     } catch (err: any) {
       console.error(err);
       navigate("/login");
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    if (deleteConfirmationText !== "ELIMINAR") return;
+
+    try {
+      await deleteUserAccount();
+      // Logout forzado tras borrar
+      await logoutUser();
+      localStorage.removeItem("userEmail");
+      localStorage.removeItem("userName");
+      navigate("/login");
+    } catch (error) {
+      console.error("Error eliminando cuenta", error);
+      alert("Hubo un error al intentar eliminar la cuenta.");
     }
   };
 
@@ -103,7 +123,6 @@ const Profile: React.FC = () => {
   return (
     <div className="min-h-screen bg-[#f9f9f6] p-6">
       
-      {/* HEADER CORREGIDO: Eliminado 'max-w-5xl mx-auto' para que ocupe todo el ancho */}
       <header className="flex items-center justify-between mb-8">
         <div className="flex items-center gap-4">
             <button onClick={() => navigate("/dashboard")} className="p-2 hover:bg-gray-200 rounded-full transition-colors">
@@ -123,7 +142,6 @@ const Profile: React.FC = () => {
         </button>
       </header>
 
-      {/* CONTENIDO CENTRADO: Mantiene su propio centrado independiente del header */}
       <div className="max-w-md mx-auto mt-10">
          <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
             
@@ -137,6 +155,7 @@ const Profile: React.FC = () => {
 
             {step === "main" && (
               <div className="space-y-8">
+                {/* Cambiar Nombre */}
                 <div>
                   <label className="block text-sm font-bold text-gray-600 mb-2">
                     Cambiar Nombre
@@ -159,6 +178,7 @@ const Profile: React.FC = () => {
                   </div>
                 </div>
 
+                {/* Exportar */}
                 <button 
                         onClick={() => navigate("/export")}
                         className="w-full flex items-center justify-between p-4 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors group"
@@ -175,8 +195,7 @@ const Profile: React.FC = () => {
                         <ArrowRight size={18} className="text-gray-400 group-hover:text-indigo-600 transition-colors"/>
                     </button>
 
-                <hr className="border-gray-100" />
-
+                {/* Cambiar Contraseña */}
                 <div>
                   <button
                     onClick={() => setStep("requestCode")}
@@ -185,6 +204,17 @@ const Profile: React.FC = () => {
                     Cambiar contraseña
                   </button>
                 </div>
+
+                {/* --- SECCIÓN ZONA DE PELIGRO (SIN LÍNEA GRIS) --- */}
+                <div className="pt-2"> 
+                    <button 
+                        onClick={() => setIsDeleteModalOpen(true)}
+                        className="w-full flex items-center justify-center gap-2 bg-red-50 text-red-600 border border-red-100 py-3 rounded-lg font-bold hover:bg-red-600 hover:text-white transition-all shadow-sm"
+                    >
+                        <Trash2 size={18}/> Eliminar Cuenta
+                    </button>
+                </div>
+
               </div>
             )}
 
@@ -254,6 +284,63 @@ const Profile: React.FC = () => {
 
          </div>
       </div>
+
+      {/* --- MODAL DE CONFIRMACIÓN DE ELIMINAR CUENTA --- */}
+      {isDeleteModalOpen && (
+        <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm animate-fade-in">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden border border-red-100">
+            
+            {/* Cabecera Roja */}
+            <div className="bg-red-50 p-6 flex flex-col items-center justify-center text-center border-b border-red-100">
+                <div className="bg-red-100 p-3 rounded-full mb-3">
+                    <AlertTriangle size={32} className="text-red-600" />
+                </div>
+                <h3 className="text-xl font-bold text-red-700">¿Eliminar cuenta permanentemente?</h3>
+                <button onClick={() => setIsDeleteModalOpen(false)} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                    <X size={24} />
+                </button>
+            </div>
+
+            <div className="p-6 space-y-4">
+                <p className="text-gray-600 text-sm leading-relaxed text-center">
+                    Estás a punto de eliminar tu cuenta y todos sus datos asociados (cuentas, movimientos, presupuestos...). 
+                    <br/><br/>
+                    Esta acción <strong>NO se puede deshacer</strong>.
+                </p>
+
+                <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                    <label className="block text-xs font-bold text-gray-500 uppercase mb-2 text-center">
+                        Escribe <span className="text-red-600">ELIMINAR</span> para confirmar
+                    </label>
+                    <input
+                        type="text"
+                        value={deleteConfirmationText}
+                        onChange={(e) => setDeleteConfirmationText(e.target.value)}
+                        placeholder="ELIMINAR"
+                        className="w-full text-center tracking-widest font-bold border-2 border-gray-300 rounded-lg p-3 outline-none focus:border-red-500 focus:ring-4 focus:ring-red-100 transition-all uppercase placeholder-gray-300"
+                    />
+                </div>
+
+                <div className="flex gap-3 pt-2">
+                    <button 
+                        onClick={() => { setIsDeleteModalOpen(false); setDeleteConfirmationText(""); }} 
+                        className="flex-1 py-3 text-gray-600 font-bold hover:bg-gray-100 rounded-xl transition-colors"
+                    >
+                        Cancelar
+                    </button>
+                    <button 
+                        onClick={handleDeleteAccount}
+                        disabled={deleteConfirmationText !== "ELIMINAR"}
+                        className="flex-1 bg-red-600 text-white py-3 rounded-xl font-bold hover:bg-red-700 shadow-lg shadow-red-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                    >
+                        Confirmar
+                    </button>
+                </div>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };

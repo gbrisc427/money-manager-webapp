@@ -26,7 +26,7 @@ const Login: React.FC = () => {
     } catch (error: any) {
       console.error(error);
       
-      setMessage(error.message || "Error: credenciales incorrectas ");
+      setMessage(error.message || "Error: Credenciales incorrectas ");
     }
   };
 

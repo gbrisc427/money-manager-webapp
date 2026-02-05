@@ -134,7 +134,6 @@ public class UserController {
 
     @PostMapping("/logout")
     public ResponseEntity<?> logout(HttpServletRequest request) {
-        // CORRECCIÓN: Añadido sameSite("Lax") para asegurar que se borran correctamente
         ResponseCookie accessCookie = ResponseCookie.from("accessToken", "")
                 .httpOnly(true)
                 .path("/")
@@ -184,5 +183,21 @@ public class UserController {
         String newName = request.get("newName");
         userProfileService.updateName(authentication.getName(), newName);
         return ResponseEntity.ok(Map.of("message", "Nombre actualizado", "name", newName));
+    }
+
+    @DeleteMapping("/me")
+    public ResponseEntity<?> deleteMyAccount(Authentication auth) {
+        try {
+            System.out.println("Iniciando borrado para: " + auth.getName());
+            userService.deleteUserAndAllData(auth.getName());
+            return ResponseEntity.ok(Map.of("message", "Cuenta y datos eliminados correctamente"));
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            return ResponseEntity.status(500).body(Map.of(
+                    "error", "Error interno al borrar",
+                    "detalle", e.getMessage()
+            ));
+        }
     }
 }

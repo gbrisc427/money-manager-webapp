@@ -4,13 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f7de1767-9991-481f-8d5b-6733416d9fb1" name="Changes" comment="Cambios para añadir categorías">
-      <change afterPath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/controller/ExportController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/service/ExportService.java" afterDir="false" />
+    <list default="true" id="f7de1767-9991-481f-8d5b-6733416d9fb1" name="Changes" comment="Implemetación Exportar Datos">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/money-manager-backend/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/money-manager-backend/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/money-manager-frontend/src/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/money-manager-frontend/src/App.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/config/SecurityConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/controller/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/controller/UserController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/repository/RefreshTokenRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/repository/RefreshTokenRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/service/UserServ.java" beforeDir="false" afterPath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/service/UserServ.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/money-manager-frontend/src/pages/Profile.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/money-manager-frontend/src/pages/Profile.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/money-manager-frontend/src/services/profileService.ts" beforeDir="false" afterPath="$PROJECT_DIR$/money-manager-frontend/src/services/profileService.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -437,7 +438,15 @@
       <option name="project" value="LOCAL" />
       <updated>1770287210244</updated>
     </task>
-    <option name="localTasksCounter" value="39" />
+    <task id="LOCAL-00039" summary="Implemetación Exportar Datos">
+      <option name="closed" value="true" />
+      <created>1770308114719</created>
+      <option name="number" value="00039" />
+      <option name="presentableId" value="LOCAL-00039" />
+      <option name="project" value="LOCAL" />
+      <updated>1770308114719</updated>
+    </task>
+    <option name="localTasksCounter" value="40" />
     <servers />
   </component>
   <component name="UnknownFeatures">
@@ -445,7 +454,6 @@
     <option featureType="com.intellij.fileTypeFactory" implementationName=".env" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Cambiar Nombre+ Obtener info del perfil Rest Api TERMINADO" />
     <MESSAGE value="Implemntacion Login en el FRONTEND" />
     <MESSAGE value="FrontEnd Estructura basica casi terminada" />
     <MESSAGE value="FrontEnd GESTIÓN USUARIOS TERMINADO&#10;FIN SPRINT 3" />
@@ -470,6 +478,7 @@
     <MESSAGE value="Implementación presupuestos de gastos" />
     <MESSAGE value="Implementación metas de ahorro" />
     <MESSAGE value="Cambios para añadir categorías" />
-    <option name="LAST_COMMIT_MESSAGE" value="Cambios para añadir categorías" />
+    <MESSAGE value="Implemetación Exportar Datos" />
+    <option name="LAST_COMMIT_MESSAGE" value="Implemetación Exportar Datos" />
   </component>
 </project>

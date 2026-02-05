@@ -2,13 +2,10 @@ export const handleResponse = async (response: Response) => {
   
   if (response.status === 403) {
     
-    //localStorage.removeItem("userEmail");
-    //localStorage.removeItem("userName");
+    localStorage.removeItem("userEmail");
+    localStorage.removeItem("userName");
     
-    //alert("OPPS! Tu sesión ha expirado.\n\nPor seguridad, debes volver a identificarte.");
-    
-    
-    //window.location.href = "/";
+    window.location.href = "/";
     
     console.error("⛔ ERROR 403: Acceso denegado o sesión expirada. (Redirección desactivada por depuración)");
     throw new Error("Sesión expirada");
