@@ -1,0 +1,162 @@
+name: CD Production (Produccion - Render & Vercel)
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - "v*.*.*"
+  workflow_dispatch:
+    inputs:
+      force_deploy_all:
+        description: "Forzar despliegue de Backend y Frontend en Produccion"
+        required: false
+        default: true
+        type: boolean
+
+jobs:
+  # ============================================================================
+  # 1. DETECCION DE CAMBIOS EN EL MONOREPO (PATH FILTERING)
+  # ============================================================================
+  changes:
+    name: Detect Monorepo Changes
+    runs-on: ubuntu-latest
+    outputs:
+      backend: ${{ steps.filter.outputs.backend }}
+      frontend: ${{ steps.filter.outputs.frontend }}
+      is_tag_or_manual: ${{ startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch' }}
+    steps:
+      - name: Checkout Monorepo
+        uses: actions/checkout@v4
+
+      - name: Check Modified Directories
+        uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            backend:
+              - 'money-manager-backend/**'
+              - 'render.yaml'
+              - '.github/workflows/cd-production.yml'
+            frontend:
+              - 'money-manager-frontend/**'
+              - '.github/workflows/cd-production.yml'
+
+  # ============================================================================
+  # 2. DESPLIEGUE DE BACKEND EN RENDER (ENVIRONMENT: production)
+  # ============================================================================
+  deploy-backend-production:
+    name: Deploy Backend to Render (Production)
+    needs: changes
+    if: needs.changes.outputs.backend == 'true' || needs.changes.outputs.is_tag_or_manual == 'true'
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+    defaults:
+      run:
+        working-directory: money-manager-backend
+
+    env:
+      SPRING_PROFILES_ACTIVE: prod
+      DB_URL: ${{ secrets.DB_URL }}
+      DB_USERNAME: ${{ secrets.DB_USERNAME }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      JWT_SECRET: ${{ secrets.JWT_SECRET }}
+      MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
+      MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
+      CORS_ALLOWED_ORIGINS: ${{ secrets.CORS_ALLOWED_ORIGINS }}
+
+    steps:
+      - name: Checkout Monorepo
+        uses: actions/checkout@v4
+
+      - name: Setup Java 21 (Eclipse Temurin)
+        uses: actions/setup-java@v4
+        with:
+          java-version: "21"
+          distribution: "temurin"
+          cache: "maven"
+          cache-dependency-path: "money-manager-backend/pom.xml"
+
+      - name: Verify Required Production Environment Secrets
+        run: |
+          if [ -z "$DB_URL" ] || [ -z "$DB_USERNAME" ] || [ -z "$DB_PASSWORD" ] || [ -z "$JWT_SECRET" ] || [ -z "$MAIL_USERNAME" ] || [ -z "$MAIL_PASSWORD" ] || [ -z "$CORS_ALLOWED_ORIGINS" ]; then
+            echo "ERROR: Faltan secretos obligatorios (DB_URL, DB_USERNAME, DB_PASSWORD, JWT_SECRET, MAIL_USERNAME, MAIL_PASSWORD o CORS_ALLOWED_ORIGINS) en el GitHub Environment 'production'."
+            exit 1
+          fi
+          echo "Todos los secretos del entorno 'production' verificados correctamente."
+
+      - name: Compile & Package Backend JAR
+        run: |
+          chmod +x mvnw
+          ./mvnw clean package -DskipTests -B
+
+      - name: Trigger Render Deploy Hook (Production)
+        env:
+          RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+        run: |
+          if [ -z "$RENDER_DEPLOY_HOOK_URL" ]; then
+            echo "AVISO: El secreto RENDER_DEPLOY_HOOK_URL aun no esta configurado en el Environment 'production'."
+            exit 0
+          fi
+          curl -fsSL -X POST "$RENDER_DEPLOY_HOOK_URL"
+          echo "Despliegue en Render (Production) disparado con exito."
+
+  # ============================================================================
+  # 3. DESPLIEGUE DE FRONTEND EN VERCEL (ENVIRONMENT: production)
+  # ============================================================================
+  deploy-frontend-production:
+    name: Deploy Frontend to Vercel (Production)
+    needs: changes
+    if: needs.changes.outputs.frontend == 'true' || needs.changes.outputs.is_tag_or_manual == 'true'
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+    defaults:
+      run:
+        working-directory: money-manager-frontend
+
+    env:
+      VITE_APP_ENV: production
+      VITE_API_URL: ${{ secrets.VITE_API_URL }}
+
+    steps:
+      - name: Checkout Monorepo
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22 LTS
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+          cache-dependency-path: "money-manager-frontend/package-lock.json"
+
+      - name: Verify VITE_API_URL Secret
+        run: |
+          if [ -z "$VITE_API_URL" ]; then
+            echo "ERROR: El secreto VITE_API_URL no esta definido en el Environment 'production'."
+            exit 1
+          fi
+
+      - name: Install Dependencies & Lint
+        run: |
+          npm ci
+          npm run lint
+
+      - name: Build Production Bundle with Secret VITE_API_URL
+        run: npm run build:prod
+
+      - name: Deploy to Vercel Production (--prod)
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        run: |
+          if [ -z "$VERCEL_TOKEN" ] || [ -z "$VERCEL_ORG_ID" ] || [ -z "$VERCEL_PROJECT_ID" ]; then
+            echo "AVISO: VERCEL_TOKEN, VERCEL_ORG_ID o VERCEL_PROJECT_ID no estan definidos en el Environment 'production'."
+            exit 0
+          fi
+          npx vercel pull --yes --environment=production --token="$VERCEL_TOKEN"
+          npx vercel build --prod --token="$VERCEL_TOKEN"
+          DEPLOY_URL=$(npx vercel deploy --prebuilt --prod --token="$VERCEL_TOKEN")
+          echo "Frontend desplegado en Vercel Production: $DEPLOY_URL"

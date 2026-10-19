@@ -4,10 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f7de1767-9991-481f-8d5b-6733416d9fb1" name="Changes" comment="Implemetación Eliminar Cuenta">
+    <list default="true" id="f7de1767-9991-481f-8d5b-6733416d9fb1" name="Changes" comment="Correccion de errores">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/exception/GlobalExceptionHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/exception/GlobalExceptionHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/money-manager-frontend/src/utils/apiHandler.ts" beforeDir="false" afterPath="$PROJECT_DIR$/money-manager-frontend/src/utils/apiHandler.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -450,7 +448,15 @@
       <option name="project" value="LOCAL" />
       <updated>1770312668698</updated>
     </task>
-    <option name="localTasksCounter" value="41" />
+    <task id="LOCAL-00041" summary="Correccion de errores">
+      <option name="closed" value="true" />
+      <created>1770313648182</created>
+      <option name="number" value="00041" />
+      <option name="presentableId" value="LOCAL-00041" />
+      <option name="project" value="LOCAL" />
+      <updated>1770313648182</updated>
+    </task>
+    <option name="localTasksCounter" value="42" />
     <servers />
   </component>
   <component name="UnknownFeatures">
@@ -458,7 +464,6 @@
     <option featureType="com.intellij.fileTypeFactory" implementationName=".env" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="FrontEnd Estructura basica casi terminada" />
     <MESSAGE value="FrontEnd GESTIÓN USUARIOS TERMINADO&#10;FIN SPRINT 3" />
     <MESSAGE value="CRUD de Cuentas Bancarias (Crear, Modificar, Listar y Eliminar)" />
     <MESSAGE value="CRUD de Cuentas Bancarias (Crear, Modificar, Listar y Eliminar) TERMINADO" />
@@ -483,6 +488,7 @@
     <MESSAGE value="Cambios para añadir categorías" />
     <MESSAGE value="Implemetación Exportar Datos" />
     <MESSAGE value="Implemetación Eliminar Cuenta" />
-    <option name="LAST_COMMIT_MESSAGE" value="Implemetación Eliminar Cuenta" />
+    <MESSAGE value="Correccion de errores" />
+    <option name="LAST_COMMIT_MESSAGE" value="Correccion de errores" />
   </component>
 </project>

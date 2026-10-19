@@ -1,0 +1,54 @@
+name: Frontend CI (React 19, TypeScript & Vite 6)
+
+on:
+  push:
+    branches:
+      - develop
+      - staging
+      - main
+    paths:
+      - "money-manager-frontend/**"
+      - ".github/workflows/frontend-ci.yml"
+  pull_request:
+    branches:
+      - develop
+      - staging
+      - main
+    paths:
+      - "money-manager-frontend/**"
+      - ".github/workflows/frontend-ci.yml"
+  workflow_dispatch:
+
+jobs:
+  frontend-ci:
+    name: Lint, Typecheck & Build Frontend (Node 22)
+    runs-on: ubuntu-latest
+    # Selecciona el Environment 'production' si apunta a main, o 'staging' para staging/develop
+    environment: ${{ (github.ref == 'refs/heads/main' || github.base_ref == 'main') && 'production' || 'staging' }}
+    defaults:
+      run:
+        working-directory: money-manager-frontend
+
+    env:
+      VITE_APP_ENV: ${{ (github.ref == 'refs/heads/main' || github.base_ref == 'main') && 'production' || 'staging' }}
+      VITE_API_URL: ${{ secrets.VITE_API_URL }}
+
+    steps:
+      - name: Checkout Monorepo
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22 LTS with npm Cache
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+          cache-dependency-path: "money-manager-frontend/package-lock.json"
+
+      - name: Clean Install Dependencies
+        run: npm ci
+
+      - name: Run ESLint Static Analysis
+        run: npm run lint
+
+      - name: TypeScript Verification & Bundle Build
+        run: npm run build

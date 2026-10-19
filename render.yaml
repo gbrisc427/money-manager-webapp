@@ -1,0 +1,85 @@
+# ==============================================================================
+# RENDER BLUEPRINT - MONOREPO BACKEND SERVICES (STAGING & PRODUCTION)
+# ==============================================================================
+services:
+  # 1. Servicio Backend Preproduccion (Rama: staging)
+  - type: web
+    name: money-manager-backend-staging
+    runtime: docker
+    plan: free
+    region: frankfurt
+    branch: staging
+    rootDir: money-manager-backend
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /api/health
+    autoDeploy: false # Orquestado desde GitHub Actions (.github/workflows/cd-staging.yml) via Deploy Hook
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: staging
+      - key: HIKARI_MAX_POOL_SIZE
+        value: "5"
+      - key: HIKARI_MIN_IDLE
+        value: "1"
+      - key: JPA_DDL_AUTO
+        value: update
+      - key: JPA_SHOW_SQL
+        value: "false"
+      - key: COOKIE_SECURE
+        value: "true"
+      - key: COOKIE_SAME_SITE
+        value: None
+      - key: DB_URL
+        sync: false
+      - key: DB_USERNAME
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: MAIL_USERNAME
+        sync: false
+      - key: MAIL_PASSWORD
+        sync: false
+      - key: CORS_ALLOWED_ORIGINS
+        sync: false
+
+  # 2. Servicio Backend Produccion (Rama: main)
+  - type: web
+    name: money-manager-backend-prod
+    runtime: docker
+    plan: free
+    region: frankfurt
+    branch: main
+    rootDir: money-manager-backend
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /api/health
+    autoDeploy: false # Orquestado desde GitHub Actions (.github/workflows/cd-production.yml) via Deploy Hook
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
+      - key: HIKARI_MAX_POOL_SIZE
+        value: "5"
+      - key: HIKARI_MIN_IDLE
+        value: "1"
+      - key: JPA_DDL_AUTO
+        value: validate
+      - key: JPA_SHOW_SQL
+        value: "false"
+      - key: COOKIE_SECURE
+        value: "true"
+      - key: COOKIE_SAME_SITE
+        value: None
+      - key: DB_URL
+        sync: false
+      - key: DB_USERNAME
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: MAIL_USERNAME
+        sync: false
+      - key: MAIL_PASSWORD
+        sync: false
+      - key: CORS_ALLOWED_ORIGINS
+        sync: false

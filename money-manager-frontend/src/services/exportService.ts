@@ -1,6 +1,7 @@
+import API_URL from "../config/api";
 
 export const downloadExcel = async (startDate?: string, endDate?: string) => {
-  let url = "http://localhost:8081/api/export/excel";
+  let url = `${API_URL}/export/excel`;
   
   const params = new URLSearchParams();
   if (startDate) params.append("startDate", startDate);

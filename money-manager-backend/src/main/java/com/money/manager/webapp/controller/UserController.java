@@ -44,6 +44,12 @@ public class UserController {
     @Autowired
     private RefreshTokenService refreshTokenService;
 
+    @org.springframework.beans.factory.annotation.Value("${cookie.secure:false}")
+    private boolean cookieSecure;
+
+    @org.springframework.beans.factory.annotation.Value("${cookie.same-site:Lax}")
+    private String cookieSameSite;
+
     @Autowired
     public UserController(UserServ userService, AuthenticationManager authManager, JwtUtils jwtUtils,
                           UserRepository userRepository, PasswordEncoder passwordEncoder, UserProfileService userProfileService) {
@@ -71,8 +77,8 @@ public class UserController {
 
         ResponseCookie accessCookie = ResponseCookie.from("accessToken", jwtUtils.generateToken(ud))
                 .httpOnly(true)
-                .secure(false)
-                .sameSite("Lax")
+                .secure(cookieSecure)
+                .sameSite(cookieSameSite)
                 .path("/")
                 .maxAge(15 * 60)
                 .build();
@@ -82,8 +88,8 @@ public class UserController {
 
         ResponseCookie refreshCookie = ResponseCookie.from("refreshToken", refreshToken.getToken())
                 .httpOnly(true)
-                .secure(false)
-                .sameSite("Lax")
+                .secure(cookieSecure)
+                .sameSite(cookieSameSite)
                 .path("/")
                 .maxAge(24 * 60 * 60)
                 .build();
@@ -119,8 +125,8 @@ public class UserController {
 
                     ResponseCookie newAccessCookie = ResponseCookie.from("accessToken", newAccessToken)
                             .httpOnly(true)
-                            .secure(false)
-                            .sameSite("Lax")
+                            .secure(cookieSecure)
+                            .sameSite(cookieSameSite)
                             .path("/")
                             .maxAge(15 * 60)
                             .build();
@@ -137,16 +143,16 @@ public class UserController {
         ResponseCookie accessCookie = ResponseCookie.from("accessToken", "")
                 .httpOnly(true)
                 .path("/")
-                .secure(false)
-                .sameSite("Lax")
+                .secure(cookieSecure)
+                .sameSite(cookieSameSite)
                 .maxAge(0)
                 .build();
 
         ResponseCookie refreshCookie = ResponseCookie.from("refreshToken", "")
                 .httpOnly(true)
                 .path("/")
-                .secure(false)
-                .sameSite("Lax")
+                .secure(cookieSecure)
+                .sameSite(cookieSameSite)
                 .maxAge(0)
                 .build();
 
