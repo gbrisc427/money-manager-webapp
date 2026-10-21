@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { 
   ArrowLeft, Trash2, Save, Edit2, Plus, 
@@ -57,12 +57,7 @@ const AccountDetail: React.FC = () => {
   const [isRecurringModalOpen, setIsRecurringModalOpen] = useState(false);
   const [accountRecurringList, setAccountRecurringList] = useState<RecurringTransaction[]>([]);
 
-  useEffect(() => {
-    if (!accountId) return;
-    loadData();
-  }, [accountId]);
-
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     try {
       const [accData, txData, catData] = await Promise.all([
         getAccount(accountId),
@@ -85,13 +80,18 @@ const AccountDetail: React.FC = () => {
       console.error("Error cargando detalles", error);
       navigate("/accounts"); 
     }
-  };
+  }, [accountId, navigate]);
+
+  useEffect(() => {
+    if (!accountId) return;
+    loadData();
+  }, [accountId, loadData]);
 
   // --- LÓGICA RECURRENTES ---
   const openRecurringModal = async () => {
     try {
       const allRecurring = await getRecurringTransactions();
-      const filtered = allRecurring.filter((r: any) => 
+      const filtered = allRecurring.filter((r: RecurringTransaction) => 
           r.active && (r.account?.id === accountId || r.accountId === accountId)
       );
       setAccountRecurringList(filtered);
@@ -106,7 +106,7 @@ const AccountDetail: React.FC = () => {
     try {
       await cancelRecurringTransaction(recId);
       const updatedList = await getRecurringTransactions();
-      const filtered = updatedList.filter((r: any) => 
+      const filtered = updatedList.filter((r: RecurringTransaction) => 
         r.active && (r.account?.id === accountId || r.accountId === accountId)
       );
       setAccountRecurringList(filtered);

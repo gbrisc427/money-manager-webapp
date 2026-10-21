@@ -1,6 +1,6 @@
 import { apiClient } from "../utils/apiClient";
 
-type MaybeJSON = Record<string, any> | string | null;
+type MaybeJSON = Record<string, unknown> | string | null;
 
 export const requestRecoveryCode = async (email: string): Promise<MaybeJSON> => {
   return apiClient(`/user/recover/request?email=${email}`, { method: "POST" });

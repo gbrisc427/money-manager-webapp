@@ -45,7 +45,7 @@ const Profile: React.FC = () => {
       localStorage.removeItem("userEmail");
       localStorage.removeItem("userName");
       navigate("/login");
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
       navigate("/login");
     }
@@ -76,8 +76,8 @@ const Profile: React.FC = () => {
       setMessage("Nombre actualizado correctamente");
       setIsError(false);
       setNewName("");
-    } catch (err: any) {
-      setMessage(err.message || "Error al actualizar nombre");
+    } catch (err: unknown) {
+      setMessage(err instanceof Error ? err.message : "Error al actualizar nombre");
       setIsError(true);
     }
   };
@@ -88,8 +88,8 @@ const Profile: React.FC = () => {
       setMessage("Código enviado al correo");
       setIsError(false);
       setStep("verifyCode");
-    } catch (err: any) {
-      setMessage(err.message || "Error al solicitar código");
+    } catch (err: unknown) {
+      setMessage(err instanceof Error ? err.message : "Error al solicitar código");
       setIsError(true);
     }
   };
@@ -100,8 +100,8 @@ const Profile: React.FC = () => {
       setMessage("Código verificado. Introduce tu nueva contraseña.");
       setIsError(false);
       setStep("resetPassword");
-    } catch (err: any) {
-      setMessage(err.message || "Código incorrecto");
+    } catch (err: unknown) {
+      setMessage(err instanceof Error ? err.message : "Código incorrecto");
       setIsError(true);
     }
   };
@@ -114,8 +114,8 @@ const Profile: React.FC = () => {
       setStep("main");
       setCode("");
       setNewPassword("");
-    } catch (err: any) {
-      setMessage(err.message || "Error al cambiar contraseña");
+    } catch (err: unknown) {
+      setMessage(err instanceof Error ? err.message : "Error al cambiar contraseña");
       setIsError(true);
     }
   };

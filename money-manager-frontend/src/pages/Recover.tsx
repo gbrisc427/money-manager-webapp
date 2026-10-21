@@ -17,8 +17,8 @@ const Recover: React.FC = () => {
       await requestRecoveryCode(email);
       setMessage("Código enviado al correo");
       setStep("verifyCode");
-    } catch (err: any) {
-      setMessage(err.message);
+    } catch (err: unknown) {
+      setMessage(err instanceof Error ? err.message : "Error inesperado");
     }
   };
 
@@ -27,8 +27,8 @@ const Recover: React.FC = () => {
       await verifyRecoveryCode(email, code);
       setMessage("Código verificado correctamente");
       setStep("resetPassword");
-    } catch (err: any) {
-      setMessage(err.message);
+    } catch (err: unknown) {
+      setMessage(err instanceof Error ? err.message : "Error inesperado");
     }
   };
 
@@ -40,8 +40,8 @@ const Recover: React.FC = () => {
       setEmail("");
       setCode("");
       setNewPassword("");
-    } catch (err: any) {
-      setMessage(err.message);
+    } catch (err: unknown) {
+      setMessage(err instanceof Error ? err.message : "Error inesperado");
     }
   };
 

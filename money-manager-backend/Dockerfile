@@ -1,22 +1,17 @@
 # ==============================================================================
-# STAGE 1: Build Stage (Maven + JDK 21)
+# STAGE 1: Build Stage (Maven 3.9.9 + JDK 21)
 # ==============================================================================
-FROM eclipse-temurin:21-jdk-alpine AS build
+FROM maven:3.9.9-eclipse-temurin-21-alpine AS build
 
 WORKDIR /workspace
 
-# Copiar descriptor Maven y wrapper para cachear dependencias en capas Docker
-COPY mvnw .
-COPY .mvn .mvn
+# Copiar descriptor Maven para cachear dependencias en capas Docker
 COPY pom.xml .
-
-# Normalizar saltos de linea CRLF (Windows) a LF (Linux) y dar permisos de ejecucion
-RUN sed -i 's/\r$//' mvnw && chmod +x mvnw
-RUN ./mvnw dependency:go-offline -B
+RUN mvn dependency:go-offline -B
 
 # Copiar codigo fuente y compilar el artefacto JAR ejecutable
 COPY src src
-RUN ./mvnw clean package -DskipTests -B
+RUN mvn clean package -DskipTests -B
 
 # ==============================================================================
 # STAGE 2: Runtime Stage (JRE 21 Ligero optimizado para Render Free 512MB RAM)

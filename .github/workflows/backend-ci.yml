@@ -51,8 +51,5 @@ jobs:
           cache: "maven"
           cache-dependency-path: "money-manager-backend/pom.xml"
 
-      - name: Grant Execute Permission to Maven Wrapper
-        run: chmod +x mvnw
-
       - name: Compile Backend & Verify Tests
-        run: ./mvnw clean test-compile -B
+        run: mvn clean test-compile -B

@@ -87,9 +87,7 @@ jobs:
           echo "Todos los secretos del entorno 'production' verificados correctamente."
 
       - name: Compile & Package Backend JAR
-        run: |
-          chmod +x mvnw
-          ./mvnw clean package -DskipTests -B
+        run: mvn clean package -DskipTests -B
 
       - name: Trigger Render Deploy Hook (Production)
         env:
