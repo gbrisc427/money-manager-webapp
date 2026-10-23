@@ -10,23 +10,30 @@ import Transactions from './pages/Transactions';
 import Accounts from './pages/Accounts';
 import AccountDetail from './pages/AccountDetail';
 import ExportData from "./pages/ExportData"; 
+import { useBackendWakeup } from './hooks/useBackendWakeup';
+import { ServerStatusIndicator } from './components/common/ServerStatusIndicator';
 
 function App() {
+  const { status } = useBackendWakeup();
+
   return (
-    <Routes>
-      <Route path="/" element={<LandingPage />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
-      <Route path="/recover" element={<Recover />} />
-      
-      <Route path="/dashboard" element={<Dashboard />} />
-      <Route path="/profile" element={<Profile />} />
-      <Route path="/categories" element={<Categories />} />     
-      <Route path="/transactions" element={<Transactions />} /> 
-      <Route path="/accounts" element={<Accounts/>} />
-      <Route path="/accounts/:id" element={<AccountDetail />} />
-      <Route path="/export" element={<ExportData />} /> 
-    </Routes>
+    <>
+      <ServerStatusIndicator status={status} />
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/recover" element={<Recover />} />
+        
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/categories" element={<Categories />} />     
+        <Route path="/transactions" element={<Transactions />} /> 
+        <Route path="/accounts" element={<Accounts/>} />
+        <Route path="/accounts/:id" element={<AccountDetail />} />
+        <Route path="/export" element={<ExportData />} /> 
+      </Routes>
+    </>
   );
 }
 
