@@ -39,7 +39,7 @@ public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final UserDetailsService userDetailsService;
 
-    @Value("${cors.allowed-origins}")
+    @Value("${cors.allowed-origins:http://localhost:5173}")
     private String allowedOrigins;
 
     public SecurityConfig(CustomUserDetailsService uds, JwtUtils jwtProvider, TokenBlacklistService tokenBlacklistService, JwtAuthenticationFilter jwtAuthenticationFilter, UserDetailsService userDetailsService){
@@ -90,7 +90,17 @@ public class SecurityConfig {
                 .map(String::trim)
                 .filter(origin -> !origin.isEmpty())
                 .toList();
-        configuration.setAllowedOriginPatterns(origins);
+        List<String> mutableOrigins = new java.util.ArrayList<>(origins);
+        if (!mutableOrigins.contains("https://*.vercel.app")) {
+            mutableOrigins.add("https://*.vercel.app");
+        }
+        if (!mutableOrigins.contains("http://localhost:5173")) {
+            mutableOrigins.add("http://localhost:5173");
+        }
+        if (!mutableOrigins.contains("http://localhost:3000")) {
+            mutableOrigins.add("http://localhost:3000");
+        }
+        configuration.setAllowedOriginPatterns(mutableOrigins);
 
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         configuration.setAllowedHeaders(List.of("*"));
