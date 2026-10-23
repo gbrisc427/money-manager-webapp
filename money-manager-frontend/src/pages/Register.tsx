@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { registerUser } from "../services/registerService";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
-
+import { Button } from "../components/ui/Button";
 
 const Register: React.FC = () => {
   const navigate = useNavigate();
@@ -12,6 +12,7 @@ const Register: React.FC = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   // Estados de validación en tiempo real
   const [passwordValid, setPasswordValid] = useState(true);
@@ -21,7 +22,7 @@ const Register: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  // 🔹 Validación de contraseña
+  // Validación de contraseña
   const validatePassword = (pwd: string) => {
     const regex =
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=[{};':"\\|,.<>/?\]]).{8,}$/;
@@ -39,9 +40,10 @@ const Register: React.FC = () => {
     setPasswordsMatch(password === confirm);
   };
 
-  // 🔹 Envío del formulario
+  // Envío del formulario
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isLoading) return;
     setError("");
     setSuccess("");
 
@@ -60,12 +62,14 @@ const Register: React.FC = () => {
       return;
     }
 
+    setIsLoading(true);
     try {
       await registerUser({ fullName, email, password });
       setSuccess("Registro exitoso. Puedes iniciar sesión.");
       setTimeout(() => navigate("/login"), 1500);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Error al registrar");
+      setIsLoading(false);
     }
   };
 
@@ -90,7 +94,8 @@ const Register: React.FC = () => {
               value={fullName}
               onChange={(e) => setName(e.target.value)}
               required
-              className="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+              disabled={isLoading}
+              className="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none disabled:bg-gray-50"
               placeholder="Tu nombre"
             />
           </div>
@@ -109,7 +114,8 @@ const Register: React.FC = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+              disabled={isLoading}
+              className="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none disabled:bg-gray-50"
               placeholder="ejemplo@correo.com"
             />
           </div>
@@ -128,7 +134,8 @@ const Register: React.FC = () => {
               value={password}
               onChange={(e) => handlePasswordChange(e.target.value)}
               required
-              className={`w-full mt-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 ${
+              disabled={isLoading}
+              className={`w-full mt-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 disabled:bg-gray-50 ${
                 passwordValid
                   ? "focus:ring-indigo-500 border-gray-300"
                   : "focus:ring-red-500 border-red-500"
@@ -139,7 +146,6 @@ const Register: React.FC = () => {
               type="button"
               onClick={() => setShowPassword(!showPassword)}
               className="absolute right-3 top-9 text-gray-500"
-              
             >
               {showPassword ? <AiOutlineEyeInvisible size={20} /> : <AiOutlineEye size={20} />}
             </button>
@@ -167,7 +173,8 @@ const Register: React.FC = () => {
                 handleConfirmPasswordChange(e.target.value)
               }
               required
-              className={`w-full mt-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 ${
+              disabled={isLoading}
+              className={`w-full mt-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 disabled:bg-gray-50 ${
                 passwordsMatch
                   ? "focus:ring-indigo-500 border-gray-300"
                   : "focus:ring-red-500 border-red-500"
@@ -181,7 +188,7 @@ const Register: React.FC = () => {
               }
               className="absolute right-3 top-9 text-gray-500"
             >
-              {showConfirmPassword ? <AiOutlineEye size={20} /> : <AiOutlineEyeInvisible  size={20} />}
+              {showConfirmPassword ? <AiOutlineEye size={20} /> : <AiOutlineEyeInvisible size={20} />}
             </button>
             {!passwordsMatch && (
               <p className="text-xs text-red-500 mt-1">
@@ -191,12 +198,14 @@ const Register: React.FC = () => {
           </div>
 
           {/* Botón */}
-          <button
+          <Button
             type="submit"
-            className="w-full bg-indigo-600 text-white py-2 px-4 rounded-lg font-semibold hover:bg-indigo-700 transition duration-300"
+            isLoading={isLoading}
+            loadingText="Registrando..."
+            className="py-2.5 px-4 rounded-lg font-semibold"
           >
             Registrarse
-          </button>
+          </Button>
         </form>
 
         {/* Mensajes */}

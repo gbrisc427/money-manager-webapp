@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { loginUser } from "../services/authService";
+import { Button } from "../components/ui/Button";
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
@@ -9,24 +10,25 @@ const Login: React.FC = () => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [message, setMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setMessage(""); 
-    
+    if (isLoading) return;
+    setMessage("");
+    setIsLoading(true);
+
     try {
-      
       await loginUser({ email, password });
 
       setMessage("Login exitoso");
       localStorage.setItem("userEmail", email);
-      
+
       setTimeout(() => navigate("/dashboard"), 1000);
-      
     } catch (error: unknown) {
       console.error(error);
-      
       setMessage(error instanceof Error ? error.message : "Error: Credenciales incorrectas ");
+      setIsLoading(false);
     }
   };
 
@@ -46,7 +48,8 @@ const Login: React.FC = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+              disabled={isLoading}
+              className="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none disabled:bg-gray-50"
               placeholder="ejemplo@correo.com"
             />
           </div>
@@ -60,7 +63,8 @@ const Login: React.FC = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+              disabled={isLoading}
+              className="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none disabled:bg-gray-50"
               placeholder="********"
             />
             <button
@@ -79,12 +83,14 @@ const Login: React.FC = () => {
             </a>
           </p>
 
-          <button
+          <Button
             type="submit"
-            className="w-full bg-indigo-600 text-white py-2 px-4 rounded-lg font-semibold hover:bg-indigo-700 transition duration-300"
+            isLoading={isLoading}
+            loadingText="Iniciando sesión..."
+            className="py-2.5 px-4 rounded-lg font-semibold"
           >
             Entrar
-          </button>
+          </Button>
         </form>
 
         {message && (

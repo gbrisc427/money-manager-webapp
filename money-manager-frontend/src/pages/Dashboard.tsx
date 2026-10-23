@@ -21,6 +21,7 @@ import { getCategories } from "../services/categoryService";
 import type { Category } from "../services/categoryService";
 import { getGoals, createGoal, addFundsToGoal, deleteGoal } from "../services/goalService";
 import type { SavingsGoal } from "../services/goalService";
+import { Button } from "../components/ui/Button";
 
 const Dashboard: React.FC = () => {
   const [profile, setProfile] = useState<{ name?: string; email?: string } | null>(null);
@@ -42,6 +43,14 @@ const Dashboard: React.FC = () => {
   const [isAddFundsModalOpen, setIsAddFundsModalOpen] = useState(false);
   const [selectedGoalId, setSelectedGoalId] = useState<number | null>(null);
   const [fundsAmount, setFundsAmount] = useState("");
+
+  // ESTADOS DE CARGA CRUD
+  const [isSubmittingAccount, setIsSubmittingAccount] = useState(false);
+  const [isSubmittingBudget, setIsSubmittingBudget] = useState(false);
+  const [isSubmittingGoal, setIsSubmittingGoal] = useState(false);
+  const [isSubmittingFunds, setIsSubmittingFunds] = useState(false);
+  const [deletingBudgetId, setDeletingBudgetId] = useState<number | null>(null);
+  const [deletingGoalId, setDeletingGoalId] = useState<number | null>(null);
 
   // ESTADOS FORMULARIOS
   const [newAccount, setNewAccount] = useState({ name: "", type: "Banco", balance: "" as string | number });
@@ -77,7 +86,8 @@ const Dashboard: React.FC = () => {
 
   const handleCreateAccount = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newAccount.name || newAccount.balance === "") return;
+    if (isSubmittingAccount || !newAccount.name || newAccount.balance === "") return;
+    setIsSubmittingAccount(true);
     try {
       await createAccount({
         name: newAccount.name,
@@ -90,12 +100,15 @@ const Dashboard: React.FC = () => {
       setAccounts(updatedAccounts);
     } catch (error) {
       console.error("Error creando cuenta", error);
+    } finally {
+      setIsSubmittingAccount(false);
     }
   };
 
   const handleCreateBudget = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newBudget.categoryId || !newBudget.amount) return;
+    if (isSubmittingBudget || !newBudget.categoryId || !newBudget.amount) return;
+    setIsSubmittingBudget(true);
     try {
         await createBudget({ categoryId: Number(newBudget.categoryId), amount: Number(newBudget.amount) });
         setNewBudget({ categoryId: 0, amount: "" });
@@ -103,17 +116,29 @@ const Dashboard: React.FC = () => {
         setBudgets(await getBudgets());
     } catch (error) {
         console.error("Error creando presupuesto", error);
+    } finally {
+        setIsSubmittingBudget(false);
     }
   };
 
   const handleDeleteBudget = async (id: number) => {
+      if (deletingBudgetId !== null) return;
       if(!confirm("¿Eliminar este límite de gasto?")) return;
-      try { await deleteBudget(id); setBudgets(await getBudgets()); } catch (error) { console.error(error); }
-  }
+      setDeletingBudgetId(id);
+      try {
+        await deleteBudget(id);
+        setBudgets(await getBudgets());
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setDeletingBudgetId(null);
+      }
+  };
 
   const handleCreateGoal = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newGoal.name || !newGoal.targetAmount) return;
+    if (isSubmittingGoal || !newGoal.name || !newGoal.targetAmount) return;
+    setIsSubmittingGoal(true);
     try {
         await createGoal({
             name: newGoal.name,
@@ -124,25 +149,43 @@ const Dashboard: React.FC = () => {
         setNewGoal({ name: "", targetAmount: "", color: "#10b981" });
         setIsGoalModalOpen(false);
         setGoals(await getGoals());
-    } catch (error) { console.error(error); }
+    } catch (error) {
+        console.error(error);
+    } finally {
+        setIsSubmittingGoal(false);
+    }
   };
 
   const handleAddFunds = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedGoalId || !fundsAmount) return;
+    if (isSubmittingFunds || !selectedGoalId || !fundsAmount) return;
+    setIsSubmittingFunds(true);
     try {
         await addFundsToGoal(selectedGoalId, Number(fundsAmount));
         setFundsAmount("");
         setSelectedGoalId(null);
         setIsAddFundsModalOpen(false);
         setGoals(await getGoals());
-    } catch (error) { console.error(error); }
+    } catch (error) {
+        console.error(error);
+    } finally {
+        setIsSubmittingFunds(false);
+    }
   };
 
   const handleDeleteGoal = async (id: number) => {
+      if (deletingGoalId !== null) return;
       if(!confirm("¿Borrar esta meta de ahorro?")) return;
-      try { await deleteGoal(id); setGoals(await getGoals()); } catch (error) { console.error(error); }
-  }
+      setDeletingGoalId(id);
+      try {
+        await deleteGoal(id);
+        setGoals(await getGoals());
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setDeletingGoalId(null);
+      }
+  };
 
   const openAddFundsModal = (id: number) => {
       setSelectedGoalId(id);
@@ -197,7 +240,7 @@ const Dashboard: React.FC = () => {
           </p>
         </div>
 
-        {/* SECCIÓN 2: LISTA DE CUENTAS (MOVIDO AQUÍ) */}
+        {/* SECCIÓN 2: LISTA DE CUENTAS */}
         <div className="mb-10">
           <div className="flex justify-between items-end mb-4">
             <h2 className="text-xl font-bold text-gray-800 flex items-center gap-2">
@@ -319,7 +362,11 @@ const Dashboard: React.FC = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {budgets.map(b => (
                         <div key={b.id} className="bg-white p-5 rounded-xl shadow-sm border border-gray-100 relative group">
-                            <button onClick={() => handleDeleteBudget(b.id)} className="absolute top-3 right-3 text-gray-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button
+                              onClick={() => handleDeleteBudget(b.id)}
+                              disabled={deletingBudgetId === b.id}
+                              className="absolute top-3 right-3 text-gray-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
                                 <Trash2 size={16}/>
                             </button>
                             <div className="flex justify-between items-end mb-2">
@@ -379,7 +426,11 @@ const Dashboard: React.FC = () => {
                                         <button onClick={() => openAddFundsModal(g.id)} className="p-2 text-indigo-600 hover:bg-indigo-50 rounded-full" title="Añadir dinero">
                                             <TrendingUp size={18}/>
                                         </button>
-                                        <button onClick={() => handleDeleteGoal(g.id)} className="p-2 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-full">
+                                        <button
+                                          onClick={() => handleDeleteGoal(g.id)}
+                                          disabled={deletingGoalId === g.id}
+                                          className="p-2 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-full disabled:opacity-50 disabled:cursor-not-allowed"
+                                        >
                                             <Trash2 size={18}/>
                                         </button>
                                     </div>
@@ -430,21 +481,21 @@ const Dashboard: React.FC = () => {
           <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden animate-fade-in">
             <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50">
               <h3 className="text-xl font-bold text-gray-800">Crear Cuenta</h3>
-              <button onClick={() => setIsAccountModalOpen(false)} className="text-gray-400 hover:text-gray-600"><X size={20} /></button>
+              <button onClick={() => !isSubmittingAccount && setIsAccountModalOpen(false)} className="text-gray-400 hover:text-gray-600"><X size={20} /></button>
             </div>
             <form onSubmit={handleCreateAccount} className="p-6 space-y-5">
               <div>
                 <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Nombre</label>
                 <div className="relative">
                     <Wallet className="absolute left-3 top-3 text-gray-400" size={18}/>
-                    <input type="text" required value={newAccount.name} onChange={(e) => setNewAccount({ ...newAccount, name: e.target.value })} className="w-full border border-gray-200 rounded-lg p-3 pl-10 outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Ej: Ahorros"/>
+                    <input type="text" required disabled={isSubmittingAccount} value={newAccount.name} onChange={(e) => setNewAccount({ ...newAccount, name: e.target.value })} className="w-full border border-gray-200 rounded-lg p-3 pl-10 outline-none focus:ring-2 focus:ring-indigo-500 disabled:bg-gray-50" placeholder="Ej: Ahorros"/>
                 </div>
               </div>
               <div>
                 <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Tipo</label>
                 <div className="relative">
                     <Landmark className="absolute left-3 top-3 text-gray-400" size={18}/>
-                    <select className="w-full border border-gray-200 rounded-lg p-3 pl-10 outline-none focus:ring-2 focus:ring-indigo-500 bg-white" value={newAccount.type} onChange={(e) => setNewAccount({ ...newAccount, type: e.target.value })}>
+                    <select disabled={isSubmittingAccount} className="w-full border border-gray-200 rounded-lg p-3 pl-10 outline-none focus:ring-2 focus:ring-indigo-500 bg-white disabled:bg-gray-50" value={newAccount.type} onChange={(e) => setNewAccount({ ...newAccount, type: e.target.value })}>
                         <option value="Banco">Banco</option><option value="Efectivo">Efectivo</option><option value="Tarjeta">Tarjeta Crédito</option><option value="Ahorro">Ahorro</option><option value="Inversión">Inversión</option>
                     </select>
                 </div>
@@ -453,28 +504,35 @@ const Dashboard: React.FC = () => {
                 <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Saldo Inicial</label>
                 <div className="relative">
                     <CircleDollarSign className="absolute left-3 top-3 text-gray-400" size={18}/>
-                    <input type="number" step="0.01" required value={newAccount.balance} onChange={(e) => setNewAccount({ ...newAccount, balance: e.target.value })} className="w-full border border-gray-200 rounded-lg p-3 pl-10 outline-none focus:ring-2 focus:ring-indigo-500 font-mono" placeholder="0.00"/>
+                    <input type="number" step="0.01" required disabled={isSubmittingAccount} value={newAccount.balance} onChange={(e) => setNewAccount({ ...newAccount, balance: e.target.value })} className="w-full border border-gray-200 rounded-lg p-3 pl-10 outline-none focus:ring-2 focus:ring-indigo-500 font-mono disabled:bg-gray-50" placeholder="0.00"/>
                 </div>
               </div>
-              <button type="submit" className="w-full bg-indigo-600 text-white py-4 rounded-xl font-bold hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-200 mt-2">Crear Cuenta</button>
+              <Button
+                type="submit"
+                isLoading={isSubmittingAccount}
+                loadingText="Creando cuenta..."
+                className="py-4 shadow-lg mt-2"
+              >
+                Crear Cuenta
+              </Button>
             </form>
           </div>
         </div>
       )}
 
-      {/* MODAL PRESUPUESTOS (Igual que antes) */}
+      {/* MODAL PRESUPUESTOS */}
       {isBudgetModalOpen && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
           <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden animate-fade-in">
             <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50">
               <h3 className="text-xl font-bold text-gray-800">Definir Límite de Gasto</h3>
-              <button onClick={() => setIsBudgetModalOpen(false)} className="text-gray-400 hover:text-gray-600"><X size={20} /></button>
+              <button onClick={() => !isSubmittingBudget && setIsBudgetModalOpen(false)} className="text-gray-400 hover:text-gray-600"><X size={20} /></button>
             </div>
             <form onSubmit={handleCreateBudget} className="p-6 space-y-5">
               <div>
                  <p className="text-sm text-gray-500 mb-4">Elige una categoría y define cuánto quieres gastar como máximo al mes.</p>
                  <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Categoría</label>
-                 <select className="w-full border border-gray-200 rounded-lg p-3 outline-none focus:ring-2 focus:ring-indigo-500 bg-white" value={newBudget.categoryId} onChange={(e) => setNewBudget({ ...newBudget, categoryId: Number(e.target.value) })}>
+                 <select disabled={isSubmittingBudget} className="w-full border border-gray-200 rounded-lg p-3 outline-none focus:ring-2 focus:ring-indigo-500 bg-white disabled:bg-gray-50" value={newBudget.categoryId} onChange={(e) => setNewBudget({ ...newBudget, categoryId: Number(e.target.value) })}>
                     <option value={0}>Selecciona categoría...</option>
                     {categories.filter(c => c.type === 'EXPENSE').map(cat => (<option key={cat.id} value={cat.id}>{cat.name}</option>))}
                  </select>
@@ -483,58 +541,80 @@ const Dashboard: React.FC = () => {
                 <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Límite Mensual</label>
                 <div className="relative">
                     <CircleDollarSign className="absolute left-3 top-3 text-gray-400" size={18}/>
-                    <input type="number" step="0.01" required value={newBudget.amount} onChange={(e) => setNewBudget({ ...newBudget, amount: e.target.value })} className="w-full border border-gray-200 rounded-lg p-3 pl-10 outline-none focus:ring-2 focus:ring-indigo-500 font-mono" placeholder="Ej: 200.00"/>
+                    <input type="number" step="0.01" required disabled={isSubmittingBudget} value={newBudget.amount} onChange={(e) => setNewBudget({ ...newBudget, amount: e.target.value })} className="w-full border border-gray-200 rounded-lg p-3 pl-10 outline-none focus:ring-2 focus:ring-indigo-500 font-mono disabled:bg-gray-50" placeholder="Ej: 200.00"/>
                 </div>
               </div>
-              <button type="submit" className="w-full bg-indigo-600 text-white py-4 rounded-xl font-bold hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-200 mt-2">Guardar Presupuesto</button>
+              <Button
+                type="submit"
+                isLoading={isSubmittingBudget}
+                loadingText="Guardando..."
+                className="py-4 shadow-lg mt-2"
+              >
+                Guardar Presupuesto
+              </Button>
             </form>
           </div>
         </div>
       )}
 
-      {/* MODAL METAS (Igual que antes) */}
+      {/* MODAL METAS */}
       {isGoalModalOpen && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
           <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden animate-fade-in">
             <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50">
               <h3 className="text-xl font-bold text-gray-800">Nueva Meta de Ahorro</h3>
-              <button onClick={() => setIsGoalModalOpen(false)} className="text-gray-400 hover:text-gray-600"><X size={20} /></button>
+              <button onClick={() => !isSubmittingGoal && setIsGoalModalOpen(false)} className="text-gray-400 hover:text-gray-600"><X size={20} /></button>
             </div>
             <form onSubmit={handleCreateGoal} className="p-6 space-y-5">
               <div>
                 <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Nombre del Objetivo</label>
-                <input type="text" required value={newGoal.name} onChange={(e) => setNewGoal({ ...newGoal, name: e.target.value })} className="w-full border border-gray-200 rounded-lg p-3 outline-none focus:ring-2 focus:ring-green-500" placeholder="Ej: Viaje a Japón"/>
+                <input type="text" required disabled={isSubmittingGoal} value={newGoal.name} onChange={(e) => setNewGoal({ ...newGoal, name: e.target.value })} className="w-full border border-gray-200 rounded-lg p-3 outline-none focus:ring-2 focus:ring-green-500 disabled:bg-gray-50" placeholder="Ej: Viaje a Japón"/>
               </div>
               <div>
                 <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Cantidad Objetivo</label>
                 <div className="relative">
                     <CircleDollarSign className="absolute left-3 top-3 text-gray-400" size={18}/>
-                    <input type="number" step="0.01" required value={newGoal.targetAmount} onChange={(e) => setNewGoal({ ...newGoal, targetAmount: e.target.value })} className="w-full border border-gray-200 rounded-lg p-3 pl-10 outline-none focus:ring-2 focus:ring-green-500 font-mono" placeholder="0.00"/>
+                    <input type="number" step="0.01" required disabled={isSubmittingGoal} value={newGoal.targetAmount} onChange={(e) => setNewGoal({ ...newGoal, targetAmount: e.target.value })} className="w-full border border-gray-200 rounded-lg p-3 pl-10 outline-none focus:ring-2 focus:ring-green-500 font-mono disabled:bg-gray-50" placeholder="0.00"/>
                 </div>
               </div>
-              <button type="submit" className="w-full bg-green-600 text-white py-4 rounded-xl font-bold hover:bg-green-700 transition-all shadow-lg shadow-green-200 mt-2">Crear Meta</button>
+              <Button
+                type="submit"
+                variant="success"
+                isLoading={isSubmittingGoal}
+                loadingText="Creando meta..."
+                className="py-4 shadow-lg mt-2"
+              >
+                Crear Meta
+              </Button>
             </form>
           </div>
         </div>
       )}
 
-      {/* MODAL AÑADIR FONDOS (Igual que antes) */}
+      {/* MODAL AÑADIR FONDOS */}
       {isAddFundsModalOpen && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
           <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm overflow-hidden animate-fade-in">
             <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50">
               <h3 className="text-xl font-bold text-gray-800">Añadir Ahorros</h3>
-              <button onClick={() => setIsAddFundsModalOpen(false)} className="text-gray-400 hover:text-gray-600"><X size={20} /></button>
+              <button onClick={() => !isSubmittingFunds && setIsAddFundsModalOpen(false)} className="text-gray-400 hover:text-gray-600"><X size={20} /></button>
             </div>
             <form onSubmit={handleAddFunds} className="p-6 space-y-5">
               <div>
                 <p className="text-sm text-gray-500 mb-4">¿Cuánto dinero quieres destinar a esta meta hoy?</p>
                 <div className="relative">
                     <CircleDollarSign className="absolute left-3 top-3 text-gray-400" size={18}/>
-                    <input type="number" step="0.01" required value={fundsAmount} onChange={(e) => setFundsAmount(e.target.value)} className="w-full border border-gray-200 rounded-lg p-3 pl-10 outline-none focus:ring-2 focus:ring-indigo-500 font-mono text-xl font-bold text-gray-800" placeholder="0.00" autoFocus/>
+                    <input type="number" step="0.01" required disabled={isSubmittingFunds} value={fundsAmount} onChange={(e) => setFundsAmount(e.target.value)} className="w-full border border-gray-200 rounded-lg p-3 pl-10 outline-none focus:ring-2 focus:ring-indigo-500 font-mono text-xl font-bold text-gray-800 disabled:bg-gray-50" placeholder="0.00" autoFocus/>
                 </div>
               </div>
-              <button type="submit" className="w-full bg-indigo-600 text-white py-4 rounded-xl font-bold hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-200 mt-2">Añadir Fondos</button>
+              <Button
+                type="submit"
+                isLoading={isSubmittingFunds}
+                loadingText="Añadiendo..."
+                className="py-4 shadow-lg mt-2"
+              >
+                Añadir Fondos
+              </Button>
             </form>
           </div>
         </div>

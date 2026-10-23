@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { 
   ArrowLeft, Trash2, Save, Edit2, Plus, 
   ArrowUpCircle, ArrowDownCircle, ChevronLeft, ChevronRight, 
-  CircleDollarSign, Search, Repeat, Clock, XCircle, Tag 
+  CircleDollarSign, Search, Repeat, Clock, XCircle, Tag, Loader2
 } from "lucide-react";
 import { getAccount, updateAccount, deleteAccount } from "../services/accountService";
 import type { Account } from "../services/accountService";
@@ -12,8 +12,9 @@ import {
   createRecurringTransaction, getRecurringTransactions, cancelRecurringTransaction
 } from "../services/transactionService";
 import type { Transaction, TransactionRequest, RecurringTransaction } from "../services/transactionService";
-import { getCategories, createCategory } from "../services/categoryService"; // <--- Importamos createCategory
+import { getCategories, createCategory } from "../services/categoryService";
 import type { Category } from "../services/categoryService";
+import { Button } from "../components/ui/Button";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -31,6 +32,14 @@ const AccountDetail: React.FC = () => {
   const [editType, setEditType] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
 
+  // Estados de carga de acciones CRUD
+  const [isUpdatingAccount, setIsUpdatingAccount] = useState(false);
+  const [isDeletingAccount, setIsDeletingAccount] = useState(false);
+  const [isSubmittingTx, setIsSubmittingTx] = useState(false);
+  const [isCreatingCategory, setIsCreatingCategory] = useState(false);
+  const [deletingTxId, setDeletingTxId] = useState<number | null>(null);
+  const [cancelingRecId, setCancelingRecId] = useState<number | null>(null);
+
   const [currentPage, setCurrentPage] = useState(1);
 
   // --- MODAL AÑADIR MOVIMIENTO ---
@@ -45,7 +54,7 @@ const AccountDetail: React.FC = () => {
     date: new Date().toISOString().split('T')[0]
   });
 
-  // --- MODAL AÑADIR CATEGORÍA RÁPIDA (NUEVO) ---
+  // --- MODAL AÑADIR CATEGORÍA RÁPIDA ---
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
   const [newQuickCategory, setNewQuickCategory] = useState({
     name: "",
@@ -102,7 +111,9 @@ const AccountDetail: React.FC = () => {
   };
 
   const handleCancelRecurring = async (recId: number) => {
+    if (cancelingRecId !== null) return;
     if (!window.confirm("¿Cancelar suscripción?")) return;
+    setCancelingRecId(recId);
     try {
       await cancelRecurringTransaction(recId);
       const updatedList = await getRecurringTransactions();
@@ -112,36 +123,32 @@ const AccountDetail: React.FC = () => {
       setAccountRecurringList(filtered);
     } catch (error) {
       console.error("Error cancelando", error);
+    } finally {
+      setCancelingRecId(null);
     }
   };
 
   // --- LÓGICA CREAR CATEGORÍA RÁPIDA ---
   const handleQuickCreateCategory = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newQuickCategory.name) return;
+    if (isCreatingCategory || !newQuickCategory.name) return;
+    setIsCreatingCategory(true);
     try {
-        // 1. Crear la categoría
         await createCategory(newQuickCategory);
-        
-        // 2. Recargar categorías
         const updatedCats = await getCategories();
         setCategories(updatedCats);
-        
-        // 3. Cerrar modal de categoría (volvemos al de transacción)
         setIsCategoryModalOpen(false);
         
-        // 4. Opcional: Seleccionar la nueva categoría automáticamente
-        // Buscamos la categoría recién creada (asumiendo que es la última o por nombre)
         const created = updatedCats.find(c => c.name === newQuickCategory.name && c.type === newQuickCategory.type);
         if (created) {
             setNewTransaction(prev => ({ ...prev, categoryId: created.id }));
         }
 
-        // 5. Resetear formulario
         setNewQuickCategory({ name: "", type: "EXPENSE", color: "#3b82f6" });
-
     } catch (error) {
         console.error("Error creando categoría rápida", error);
+    } finally {
+        setIsCreatingCategory(false);
     }
   };
 
@@ -158,22 +165,29 @@ const AccountDetail: React.FC = () => {
   const goToPrevPage = () => setCurrentPage((prev) => Math.max(prev - 1, 1));
 
   const handleUpdateAccount = async () => {
+    if (isUpdatingAccount) return;
+    setIsUpdatingAccount(true);
     try {
       const updated = await updateAccount(accountId, { ...account!, name: editName, type: editType });
       setAccount(updated);
       setIsEditing(false);
     } catch (error) {
       console.error(error);
+    } finally {
+      setIsUpdatingAccount(false);
     }
   };
 
   const handleDeleteAccount = async () => {
+    if (isDeletingAccount) return;
     if (!confirm("¿Estás seguro de eliminar esta cuenta y TODAS sus transacciones?")) return;
+    setIsDeletingAccount(true);
     try {
       await deleteAccount(accountId);
       navigate("/dashboard");
     } catch (error) {
       console.error(error);
+      setIsDeletingAccount(false);
     }
   };
 
@@ -184,14 +198,14 @@ const AccountDetail: React.FC = () => {
         type: type,
         categoryId: validCategories.length > 0 ? validCategories[0].id : 0
     }));
-    // Sincronizar el tipo para el modal de nueva categoría también
     setNewQuickCategory(prev => ({ ...prev, type: type }));
   };
 
   const handleCreateTransaction = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newTransaction.categoryId || Number(newTransaction.amount) <= 0) return;
+    if (isSubmittingTx || !newTransaction.categoryId || Number(newTransaction.amount) <= 0) return;
     
+    setIsSubmittingTx(true);
     try {
       const payload = {
         ...newTransaction,
@@ -222,11 +236,15 @@ const AccountDetail: React.FC = () => {
       setCurrentPage(1); 
     } catch (error) {
       console.error(error);
+    } finally {
+      setIsSubmittingTx(false);
     }
   };
 
   const handleDeleteTransaction = async (txId: number) => {
+    if (deletingTxId !== null) return;
     if (!confirm("¿Borrar movimiento?")) return;
+    setDeletingTxId(txId);
     try {
       await deleteTransaction(txId);
       await loadData();
@@ -235,6 +253,8 @@ const AccountDetail: React.FC = () => {
       }
     } catch (error) {
       console.error(error);
+    } finally {
+      setDeletingTxId(null);
     }
   };
 
@@ -263,11 +283,23 @@ const AccountDetail: React.FC = () => {
               <h3 className="text-gray-500 text-sm font-bold uppercase">Información</h3>
               <div className="flex gap-2">
                 {isEditing ? (
-                  <button onClick={handleUpdateAccount} className="p-2 text-green-600 hover:bg-green-50 rounded-full"><Save size={18}/></button>
+                  <button
+                    onClick={handleUpdateAccount}
+                    disabled={isUpdatingAccount}
+                    className="p-2 text-green-600 hover:bg-green-50 rounded-full disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {isUpdatingAccount ? <Loader2 size={18} className="animate-spin" /> : <Save size={18}/>}
+                  </button>
                 ) : (
                   <button onClick={() => setIsEditing(true)} className="p-2 text-blue-600 hover:bg-blue-50 rounded-full"><Edit2 size={18}/></button>
                 )}
-                <button onClick={handleDeleteAccount} className="p-2 text-red-500 hover:bg-red-50 rounded-full"><Trash2 size={18}/></button>
+                <button
+                  onClick={handleDeleteAccount}
+                  disabled={isDeletingAccount}
+                  className="p-2 text-red-500 hover:bg-red-50 rounded-full disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isDeletingAccount ? <Loader2 size={18} className="animate-spin" /> : <Trash2 size={18}/>}
+                </button>
               </div>
             </div>
 
@@ -275,13 +307,15 @@ const AccountDetail: React.FC = () => {
               {isEditing ? (
                 <div className="space-y-3" >
                   <input 
-                    className="w-full border p-2 rounded focus:ring-2 focus:ring-blue-500 outline-none" 
+                    disabled={isUpdatingAccount}
+                    className="w-full border p-2 rounded focus:ring-2 focus:ring-blue-500 outline-none disabled:bg-gray-50" 
                     value={editName} 
                     onChange={e => setEditName(e.target.value)} 
                     placeholder="Nombre"
                   />
                   <select 
-                    className="w-full border p-2 rounded focus:ring-2 focus:ring-blue-500 outline-none" 
+                    disabled={isUpdatingAccount}
+                    className="w-full border p-2 rounded focus:ring-2 focus:ring-blue-500 outline-none disabled:bg-gray-50" 
                     value={editType} 
                     onChange={e => setEditType(e.target.value)}
                   >
@@ -369,7 +403,8 @@ const AccountDetail: React.FC = () => {
                       <td className="p-4 text-right w-14">
                         <button 
                           onClick={() => handleDeleteTransaction(tx.id)}
-                          className="text-gray-300 hover:text-red-500 hover:bg-red-50 p-1.5 rounded transition-all opacity-0 group-hover:opacity-100"
+                          disabled={deletingTxId === tx.id}
+                          className="text-gray-300 hover:text-red-500 hover:bg-red-50 p-1.5 rounded transition-all opacity-0 group-hover:opacity-100 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           <Trash2 size={18}/>
                         </button>
@@ -412,7 +447,7 @@ const AccountDetail: React.FC = () => {
           <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden animate-fade-in relative">
             <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50">
               <h3 className="text-xl font-bold text-gray-800">Añadir a {account.name}</h3>
-              <button onClick={() => setIsModalOpen(false)} className="text-gray-400 hover:text-gray-600">✕</button>
+              <button onClick={() => !isSubmittingTx && setIsModalOpen(false)} className="text-gray-400 hover:text-gray-600">✕</button>
             </div>
 
             <form onSubmit={handleCreateTransaction} className="p-6 space-y-4">
@@ -420,6 +455,7 @@ const AccountDetail: React.FC = () => {
               <div className="grid grid-cols-2 gap-4 mb-2">
                 <button
                   type="button"
+                  disabled={isSubmittingTx}
                   onClick={() => handleTypeChange("EXPENSE")}
                   className={`p-3 rounded-xl flex items-center justify-center gap-2 font-bold border-2 transition-all ${newTransaction.type === 'EXPENSE' ? 'border-red-500 bg-red-50 text-red-600' : 'border-gray-200 text-gray-400 hover:border-gray-300'}`}
                 >
@@ -427,6 +463,7 @@ const AccountDetail: React.FC = () => {
                 </button>
                 <button
                   type="button"
+                  disabled={isSubmittingTx}
                   onClick={() => handleTypeChange("INCOME")}
                   className={`p-3 rounded-xl flex items-center justify-center gap-2 font-bold border-2 transition-all ${newTransaction.type === 'INCOME' ? 'border-green-500 bg-green-50 text-green-600' : 'border-gray-200 text-gray-400 hover:border-gray-300'}`}
                 >
@@ -436,7 +473,7 @@ const AccountDetail: React.FC = () => {
 
               <div 
                 className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${isRecurring ? 'bg-indigo-50 border-indigo-200' : 'bg-gray-50 border-transparent'}`}
-                onClick={() => setIsRecurring(!isRecurring)}
+                onClick={() => !isSubmittingTx && setIsRecurring(!isRecurring)}
               >
                 <div className={`w-5 h-5 rounded border flex items-center justify-center ${isRecurring ? 'bg-indigo-600 border-indigo-600' : 'bg-white border-gray-300'}`}>
                     {isRecurring && <Plus size={14} className="text-white rotate-45" />}
@@ -453,9 +490,10 @@ const AccountDetail: React.FC = () => {
                 <input
                   type="text"
                   required
+                  disabled={isSubmittingTx}
                   value={newTransaction.description}
                   onChange={(e) => setNewTransaction({ ...newTransaction, description: e.target.value })}
-                  className="w-full border border-gray-200 rounded-lg p-3 outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="w-full border border-gray-200 rounded-lg p-3 outline-none focus:ring-2 focus:ring-indigo-500 disabled:bg-gray-50"
                   placeholder="Ej: Cena, Factura..."
                 />
               </div>
@@ -467,9 +505,10 @@ const AccountDetail: React.FC = () => {
                     type="number"
                     step="0.01"
                     required
+                    disabled={isSubmittingTx}
                     value={newTransaction.amount}
                     onChange={(e) => setNewTransaction({ ...newTransaction, amount: parseFloat(e.target.value) })}
-                    className="w-full border border-gray-200 rounded-lg p-3 outline-none focus:ring-2 focus:ring-indigo-500 font-mono"
+                    className="w-full border border-gray-200 rounded-lg p-3 outline-none focus:ring-2 focus:ring-indigo-500 font-mono disabled:bg-gray-50"
                     placeholder="0.00"
                     />
                 </div>
@@ -478,9 +517,10 @@ const AccountDetail: React.FC = () => {
                     <input
                     type="date"
                     required
+                    disabled={isSubmittingTx}
                     value={newTransaction.date?.split('T')[0]} 
                     onChange={(e) => setNewTransaction({ ...newTransaction, date: e.target.value })}
-                    className="w-full border border-gray-200 rounded-lg p-3 outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="w-full border border-gray-200 rounded-lg p-3 outline-none focus:ring-2 focus:ring-indigo-500 disabled:bg-gray-50"
                     />
                 </div>
               </div>
@@ -489,9 +529,9 @@ const AccountDetail: React.FC = () => {
               <div>
                   <div className="flex justify-between items-center mb-1">
                     <label className="block text-xs font-bold text-gray-500 uppercase">Categoría</label>
-                    {/* Botón para abrir modal de crear categoría */}
                     <button 
                         type="button"
+                        disabled={isSubmittingTx}
                         onClick={() => setIsCategoryModalOpen(true)}
                         className="text-indigo-600 text-xs font-bold hover:underline flex items-center gap-1 hover:bg-indigo-50 px-2 py-0.5 rounded transition-colors"
                     >
@@ -499,7 +539,8 @@ const AccountDetail: React.FC = () => {
                     </button>
                   </div>
                   <select
-                      className="w-full border border-gray-200 rounded-lg p-3 outline-none focus:ring-2 focus:ring-indigo-500 bg-white"
+                      disabled={isSubmittingTx}
+                      className="w-full border border-gray-200 rounded-lg p-3 outline-none focus:ring-2 focus:ring-indigo-500 bg-white disabled:bg-gray-50"
                       value={newTransaction.categoryId}
                       onChange={(e) => setNewTransaction({ ...newTransaction, categoryId: parseInt(e.target.value) })}
                   >
@@ -513,9 +554,14 @@ const AccountDetail: React.FC = () => {
                   </select>
               </div>
 
-              <button type="submit" className="w-full bg-indigo-600 text-white py-4 rounded-xl font-bold hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-200 mt-2">
+              <Button
+                type="submit"
+                isLoading={isSubmittingTx}
+                loadingText="Guardando..."
+                className="py-4 shadow-lg mt-2"
+              >
                 {isRecurring ? 'Crear Recurrencia' : 'Añadir Movimiento'}
-              </button>
+              </Button>
 
             </form>
 
@@ -526,7 +572,7 @@ const AccountDetail: React.FC = () => {
                         <h3 className="text-lg font-bold text-gray-800 flex items-center gap-2">
                             <Tag size={18} className="text-blue-500"/> Nueva Categoría
                         </h3>
-                        <button onClick={() => setIsCategoryModalOpen(false)} className="text-gray-400 hover:text-gray-600">✕</button>
+                        <button onClick={() => !isCreatingCategory && setIsCategoryModalOpen(false)} className="text-gray-400 hover:text-gray-600">✕</button>
                     </div>
                     <form onSubmit={handleQuickCreateCategory} className="p-6 flex-1 flex flex-col gap-4">
                         
@@ -540,9 +586,10 @@ const AccountDetail: React.FC = () => {
                                 type="text"
                                 required
                                 autoFocus
+                                disabled={isCreatingCategory}
                                 value={newQuickCategory.name}
                                 onChange={(e) => setNewQuickCategory({ ...newQuickCategory, name: e.target.value })}
-                                className="w-full border border-gray-200 rounded-lg p-3 outline-none focus:ring-2 focus:ring-blue-500"
+                                className="w-full border border-gray-200 rounded-lg p-3 outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-50"
                                 placeholder="Ej: Regalos, Transporte..."
                             />
                         </div>
@@ -552,6 +599,7 @@ const AccountDetail: React.FC = () => {
                             <div className="flex items-center gap-4">
                                 <input 
                                     type="color" 
+                                    disabled={isCreatingCategory}
                                     value={newQuickCategory.color}
                                     onChange={(e) => setNewQuickCategory({...newQuickCategory, color: e.target.value})}
                                     className="h-10 w-20 p-1 rounded border cursor-pointer"
@@ -563,17 +611,22 @@ const AccountDetail: React.FC = () => {
                         <div className="mt-auto pt-4 flex gap-3">
                             <button 
                                 type="button" 
+                                disabled={isCreatingCategory}
                                 onClick={() => setIsCategoryModalOpen(false)}
-                                className="flex-1 py-3 text-gray-500 font-bold hover:bg-gray-100 rounded-xl"
+                                className="flex-1 py-3 text-gray-500 font-bold hover:bg-gray-100 rounded-xl disabled:opacity-50"
                             >
                                 Cancelar
                             </button>
-                            <button 
+                            <Button 
                                 type="submit" 
-                                className="flex-1 bg-blue-600 text-white py-3 rounded-xl font-bold hover:bg-blue-700 shadow-lg shadow-blue-200"
+                                variant="blue"
+                                fullWidth={false}
+                                isLoading={isCreatingCategory}
+                                loadingText="Guardando..."
+                                className="flex-1 py-3 shadow-lg"
                             >
                                 Guardar
-                            </button>
+                            </Button>
                         </div>
                     </form>
                 </div>
@@ -625,7 +678,8 @@ const AccountDetail: React.FC = () => {
                                     <td className="py-4 text-center">
                                         <button 
                                             onClick={() => handleCancelRecurring(rec.id)}
-                                            className="text-red-400 hover:text-red-600 hover:bg-red-50 p-2 rounded-full transition-colors"
+                                            disabled={cancelingRecId === rec.id}
+                                            className="text-red-400 hover:text-red-600 hover:bg-red-50 p-2 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                                         >
                                             <XCircle size={20}/>
                                         </button>

@@ -5,6 +5,7 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { getCategories, createCategory, deleteCategory } from "../services/categoryService";
+import { Button } from "../components/ui/Button";
 
 interface Category {
   id: number;
@@ -18,6 +19,8 @@ const Categories: React.FC = () => {
   const navigate = useNavigate();
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [deletingId, setDeletingId] = useState<number | null>(null);
   
   // Estado para el Buscador
   const [searchTerm, setSearchTerm] = useState("");
@@ -47,24 +50,31 @@ const Categories: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newCat.name) return;
+    if (isSubmitting || !newCat.name) return;
+    setIsSubmitting(true);
     try {
       await createCategory(newCat);
       setNewCat({ name: "", type: "EXPENSE", color: "#3b82f6" }); // Reset
       setIsModalOpen(false); // Cerrar modal
-      loadCategories();
+      await loadCategories();
     } catch (error) {
       console.error("Error creando categoría", error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   const handleDelete = async (id: number) => {
+    if (deletingId !== null) return;
     if (!confirm("¿Borrar categoría? Se perderá la referencia en los movimientos antiguos.")) return;
+    setDeletingId(id);
     try {
       await deleteCategory(id);
-      loadCategories();
+      await loadCategories();
     } catch (error) {
       console.error("Error borrando categoría", error);
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -124,7 +134,11 @@ const Categories: React.FC = () => {
                       {cat.type === 'INCOME' ? 'Ingreso' : 'Gasto'}
                     </span>
                   </div>
-                  <button onClick={() => handleDelete(cat.id)} className="text-gray-300 hover:text-red-500 p-2 hover:bg-red-50 rounded-full transition-all">
+                  <button
+                    onClick={() => handleDelete(cat.id)}
+                    disabled={deletingId === cat.id}
+                    className="text-gray-300 hover:text-red-500 p-2 hover:bg-red-50 rounded-full transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
                     <Trash2 size={20} />
                   </button>
                 </div>
@@ -139,7 +153,7 @@ const Categories: React.FC = () => {
           <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden animate-fade-in">
             <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50">
               <h3 className="text-xl font-bold text-gray-800">Nueva Categoría</h3>
-              <button onClick={() => setIsModalOpen(false)} className="text-gray-400 hover:text-gray-600">✕</button>
+              <button onClick={() => !isSubmitting && setIsModalOpen(false)} className="text-gray-400 hover:text-gray-600">✕</button>
             </div>
 
             <form onSubmit={handleSubmit} className="p-6 space-y-5">
@@ -148,6 +162,7 @@ const Categories: React.FC = () => {
               <div className="grid grid-cols-2 gap-4">
                 <button
                   type="button"
+                  disabled={isSubmitting}
                   onClick={() => setNewCat({...newCat, type: "EXPENSE"})}
                   className={`p-3 rounded-xl flex items-center justify-center gap-2 font-bold border-2 transition-all ${newCat.type === 'EXPENSE' ? 'border-red-500 bg-red-50 text-red-600' : 'border-gray-200 text-gray-400 hover:border-gray-300'}`}
                 >
@@ -155,6 +170,7 @@ const Categories: React.FC = () => {
                 </button>
                 <button
                   type="button"
+                  disabled={isSubmitting}
                   onClick={() => setNewCat({...newCat, type: "INCOME"})}
                   className={`p-3 rounded-xl flex items-center justify-center gap-2 font-bold border-2 transition-all ${newCat.type === 'INCOME' ? 'border-green-500 bg-green-50 text-green-600' : 'border-gray-200 text-gray-400 hover:border-gray-300'}`}
                 >
@@ -168,9 +184,10 @@ const Categories: React.FC = () => {
                 <input
                   type="text"
                   required
+                  disabled={isSubmitting}
                   value={newCat.name}
                   onChange={(e) => setNewCat({ ...newCat, name: e.target.value })}
-                  className="w-full border border-gray-200 rounded-lg p-3 outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full border border-gray-200 rounded-lg p-3 outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-50"
                   placeholder="Ej: Gimnasio, Alquiler..."
                 />
               </div>
@@ -181,6 +198,7 @@ const Categories: React.FC = () => {
                  <div className="flex items-center gap-4">
                     <input 
                         type="color" 
+                        disabled={isSubmitting}
                         value={newCat.color}
                         onChange={(e) => setNewCat({...newCat, color: e.target.value})}
                         className="h-12 w-20 p-1 rounded-lg border border-gray-200 cursor-pointer"
@@ -191,9 +209,15 @@ const Categories: React.FC = () => {
                  </div>
               </div>
 
-              <button type="submit" className="w-full bg-blue-600 text-white py-4 rounded-xl font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-200 mt-2">
+              <Button
+                type="submit"
+                variant="blue"
+                isLoading={isSubmitting}
+                loadingText="Guardando..."
+                className="py-4 shadow-lg mt-2"
+              >
                 Guardar Categoría
-              </button>
+              </Button>
 
             </form>
           </div>

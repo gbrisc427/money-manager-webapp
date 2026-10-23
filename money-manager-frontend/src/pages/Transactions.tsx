@@ -11,8 +11,9 @@ import {
 import type { Transaction, TransactionRequest, RecurringTransaction } from "../services/transactionService";
 import { getAccounts } from "../services/accountService";
 import type { Account } from "../services/accountService";
-import { getCategories, createCategory } from "../services/categoryService"; // <--- Importamos createCategory
+import { getCategories, createCategory } from "../services/categoryService";
 import type { Category } from "../services/categoryService";
+import { Button } from "../components/ui/Button";
 
 const Transactions: React.FC = () => {
   const navigate = useNavigate();
@@ -21,6 +22,12 @@ const Transactions: React.FC = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
+
+  // Estados de bloqueo CRUD
+  const [isSubmittingTx, setIsSubmittingTx] = useState(false);
+  const [isCreatingCategory, setIsCreatingCategory] = useState(false);
+  const [deletingId, setDeletingId] = useState<number | null>(null);
+  const [cancelingRecId, setCancelingRecId] = useState<number | null>(null);
   
   // Modal Crear
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -34,7 +41,7 @@ const Transactions: React.FC = () => {
   });
   const [isRecurring, setIsRecurring] = useState(false);
 
-  // --- MODAL AÑADIR CATEGORÍA RÁPIDA (NUEVO) ---
+  // --- MODAL AÑADIR CATEGORÍA RÁPIDA ---
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
   const [newQuickCategory, setNewQuickCategory] = useState({
     name: "",
@@ -82,14 +89,14 @@ const Transactions: React.FC = () => {
   // --- LÓGICA CREAR CATEGORÍA RÁPIDA ---
   const handleQuickCreateCategory = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newQuickCategory.name) return;
+    if (isCreatingCategory || !newQuickCategory.name) return;
+    setIsCreatingCategory(true);
     try {
         await createCategory(newQuickCategory);
         const updatedCats = await getCategories();
         setCategories(updatedCats);
         setIsCategoryModalOpen(false);
         
-        // Seleccionar automáticamente la nueva
         const created = updatedCats.find(c => c.name === newQuickCategory.name && c.type === newQuickCategory.type);
         if (created) {
             setNewTransaction(prev => ({ ...prev, categoryId: created.id }));
@@ -97,6 +104,8 @@ const Transactions: React.FC = () => {
         setNewQuickCategory({ name: "", type: "EXPENSE", color: "#3b82f6" });
     } catch (error) {
         console.error("Error creando categoría rápida", error);
+    } finally {
+        setIsCreatingCategory(false);
     }
   };
 
@@ -113,13 +122,17 @@ const Transactions: React.FC = () => {
 
   // Cancelar suscripción
   const handleCancelRecurring = async (id: number) => {
+    if (cancelingRecId !== null) return;
     if (!window.confirm("¿Seguro que quieres cancelar esta suscripción? Dejará de cobrarse automáticamente.")) return;
+    setCancelingRecId(id);
     try {
       await cancelRecurringTransaction(id);
       const updatedList = await getRecurringTransactions();
       setRecurringList(updatedList.filter(r => r.active));
     } catch (error) {
       console.error("Error cancelando", error);
+    } finally {
+      setCancelingRecId(null);
     }
   };
 
@@ -130,16 +143,16 @@ const Transactions: React.FC = () => {
         type: type,
         categoryId: validCategories.length > 0 ? validCategories[0].id : 0
     }));
-    // Sincronizar tipo para categoría rápida
     setNewQuickCategory(prev => ({ ...prev, type: type }));
   };
 
   const handleCreateTransaction = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isSubmittingTx || newTransaction.categoryId === 0 || Number(newTransaction.amount) <= 0) {
+      return; 
+    }
+    setIsSubmittingTx(true);
     try {
-      if (newTransaction.categoryId === 0) {
-        return; 
-      }
       if (isRecurring) {
         await createRecurringTransaction(newTransaction);
       } else {
@@ -157,19 +170,25 @@ const Transactions: React.FC = () => {
         type: "EXPENSE",
         categoryId: defaultExpenseCats.length > 0 ? defaultExpenseCats[0].id : 0
       });
-      loadData();
+      await loadData();
     } catch (error) {
       console.error("Error creando transacción", error);
+    } finally {
+      setIsSubmittingTx(false);
     }
   };
 
   const handleDelete = async (id: number) => {
+    if (deletingId !== null) return;
     if (!window.confirm("¿Seguro que quieres borrar este movimiento?")) return;
+    setDeletingId(id);
     try {
       await deleteTransaction(id);
-      loadData();
+      await loadData();
     } catch (error) {
       console.error("Error borrando", error);
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -254,7 +273,11 @@ const Transactions: React.FC = () => {
                         </span>
                       </td>
                       <td className="p-4 text-center">
-                        <button onClick={() => handleDelete(t.id)} className="text-gray-400 hover:text-red-500 transition-colors">
+                        <button
+                          onClick={() => handleDelete(t.id)}
+                          disabled={deletingId === t.id}
+                          className="text-gray-400 hover:text-red-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
                           <Trash2 size={18}/>
                         </button>
                       </td>
@@ -308,7 +331,8 @@ const Transactions: React.FC = () => {
                                     <td className="py-4 text-center">
                                         <button 
                                             onClick={() => handleCancelRecurring(rec.id)}
-                                            className="text-red-400 hover:text-red-600 hover:bg-red-50 p-2 rounded-full transition-colors"
+                                            disabled={cancelingRecId === rec.id}
+                                            className="text-red-400 hover:text-red-600 hover:bg-red-50 p-2 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                                             title="Cancelar suscripción"
                                         >
                                             <XCircle size={20}/>
@@ -330,13 +354,14 @@ const Transactions: React.FC = () => {
           <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden animate-fade-in relative">
             <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50">
               <h3 className="text-xl font-bold text-gray-800">Registrar Movimiento</h3>
-              <button onClick={() => setIsModalOpen(false)} className="text-gray-400 hover:text-gray-600">✕</button>
+              <button onClick={() => !isSubmittingTx && setIsModalOpen(false)} className="text-gray-400 hover:text-gray-600">✕</button>
             </div>
 
             <form onSubmit={handleCreateTransaction} className="p-6 space-y-4">
               <div className="grid grid-cols-2 gap-4 mb-2">
                 <button
                   type="button"
+                  disabled={isSubmittingTx}
                   onClick={() => handleTypeChange("EXPENSE")}
                   className={`p-3 rounded-xl flex items-center justify-center gap-2 font-bold border-2 transition-all ${newTransaction.type === 'EXPENSE' ? 'border-red-500 bg-red-50 text-red-600' : 'border-gray-200 text-gray-400 hover:border-gray-300'}`}
                 >
@@ -344,6 +369,7 @@ const Transactions: React.FC = () => {
                 </button>
                 <button
                   type="button"
+                  disabled={isSubmittingTx}
                   onClick={() => handleTypeChange("INCOME")}
                   className={`p-3 rounded-xl flex items-center justify-center gap-2 font-bold border-2 transition-all ${newTransaction.type === 'INCOME' ? 'border-green-500 bg-green-50 text-green-600' : 'border-gray-200 text-gray-400 hover:border-gray-300'}`}
                 >
@@ -353,7 +379,7 @@ const Transactions: React.FC = () => {
 
               <div 
                 className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${isRecurring ? 'bg-indigo-50 border-indigo-200' : 'bg-gray-50 border-transparent'}`}
-                onClick={() => setIsRecurring(!isRecurring)}
+                onClick={() => !isSubmittingTx && setIsRecurring(!isRecurring)}
               >
                 <div className={`w-5 h-5 rounded border flex items-center justify-center ${isRecurring ? 'bg-indigo-600 border-indigo-600' : 'bg-white border-gray-300'}`}>
                     {isRecurring && <Plus size={14} className="text-white rotate-45" />}
@@ -370,9 +396,10 @@ const Transactions: React.FC = () => {
                 <input
                   type="text"
                   required
+                  disabled={isSubmittingTx}
                   value={newTransaction.description}
                   onChange={(e) => setNewTransaction({ ...newTransaction, description: e.target.value })}
-                  className="w-full border border-gray-200 rounded-lg p-3 outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="w-full border border-gray-200 rounded-lg p-3 outline-none focus:ring-2 focus:ring-indigo-500 disabled:bg-gray-50"
                   placeholder="Ej: Compra Mercadona"
                 />
               </div>
@@ -384,9 +411,10 @@ const Transactions: React.FC = () => {
                     type="number"
                     step="0.01"
                     required
+                    disabled={isSubmittingTx}
                     value={newTransaction.amount}
                     onChange={(e) => setNewTransaction({ ...newTransaction, amount: parseFloat(e.target.value) })}
-                    className="w-full border border-gray-200 rounded-lg p-3 outline-none focus:ring-2 focus:ring-indigo-500 font-mono"
+                    className="w-full border border-gray-200 rounded-lg p-3 outline-none focus:ring-2 focus:ring-indigo-500 font-mono disabled:bg-gray-50"
                     placeholder="0.00"
                     />
                 </div>
@@ -395,9 +423,10 @@ const Transactions: React.FC = () => {
                     <input
                     type="date"
                     required
+                    disabled={isSubmittingTx}
                     value={newTransaction.date?.split('T')[0]} 
                     onChange={(e) => setNewTransaction({ ...newTransaction, date: e.target.value })}
-                    className="w-full border border-gray-200 rounded-lg p-3 outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="w-full border border-gray-200 rounded-lg p-3 outline-none focus:ring-2 focus:ring-indigo-500 disabled:bg-gray-50"
                     />
                 </div>
               </div>
@@ -406,7 +435,8 @@ const Transactions: React.FC = () => {
                 <div>
                     <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Cuenta</label>
                     <select
-                        className="w-full border border-gray-200 rounded-lg p-3 outline-none focus:ring-2 focus:ring-indigo-500 bg-white"
+                        disabled={isSubmittingTx}
+                        className="w-full border border-gray-200 rounded-lg p-3 outline-none focus:ring-2 focus:ring-indigo-500 bg-white disabled:bg-gray-50"
                         value={newTransaction.accountId}
                         onChange={(e) => setNewTransaction({ ...newTransaction, accountId: parseInt(e.target.value) })}
                     >
@@ -421,6 +451,7 @@ const Transactions: React.FC = () => {
                         {/* Botón Acceso Rápido */}
                         <button 
                             type="button"
+                            disabled={isSubmittingTx}
                             onClick={() => setIsCategoryModalOpen(true)}
                             className="text-indigo-600 text-xs font-bold hover:underline flex items-center gap-1 hover:bg-indigo-50 px-2 py-0.5 rounded transition-colors"
                         >
@@ -428,7 +459,8 @@ const Transactions: React.FC = () => {
                         </button>
                     </div>
                     <select
-                        className="w-full border border-gray-200 rounded-lg p-3 outline-none focus:ring-2 focus:ring-indigo-500 bg-white"
+                        disabled={isSubmittingTx}
+                        className="w-full border border-gray-200 rounded-lg p-3 outline-none focus:ring-2 focus:ring-indigo-500 bg-white disabled:bg-gray-50"
                         value={newTransaction.categoryId}
                         onChange={(e) => setNewTransaction({ ...newTransaction, categoryId: parseInt(e.target.value) })}
                     >
@@ -443,9 +475,14 @@ const Transactions: React.FC = () => {
                 </div>
               </div>
 
-              <button type="submit" className="w-full bg-indigo-600 text-white py-4 rounded-xl font-bold hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-200 mt-2">
+              <Button
+                type="submit"
+                isLoading={isSubmittingTx}
+                loadingText="Guardando..."
+                className="py-4 shadow-lg mt-2"
+              >
                 {isRecurring ? 'Configurar Recurrencia' : 'Guardar Movimiento'}
-              </button>
+              </Button>
 
             </form>
 
@@ -456,7 +493,7 @@ const Transactions: React.FC = () => {
                         <h3 className="text-lg font-bold text-gray-800 flex items-center gap-2">
                             <Tag size={18} className="text-blue-500"/> Nueva Categoría
                         </h3>
-                        <button onClick={() => setIsCategoryModalOpen(false)} className="text-gray-400 hover:text-gray-600">✕</button>
+                        <button onClick={() => !isCreatingCategory && setIsCategoryModalOpen(false)} className="text-gray-400 hover:text-gray-600">✕</button>
                     </div>
                     <form onSubmit={handleQuickCreateCategory} className="p-6 flex-1 flex flex-col gap-4">
                         
@@ -470,9 +507,10 @@ const Transactions: React.FC = () => {
                                 type="text"
                                 required
                                 autoFocus
+                                disabled={isCreatingCategory}
                                 value={newQuickCategory.name}
                                 onChange={(e) => setNewQuickCategory({ ...newQuickCategory, name: e.target.value })}
-                                className="w-full border border-gray-200 rounded-lg p-3 outline-none focus:ring-2 focus:ring-blue-500"
+                                className="w-full border border-gray-200 rounded-lg p-3 outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-50"
                                 placeholder="Ej: Regalos, Transporte..."
                             />
                         </div>
@@ -482,6 +520,7 @@ const Transactions: React.FC = () => {
                             <div className="flex items-center gap-4">
                                 <input 
                                     type="color" 
+                                    disabled={isCreatingCategory}
                                     value={newQuickCategory.color}
                                     onChange={(e) => setNewQuickCategory({...newQuickCategory, color: e.target.value})}
                                     className="h-10 w-20 p-1 rounded border cursor-pointer"
@@ -493,17 +532,22 @@ const Transactions: React.FC = () => {
                         <div className="mt-auto pt-4 flex gap-3">
                             <button 
                                 type="button" 
+                                disabled={isCreatingCategory}
                                 onClick={() => setIsCategoryModalOpen(false)}
-                                className="flex-1 py-3 text-gray-500 font-bold hover:bg-gray-100 rounded-xl"
+                                className="flex-1 py-3 text-gray-500 font-bold hover:bg-gray-100 rounded-xl disabled:opacity-50"
                             >
                                 Cancelar
                             </button>
-                            <button 
+                            <Button 
                                 type="submit" 
-                                className="flex-1 bg-blue-600 text-white py-3 rounded-xl font-bold hover:bg-blue-700 shadow-lg shadow-blue-200"
+                                variant="blue"
+                                fullWidth={false}
+                                isLoading={isCreatingCategory}
+                                loadingText="Guardando..."
+                                className="flex-1 py-3 shadow-lg"
                             >
                                 Guardar
-                            </button>
+                            </Button>
                         </div>
                     </form>
                 </div>

@@ -5,6 +5,7 @@ import { LogOut, User, ArrowLeft, ArrowRight, Download, Trash2, AlertTriangle, X
 import { getUserProfile, updateUserName, deleteUserAccount } from "../services/profileService";
 import { logoutUser } from "../services/authService";
 import { requestRecoveryCode, verifyRecoveryCode, resetPassword } from "../services/recoverService";
+import { Button } from "../components/ui/Button";
 
 const Profile: React.FC = () => {
   const navigate = useNavigate();
@@ -12,6 +13,11 @@ const Profile: React.FC = () => {
   const [name, setName] = useState("");
   const [newName, setNewName] = useState("");
   
+  // Estados de carga CRUD
+  const [isSavingName, setIsSavingName] = useState(false);
+  const [isAuthActionLoading, setIsAuthActionLoading] = useState(false);
+  const [isDeletingAccount, setIsDeletingAccount] = useState(false);
+
   // Estados para recuperación de contraseña
   const [code, setCode] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -52,11 +58,11 @@ const Profile: React.FC = () => {
   };
 
   const handleDeleteAccount = async () => {
-    if (deleteConfirmationText !== "ELIMINAR") return;
+    if (isDeletingAccount || deleteConfirmationText !== "ELIMINAR") return;
 
+    setIsDeletingAccount(true);
     try {
       await deleteUserAccount();
-      // Logout forzado tras borrar
       await logoutUser();
       localStorage.removeItem("userEmail");
       localStorage.removeItem("userName");
@@ -64,12 +70,14 @@ const Profile: React.FC = () => {
     } catch (error) {
       console.error("Error eliminando cuenta", error);
       alert("Hubo un error al intentar eliminar la cuenta.");
+      setIsDeletingAccount(false);
     }
   };
 
   const handleChangeName = async () => {
+    if (isSavingName || !newName.trim()) return;
+    setIsSavingName(true);
     try {
-      if (!newName.trim()) return;
       await updateUserName(newName);
       setName(newName);
       localStorage.setItem("userName", newName);
@@ -79,10 +87,14 @@ const Profile: React.FC = () => {
     } catch (err: unknown) {
       setMessage(err instanceof Error ? err.message : "Error al actualizar nombre");
       setIsError(true);
+    } finally {
+      setIsSavingName(false);
     }
   };
 
   const handleRequestCode = async () => {
+    if (isAuthActionLoading) return;
+    setIsAuthActionLoading(true);
     try {
       await requestRecoveryCode(email);
       setMessage("Código enviado al correo");
@@ -91,10 +103,14 @@ const Profile: React.FC = () => {
     } catch (err: unknown) {
       setMessage(err instanceof Error ? err.message : "Error al solicitar código");
       setIsError(true);
+    } finally {
+      setIsAuthActionLoading(false);
     }
   };
 
   const handleVerifyCode = async () => {
+    if (isAuthActionLoading || !code.trim()) return;
+    setIsAuthActionLoading(true);
     try {
       await verifyRecoveryCode(email, code);
       setMessage("Código verificado. Introduce tu nueva contraseña.");
@@ -103,10 +119,14 @@ const Profile: React.FC = () => {
     } catch (err: unknown) {
       setMessage(err instanceof Error ? err.message : "Código incorrecto");
       setIsError(true);
+    } finally {
+      setIsAuthActionLoading(false);
     }
   };
 
   const handleResetPassword = async () => {
+    if (isAuthActionLoading || !newPassword.trim()) return;
+    setIsAuthActionLoading(true);
     try {
       await resetPassword(email, newPassword, code);
       setMessage("Contraseña actualizada con éxito");
@@ -117,6 +137,8 @@ const Profile: React.FC = () => {
     } catch (err: unknown) {
       setMessage(err instanceof Error ? err.message : "Error al cambiar contraseña");
       setIsError(true);
+    } finally {
+      setIsAuthActionLoading(false);
     }
   };
 
@@ -163,37 +185,41 @@ const Profile: React.FC = () => {
                   <div className="flex gap-2">
                     <input
                       type="text"
+                      disabled={isSavingName}
                       value={newName}
                       onChange={(e) => setNewName(e.target.value)}
-                      className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+                      className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none disabled:bg-gray-50"
                       placeholder="Nuevo nombre"
                     />
-                    <button
+                    <Button
                       onClick={handleChangeName}
+                      fullWidth={false}
                       disabled={!newName.trim()}
-                      className="bg-indigo-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                      isLoading={isSavingName}
+                      loadingText="Guardando..."
+                      className="px-4 py-2 rounded-lg font-medium whitespace-nowrap"
                     >
                       Guardar
-                    </button>
+                    </Button>
                   </div>
                 </div>
 
                 {/* Exportar */}
                 <button 
-                        onClick={() => navigate("/export")}
-                        className="w-full flex items-center justify-between p-4 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors group"
-                    >
-                        <div className="flex items-center gap-3">
-                            <div className="bg-indigo-50 p-2 rounded-lg text-indigo-600">
-                                <Download size={20}/>
-                            </div>
-                            <div className="text-left">
-                                <p className="font-bold text-gray-700">Exportar mis datos</p>
-                                <p className="text-xs text-gray-500">Descarga tus movimientos en Excel</p>
-                            </div>
+                    onClick={() => navigate("/export")}
+                    className="w-full flex items-center justify-between p-4 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors group"
+                >
+                    <div className="flex items-center gap-3">
+                        <div className="bg-indigo-50 p-2 rounded-lg text-indigo-600">
+                            <Download size={20}/>
                         </div>
-                        <ArrowRight size={18} className="text-gray-400 group-hover:text-indigo-600 transition-colors"/>
-                    </button>
+                        <div className="text-left">
+                            <p className="font-bold text-gray-700">Exportar mis datos</p>
+                            <p className="text-xs text-gray-500">Descarga tus movimientos en Excel</p>
+                        </div>
+                    </div>
+                    <ArrowRight size={18} className="text-gray-400 group-hover:text-indigo-600 transition-colors"/>
+                </button>
 
                 {/* Cambiar Contraseña */}
                 <div>
@@ -205,7 +231,7 @@ const Profile: React.FC = () => {
                   </button>
                 </div>
 
-                {/* --- SECCIÓN ZONA DE PELIGRO (SIN LÍNEA GRIS) --- */}
+                {/* SECCIÓN ZONA DE PELIGRO */}
                 <div className="pt-2"> 
                     <button 
                         onClick={() => setIsDeleteModalOpen(true)}
@@ -225,8 +251,22 @@ const Profile: React.FC = () => {
                   Para cambiar tu contraseña, primero enviaremos un código a <b>{email}</b>.
                 </p>
                 <div className="flex gap-3 pt-2">
-                    <button onClick={() => { setStep("main"); setMessage(""); }} className="flex-1 bg-gray-100 text-gray-600 py-2 rounded-lg hover:bg-gray-200">Cancelar</button>
-                    <button onClick={handleRequestCode} className="flex-1 bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700">Enviar Código</button>
+                    <button
+                      disabled={isAuthActionLoading}
+                      onClick={() => { setStep("main"); setMessage(""); }}
+                      className="flex-1 bg-gray-100 text-gray-600 py-2 rounded-lg hover:bg-gray-200 disabled:opacity-50"
+                    >
+                      Cancelar
+                    </button>
+                    <Button
+                      onClick={handleRequestCode}
+                      fullWidth={false}
+                      isLoading={isAuthActionLoading}
+                      loadingText="Enviando..."
+                      className="flex-1 py-2 rounded-lg"
+                    >
+                      Enviar Código
+                    </Button>
                 </div>
               </div>
             )}
@@ -236,14 +276,29 @@ const Profile: React.FC = () => {
                 <h3 className="text-lg font-bold text-center text-gray-700">Introduce el Código</h3>
                 <input
                   type="text"
+                  disabled={isAuthActionLoading}
                   value={code}
                   onChange={(e) => setCode(e.target.value)}
                   placeholder="Ej: 123456"
-                  className="w-full text-center tracking-widest text-xl px-4 py-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+                  className="w-full text-center tracking-widest text-xl px-4 py-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none disabled:bg-gray-50"
                 />
                 <div className="flex gap-3">
-                    <button onClick={() => setStep("main")} className="flex-1 bg-gray-100 text-gray-600 py-2 rounded-lg hover:bg-gray-200">Cancelar</button>
-                    <button onClick={handleVerifyCode} className="flex-1 bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700">Verificar</button>
+                    <button
+                      disabled={isAuthActionLoading}
+                      onClick={() => setStep("main")}
+                      className="flex-1 bg-gray-100 text-gray-600 py-2 rounded-lg hover:bg-gray-200 disabled:opacity-50"
+                    >
+                      Cancelar
+                    </button>
+                    <Button
+                      onClick={handleVerifyCode}
+                      fullWidth={false}
+                      isLoading={isAuthActionLoading}
+                      loadingText="Verificando..."
+                      className="flex-1 py-2 rounded-lg"
+                    >
+                      Verificar
+                    </Button>
                 </div>
               </div>
             )}
@@ -254,10 +309,11 @@ const Profile: React.FC = () => {
                 <div className="relative">
                     <input
                     type={showPassword ? "text" : "password"}
+                    disabled={isAuthActionLoading}
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
                     placeholder="Mínimo 8 caracteres..."
-                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none disabled:bg-gray-50"
                     />
                     <button
                     type="button"
@@ -267,12 +323,15 @@ const Profile: React.FC = () => {
                     {showPassword ? <AiOutlineEyeInvisible size={20} /> : <AiOutlineEye size={20} />}
                     </button>
                 </div>
-                <button
+                <Button
                   onClick={handleResetPassword}
-                  className="w-full bg-green-600 text-white py-2.5 rounded-lg font-bold hover:bg-green-700 shadow-lg shadow-green-100 transition"
+                  variant="success"
+                  isLoading={isAuthActionLoading}
+                  loadingText="Confirmando..."
+                  className="py-2.5 rounded-lg shadow-lg"
                 >
                   Confirmar Cambio
-                </button>
+                </Button>
               </div>
             )}
 
@@ -296,7 +355,7 @@ const Profile: React.FC = () => {
                     <AlertTriangle size={32} className="text-red-600" />
                 </div>
                 <h3 className="text-xl font-bold text-red-700">¿Eliminar cuenta permanentemente?</h3>
-                <button onClick={() => setIsDeleteModalOpen(false)} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                <button onClick={() => !isDeletingAccount && setIsDeleteModalOpen(false)} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
                     <X size={24} />
                 </button>
             </div>
@@ -314,27 +373,33 @@ const Profile: React.FC = () => {
                     </label>
                     <input
                         type="text"
+                        disabled={isDeletingAccount}
                         value={deleteConfirmationText}
                         onChange={(e) => setDeleteConfirmationText(e.target.value)}
                         placeholder="ELIMINAR"
-                        className="w-full text-center tracking-widest font-bold border-2 border-gray-300 rounded-lg p-3 outline-none focus:border-red-500 focus:ring-4 focus:ring-red-100 transition-all uppercase placeholder-gray-300"
+                        className="w-full text-center tracking-widest font-bold border-2 border-gray-300 rounded-lg p-3 outline-none focus:border-red-500 focus:ring-4 focus:ring-red-100 transition-all uppercase placeholder-gray-300 disabled:bg-gray-100"
                     />
                 </div>
 
                 <div className="flex gap-3 pt-2">
                     <button 
+                        disabled={isDeletingAccount}
                         onClick={() => { setIsDeleteModalOpen(false); setDeleteConfirmationText(""); }} 
-                        className="flex-1 py-3 text-gray-600 font-bold hover:bg-gray-100 rounded-xl transition-colors"
+                        className="flex-1 py-3 text-gray-600 font-bold hover:bg-gray-100 rounded-xl transition-colors disabled:opacity-50"
                     >
                         Cancelar
                     </button>
-                    <button 
+                    <Button 
                         onClick={handleDeleteAccount}
+                        variant="danger"
+                        fullWidth={false}
                         disabled={deleteConfirmationText !== "ELIMINAR"}
-                        className="flex-1 bg-red-600 text-white py-3 rounded-xl font-bold hover:bg-red-700 shadow-lg shadow-red-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                        isLoading={isDeletingAccount}
+                        loadingText="Eliminando..."
+                        className="flex-1 py-3 shadow-lg"
                     >
                         Confirmar
-                    </button>
+                    </Button>
                 </div>
             </div>
           </div>

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { requestRecoveryCode, verifyRecoveryCode, resetPassword } from "../services/recoverService";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
+import { Button } from "../components/ui/Button";
 
 const Recover: React.FC = () => {
   const navigate = useNavigate();
@@ -11,28 +12,42 @@ const Recover: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [step, setStep] = useState<"requestCode" | "verifyCode" | "resetPassword">("requestCode");
   const [message, setMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleRequestCode = async () => {
+    if (isLoading || !email.trim()) return;
+    setIsLoading(true);
+    setMessage("");
     try {
       await requestRecoveryCode(email);
       setMessage("Código enviado al correo");
       setStep("verifyCode");
     } catch (err: unknown) {
       setMessage(err instanceof Error ? err.message : "Error inesperado");
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleVerifyCode = async () => {
+    if (isLoading || !code.trim()) return;
+    setIsLoading(true);
+    setMessage("");
     try {
       await verifyRecoveryCode(email, code);
       setMessage("Código verificado correctamente");
       setStep("resetPassword");
     } catch (err: unknown) {
       setMessage(err instanceof Error ? err.message : "Error inesperado");
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleResetPassword = async () => {
+    if (isLoading || !newPassword.trim()) return;
+    setIsLoading(true);
+    setMessage("");
     try {
       await resetPassword(email, code, newPassword);
       setMessage("Contraseña actualizada correctamente");
@@ -42,6 +57,8 @@ const Recover: React.FC = () => {
       setNewPassword("");
     } catch (err: unknown) {
       setMessage(err instanceof Error ? err.message : "Error inesperado");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -58,15 +75,18 @@ const Recover: React.FC = () => {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              disabled={isLoading}
               placeholder="Correo electrónico"
-              className="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+              className="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none disabled:bg-gray-50"
             />
-            <button
+            <Button
               onClick={handleRequestCode}
-              className="w-full bg-indigo-600 text-white py-2 px-4 rounded-lg font-semibold hover:bg-indigo-700 transition duration-300"
+              isLoading={isLoading}
+              loadingText="Enviando código..."
+              className="py-2.5 px-4 rounded-lg font-semibold"
             >
               Solicitar código
-            </button>
+            </Button>
           </div>
         )}
 
@@ -76,15 +96,19 @@ const Recover: React.FC = () => {
               type="text"
               value={code}
               onChange={(e) => setCode(e.target.value)}
+              disabled={isLoading}
               placeholder="Código recibido"
-              className="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+              className="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none disabled:bg-gray-50"
             />
-            <button
+            <Button
               onClick={handleVerifyCode}
-              className="w-full bg-green-600 text-white py-2 px-4 rounded-lg font-semibold hover:bg-green-700 transition duration-300"
+              variant="success"
+              isLoading={isLoading}
+              loadingText="Verificando..."
+              className="py-2.5 px-4 rounded-lg font-semibold"
             >
               Verificar código
-            </button>
+            </Button>
           </div>
         )}
 
@@ -94,8 +118,9 @@ const Recover: React.FC = () => {
               type={showPassword ? "text" : "password"}
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
+              disabled={isLoading}
               placeholder="Nueva contraseña"
-              className="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+              className="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none disabled:bg-gray-50"
             />
             <button
               type="button"
@@ -104,12 +129,15 @@ const Recover: React.FC = () => {
             >
               {showPassword ? <AiOutlineEye size={20} /> : <AiOutlineEyeInvisible size={20} />}
             </button>
-            <button
+            <Button
               onClick={handleResetPassword}
-              className="w-full mt-12 bg-green-600 text-white py-2 px-4 rounded-lg font-semibold hover:bg-green-700 transition duration-300"
+              variant="success"
+              isLoading={isLoading}
+              loadingText="Guardando..."
+              className="mt-12 py-2.5 px-4 rounded-lg font-semibold"
             >
               Guardar nueva contraseña
-            </button>
+            </Button>
           </div>
         )}
 

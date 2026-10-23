@@ -6,12 +6,15 @@ import {
 } from "lucide-react";
 import { getAccounts, createAccount, deleteAccount } from "../services/accountService";
 import type { Account } from "../services/accountService";
+import { Button } from "../components/ui/Button";
 
 const Accounts: React.FC = () => {
   const navigate = useNavigate();
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [deletingId, setDeletingId] = useState<number | null>(null);
 
   // Estado del Modal
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -38,8 +41,9 @@ const Accounts: React.FC = () => {
 
   const handleCreateAccount = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newAccount.name || newAccount.balance === "") return;
+    if (isSubmitting || !newAccount.name || newAccount.balance === "") return;
 
+    setIsSubmitting(true);
     try {
       await createAccount({
         name: newAccount.name,
@@ -49,20 +53,26 @@ const Accounts: React.FC = () => {
       
       setNewAccount({ name: "", type: "Banco", balance: "" }); // Reset
       setIsModalOpen(false);
-      loadAccounts();
+      await loadAccounts();
     } catch (error) {
       console.error("Error creando cuenta", error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   const handleDelete = async (e: React.MouseEvent, id: number) => {
     e.stopPropagation(); // Evitar entrar al detalle al pulsar borrar
+    if (deletingId !== null) return;
     if (!window.confirm("¿Seguro que quieres borrar esta cuenta y todos sus movimientos?")) return;
+    setDeletingId(id);
     try {
       await deleteAccount(id);
-      loadAccounts();
+      await loadAccounts();
     } catch (error) {
       console.error("Error borrando cuenta", error);
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -145,7 +155,8 @@ const Accounts: React.FC = () => {
                     </div>
                     <button 
                       onClick={(e) => handleDelete(e, acc.id)}
-                      className="text-gray-300 hover:text-red-500 p-2 hover:bg-red-50 rounded-full transition-all"
+                      disabled={deletingId === acc.id}
+                      className="text-gray-300 hover:text-red-500 p-2 hover:bg-red-50 rounded-full transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       <Trash2 size={20} />
                     </button>
@@ -173,7 +184,7 @@ const Accounts: React.FC = () => {
           <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden animate-fade-in">
             <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50">
               <h3 className="text-xl font-bold text-gray-800">Crear Cuenta</h3>
-              <button onClick={() => setIsModalOpen(false)} className="text-gray-400 hover:text-gray-600">✕</button>
+              <button onClick={() => !isSubmitting && setIsModalOpen(false)} className="text-gray-400 hover:text-gray-600">✕</button>
             </div>
 
             <form onSubmit={handleCreateAccount} className="p-6 space-y-5">
@@ -186,9 +197,10 @@ const Accounts: React.FC = () => {
                     <input
                     type="text"
                     required
+                    disabled={isSubmitting}
                     value={newAccount.name}
                     onChange={(e) => setNewAccount({ ...newAccount, name: e.target.value })}
-                    className="w-full border border-gray-200 rounded-lg p-3 pl-10 outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="w-full border border-gray-200 rounded-lg p-3 pl-10 outline-none focus:ring-2 focus:ring-indigo-500 disabled:bg-gray-50"
                     placeholder="Ej: Banco Santander, Hucha..."
                     />
                 </div>
@@ -200,7 +212,8 @@ const Accounts: React.FC = () => {
                 <div className="relative">
                     <Landmark className="absolute left-3 top-3 text-gray-400" size={18}/>
                     <select
-                        className="w-full border border-gray-200 rounded-lg p-3 pl-10 outline-none focus:ring-2 focus:ring-indigo-500 bg-white"
+                        disabled={isSubmitting}
+                        className="w-full border border-gray-200 rounded-lg p-3 pl-10 outline-none focus:ring-2 focus:ring-indigo-500 bg-white disabled:bg-gray-50"
                         value={newAccount.type}
                         onChange={(e) => setNewAccount({ ...newAccount, type: e.target.value })}
                     >
@@ -222,17 +235,23 @@ const Accounts: React.FC = () => {
                     type="number"
                     step="0.01"
                     required
+                    disabled={isSubmitting}
                     value={newAccount.balance}
                     onChange={(e) => setNewAccount({ ...newAccount, balance: e.target.value })}
-                    className="w-full border border-gray-200 rounded-lg p-3 pl-10 outline-none focus:ring-2 focus:ring-indigo-500 font-mono"
+                    className="w-full border border-gray-200 rounded-lg p-3 pl-10 outline-none focus:ring-2 focus:ring-indigo-500 font-mono disabled:bg-gray-50"
                     placeholder="0.00"
                     />
                 </div>
               </div>
 
-              <button type="submit" className="w-full bg-indigo-600 text-white py-4 rounded-xl font-bold hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-200 mt-2">
+              <Button
+                type="submit"
+                isLoading={isSubmitting}
+                loadingText="Creando cuenta..."
+                className="py-4 shadow-lg mt-2"
+              >
                 Crear Cuenta
-              </button>
+              </Button>
 
             </form>
           </div>

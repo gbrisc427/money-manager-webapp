@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { ArrowLeft, Download, Calendar, FileSpreadsheet } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { downloadExcel } from "../services/exportService";
+import { Button } from "../components/ui/Button";
 
 const ExportData: React.FC = () => {
   const navigate = useNavigate();
@@ -10,6 +11,7 @@ const ExportData: React.FC = () => {
   const [loading, setLoading] = useState(false);
 
   const handleDownload = async () => {
+    if (loading) return;
     setLoading(true);
     try {
       await downloadExcel(startDate, endDate);
@@ -24,7 +26,7 @@ const ExportData: React.FC = () => {
   return (
     <div className="min-h-screen bg-[#f9f9f6] p-6">
       
-      {/* HEADER (Alineado a la izquierda, igual que el resto de páginas) */}
+      {/* HEADER */}
       <header className="flex items-center gap-4 mb-8">
         <button onClick={() => navigate("/profile")} className="p-2 hover:bg-gray-200 rounded-full transition-colors">
           <ArrowLeft className="text-gray-600" />
@@ -54,7 +56,8 @@ const ExportData: React.FC = () => {
                             <Calendar className="absolute left-3 top-3 text-gray-400" size={18}/>
                             <input 
                                 type="date" 
-                                className="w-full border border-gray-200 rounded-xl p-3 pl-10 outline-none focus:ring-2 focus:ring-indigo-500"
+                                disabled={loading}
+                                className="w-full border border-gray-200 rounded-xl p-3 pl-10 outline-none focus:ring-2 focus:ring-indigo-500 disabled:bg-gray-50"
                                 value={startDate}
                                 onChange={(e) => setStartDate(e.target.value)}
                             />
@@ -66,7 +69,8 @@ const ExportData: React.FC = () => {
                             <Calendar className="absolute left-3 top-3 text-gray-400" size={18}/>
                             <input 
                                 type="date" 
-                                className="w-full border border-gray-200 rounded-xl p-3 pl-10 outline-none focus:ring-2 focus:ring-indigo-500"
+                                disabled={loading}
+                                className="w-full border border-gray-200 rounded-xl p-3 pl-10 outline-none focus:ring-2 focus:ring-indigo-500 disabled:bg-gray-50"
                                 value={endDate}
                                 onChange={(e) => setEndDate(e.target.value)}
                             />
@@ -74,17 +78,14 @@ const ExportData: React.FC = () => {
                     </div>
                 </div>
 
-                <button 
+                <Button
                     onClick={handleDownload}
-                    disabled={loading}
-                    className="w-full bg-indigo-600 text-white py-4 rounded-xl font-bold hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-200 flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+                    isLoading={loading}
+                    loadingText="Generando..."
+                    className="py-4 shadow-lg"
                 >
-                    {loading ? 'Generando...' : (
-                        <>
-                            <Download size={20}/> Descargar Excel
-                        </>
-                    )}
-                </button>
+                    <Download size={20}/> Descargar Excel
+                </Button>
                 
                 <p className="text-xs text-center text-gray-400">
                     Si no seleccionas fechas, se descargarán todos los movimientos históricos.
