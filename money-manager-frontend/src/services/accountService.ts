@@ -5,6 +5,7 @@ export interface Account {
   name: string;
   type: string;
   balance: number;
+  currency?: string;
 }
 
 export const getAccounts = async (): Promise<Account[]> => {

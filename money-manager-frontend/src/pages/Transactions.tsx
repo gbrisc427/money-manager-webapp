@@ -14,6 +14,7 @@ import type { Account } from "../services/accountService";
 import { getCategories, createCategory } from "../services/categoryService";
 import type { Category } from "../services/categoryService";
 import { Button } from "../components/ui/Button";
+import { formatCurrency } from "../utils/currency";
 
 const Transactions: React.FC = () => {
   const navigate = useNavigate();
@@ -197,6 +198,9 @@ const Transactions: React.FC = () => {
     t.accountName?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const selectedAccount = accounts.find(a => a.id === newTransaction.accountId);
+  const selectedAccountCurrency = selectedAccount?.currency || "EUR";
+
   return (
     <div className="min-h-screen bg-[#f9f9f6] p-6">
       
@@ -269,7 +273,7 @@ const Transactions: React.FC = () => {
                       <td className="p-4 text-gray-600 text-sm whitespace-nowrap">{t.accountName}</td>
                       <td className="p-4 text-right font-bold whitespace-nowrap">
                         <span className={t.type === 'INCOME' ? 'text-green-600' : 'text-red-500'}>
-                          {t.type === 'INCOME' ? '+' : '-'}${Math.abs(t.amount).toFixed(2)}
+                          {t.type === 'INCOME' ? '+' : '-'}{formatCurrency(Math.abs(t.amount), t.currency)}
                         </span>
                       </td>
                       <td className="p-4 text-center">
@@ -322,7 +326,7 @@ const Transactions: React.FC = () => {
                                     <td className="py-4 font-medium text-gray-700">{rec.description}</td>
                                     <td className="py-4 text-right font-bold">
                                         <span className={rec.type === 'INCOME' ? 'text-green-600' : 'text-red-500'}>
-                                            {rec.type === 'INCOME' ? '+' : '-'}${Math.abs(rec.amount).toFixed(2)}
+                                            {rec.type === 'INCOME' ? '+' : '-'}{formatCurrency(Math.abs(rec.amount), rec.currency || rec.account?.currency)}
                                         </span>
                                     </td>
                                     <td className="py-4 text-right text-sm text-gray-500">
@@ -406,7 +410,7 @@ const Transactions: React.FC = () => {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                    <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Importe</label>
+                    <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Importe ({selectedAccountCurrency})</label>
                     <input
                     type="number"
                     step="0.01"
@@ -441,7 +445,9 @@ const Transactions: React.FC = () => {
                         onChange={(e) => setNewTransaction({ ...newTransaction, accountId: parseInt(e.target.value) })}
                     >
                         {accounts.map(acc => (
-                            <option key={acc.id} value={acc.id}>{acc.name} (${acc.balance})</option>
+                            <option key={acc.id} value={acc.id}>
+                              {acc.name} ({formatCurrency(acc.balance, acc.currency)})
+                            </option>
                         ))}
                     </select>
                 </div>

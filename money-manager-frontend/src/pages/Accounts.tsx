@@ -7,6 +7,7 @@ import {
 import { getAccounts, createAccount, deleteAccount } from "../services/accountService";
 import type { Account } from "../services/accountService";
 import { Button } from "../components/ui/Button";
+import { SUPPORTED_CURRENCIES, formatCurrency } from "../utils/currency";
 
 const Accounts: React.FC = () => {
   const navigate = useNavigate();
@@ -20,8 +21,9 @@ const Accounts: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newAccount, setNewAccount] = useState({
     name: "",
-    type: "Banco", // Valor por defecto
-    balance: "" as string | number
+    type: "Banco",
+    balance: "" as string | number,
+    currency: "EUR"
   });
 
   useEffect(() => {
@@ -48,10 +50,11 @@ const Accounts: React.FC = () => {
       await createAccount({
         name: newAccount.name,
         type: newAccount.type,
-        balance: Number(newAccount.balance)
+        balance: Number(newAccount.balance),
+        currency: newAccount.currency
       });
       
-      setNewAccount({ name: "", type: "Banco", balance: "" }); // Reset
+      setNewAccount({ name: "", type: "Banco", balance: "", currency: "EUR" });
       setIsModalOpen(false);
       await loadAccounts();
     } catch (error) {
@@ -62,7 +65,7 @@ const Accounts: React.FC = () => {
   };
 
   const handleDelete = async (e: React.MouseEvent, id: number) => {
-    e.stopPropagation(); // Evitar entrar al detalle al pulsar borrar
+    e.stopPropagation();
     if (deletingId !== null) return;
     if (!window.confirm("¿Seguro que quieres borrar esta cuenta y todos sus movimientos?")) return;
     setDeletingId(id);
@@ -164,9 +167,14 @@ const Accounts: React.FC = () => {
                   
                   <div>
                     <h3 className="font-bold text-gray-800 text-lg mb-1">{acc.name}</h3>
-                    <p className="text-xs text-gray-400 uppercase tracking-wider font-semibold mb-4">{acc.type}</p>
+                    <div className="flex items-center gap-2 mb-4">
+                      <p className="text-xs text-gray-400 uppercase tracking-wider font-semibold">{acc.type}</p>
+                      <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700">
+                        {acc.currency || "EUR"}
+                      </span>
+                    </div>
                     <p className={`text-2xl font-mono font-bold ${acc.balance >= 0 ? 'text-gray-800' : 'text-red-600'}`}>
-                      ${acc.balance.toFixed(2)}
+                      {formatCurrency(acc.balance, acc.currency)}
                     </p>
                   </div>
 
@@ -206,23 +214,41 @@ const Accounts: React.FC = () => {
                 </div>
               </div>
 
-              {/* Tipo */}
-              <div>
-                <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Tipo</label>
-                <div className="relative">
-                    <Landmark className="absolute left-3 top-3 text-gray-400" size={18}/>
-                    <select
-                        disabled={isSubmitting}
-                        className="w-full border border-gray-200 rounded-lg p-3 pl-10 outline-none focus:ring-2 focus:ring-indigo-500 bg-white disabled:bg-gray-50"
-                        value={newAccount.type}
-                        onChange={(e) => setNewAccount({ ...newAccount, type: e.target.value })}
-                    >
-                        <option value="Banco">Banco</option>
-                        <option value="Efectivo">Efectivo</option>
-                        <option value="Tarjeta">Tarjeta de Crédito</option>
-                        <option value="Ahorro">Cuenta de Ahorro</option>
-                        <option value="Inversión">Inversión</option>
-                    </select>
+              {/* Tipo y Divisa */}
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Tipo</label>
+                  <div className="relative">
+                      <Landmark className="absolute left-3 top-3 text-gray-400" size={18}/>
+                      <select
+                          disabled={isSubmitting}
+                          className="w-full border border-gray-200 rounded-lg p-3 pl-10 outline-none focus:ring-2 focus:ring-indigo-500 bg-white disabled:bg-gray-50"
+                          value={newAccount.type}
+                          onChange={(e) => setNewAccount({ ...newAccount, type: e.target.value })}
+                      >
+                          <option value="Banco">Banco</option>
+                          <option value="Efectivo">Efectivo</option>
+                          <option value="Tarjeta">Tarjeta de Crédito</option>
+                          <option value="Ahorro">Cuenta de Ahorro</option>
+                          <option value="Inversión">Inversión</option>
+                      </select>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Divisa</label>
+                  <select
+                      disabled={isSubmitting}
+                      className="w-full border border-gray-200 rounded-lg p-3 outline-none focus:ring-2 focus:ring-indigo-500 bg-white disabled:bg-gray-50 font-semibold"
+                      value={newAccount.currency}
+                      onChange={(e) => setNewAccount({ ...newAccount, currency: e.target.value })}
+                  >
+                      {SUPPORTED_CURRENCIES.map((curr) => (
+                        <option key={curr.code} value={curr.code}>
+                          {curr.code} ({curr.symbol})
+                        </option>
+                      ))}
+                  </select>
                 </div>
               </div>
 

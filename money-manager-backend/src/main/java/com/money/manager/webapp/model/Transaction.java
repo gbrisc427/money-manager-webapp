@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.function.ToDoubleFunction;
 
 @Entity
 @Table(name = "transactions")
@@ -31,6 +30,10 @@ public class Transaction {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private TransactionType type; // INCOME o EXPENSE
+
+    @Column(nullable = false, length = 3, columnDefinition = "varchar(3) default 'EUR'")
+    @Builder.Default
+    private String currency = "EUR";
 
     @Column(name = "transaction_date", nullable = false)
     private LocalDateTime date;

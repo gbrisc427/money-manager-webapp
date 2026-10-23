@@ -4,10 +4,11 @@ export interface Transaction {
   id: number;
   description: string;
   amount: number;
+  currency?: string;
   type: "INCOME" | "EXPENSE";
   date: string;
   accountName?: string;
-  categoryId: number; 
+  categoryId: number;
 }
 
 export interface TransactionRequest {
@@ -15,7 +16,7 @@ export interface TransactionRequest {
   amount: number;
   type: "INCOME" | "EXPENSE";
   accountId: number;
-  categoryId: number; 
+  categoryId: number;
   date?: string;
 }
 
@@ -35,10 +36,11 @@ export interface RecurringTransaction {
   id: number;
   description: string;
   amount: number;
+  currency?: string;
   active: boolean;
   nextPaymentDate: string;
   type: "INCOME" | "EXPENSE";
-  account?: { id: number };
+  account?: { id: number; currency?: string };
   accountId?: number;
 }
 
@@ -47,7 +49,7 @@ export const getTransactions = async (): Promise<Transaction[]> => {
 };
 
 export const createTransaction = async (transaction: TransactionRequest): Promise<Transaction> => {
-  return apiClient("/transactions", { 
+  return apiClient("/transactions", {
     method: "POST",
     body: JSON.stringify(transaction),
   });

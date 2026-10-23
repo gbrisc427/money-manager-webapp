@@ -22,6 +22,7 @@ import type { Category } from "../services/categoryService";
 import { getGoals, createGoal, addFundsToGoal, deleteGoal } from "../services/goalService";
 import type { SavingsGoal } from "../services/goalService";
 import { Button } from "../components/ui/Button";
+import { SUPPORTED_CURRENCIES, formatCurrency } from "../utils/currency";
 
 const Dashboard: React.FC = () => {
   const [profile, setProfile] = useState<{ name?: string; email?: string } | null>(null);
@@ -53,7 +54,12 @@ const Dashboard: React.FC = () => {
   const [deletingGoalId, setDeletingGoalId] = useState<number | null>(null);
 
   // ESTADOS FORMULARIOS
-  const [newAccount, setNewAccount] = useState({ name: "", type: "Banco", balance: "" as string | number });
+  const [newAccount, setNewAccount] = useState({
+    name: "",
+    type: "Banco",
+    balance: "" as string | number,
+    currency: "EUR"
+  });
   const [newBudget, setNewBudget] = useState({ categoryId: 0, amount: "" as string | number });
   const [newGoal, setNewGoal] = useState({ name: "", targetAmount: "" as string | number, color: "#10b981" });
 
@@ -92,9 +98,10 @@ const Dashboard: React.FC = () => {
       await createAccount({
         name: newAccount.name,
         type: newAccount.type,
-        balance: Number(newAccount.balance)
+        balance: Number(newAccount.balance),
+        currency: newAccount.currency
       });
-      setNewAccount({ name: "", type: "Banco", balance: "" }); 
+      setNewAccount({ name: "", type: "Banco", balance: "", currency: "EUR" }); 
       setIsAccountModalOpen(false);
       const updatedAccounts = await getAccounts();
       setAccounts(updatedAccounts);
@@ -192,11 +199,16 @@ const Dashboard: React.FC = () => {
       setIsAddFundsModalOpen(true);
   };
 
-  const totalBalance = accounts.reduce((sum, acc) => sum + acc.balance, 0);
+  // Opción 1: Agrupación del balance total por divisa activa (EUR y/o USD)
+  const balancesByCurrency = accounts.reduce<Record<string, number>>((accMap, acc) => {
+    const curr = (acc.currency || "EUR").toUpperCase();
+    accMap[curr] = (accMap[curr] || 0) + acc.balance;
+    return accMap;
+  }, {});
+  const currencyEntries = Object.entries(balancesByCurrency);
 
   const currencyFormatter = (value: number | string | undefined) => {
-    if (value === undefined || value === null) return "$0.00";
-    return `$${Number(value).toFixed(2)}`;
+    return formatCurrency(value, "EUR");
   };
 
   const getProgressColor = (percentage: number) => {
@@ -229,15 +241,28 @@ const Dashboard: React.FC = () => {
       </header>
 
       <main className="max-w-6xl mx-auto">
-        {/* SECCIÓN 1: BIENVENIDA Y SALDO */}
+        {/* SECCIÓN 1: BIENVENIDA Y SALDO AGRUPADO POR DIVISA */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-800">
             Hola, <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">{profile?.name || 'Usuario'}</span>
           </h1>
           <p className="text-gray-500 mt-1">Balance total actual:</p>
-          <p className={`text-4xl font-extrabold mt-2 ${totalBalance >= 0 ? 'text-gray-900' : 'text-red-500'}`}>
-            ${totalBalance.toFixed(2)}
-          </p>
+          {currencyEntries.length === 0 ? (
+            <p className="text-4xl font-extrabold mt-2 text-gray-900">
+              {formatCurrency(0, "EUR")}
+            </p>
+          ) : (
+            <div className="flex flex-wrap items-baseline gap-x-4 gap-y-2 mt-2">
+              {currencyEntries.map(([curr, total], idx) => (
+                <React.Fragment key={curr}>
+                  {idx > 0 && <span className="text-3xl font-light text-gray-300">|</span>}
+                  <span className={`text-4xl font-extrabold ${total >= 0 ? 'text-gray-900' : 'text-red-500'}`}>
+                    {formatCurrency(total, curr)}
+                  </span>
+                </React.Fragment>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* SECCIÓN 2: LISTA DE CUENTAS */}
@@ -262,13 +287,18 @@ const Dashboard: React.FC = () => {
                   <div className="p-2 bg-indigo-50 rounded-lg text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
                     <CreditCard size={20} />
                   </div>
-                  <span className="text-xs font-medium px-2 py-1 bg-gray-100 text-gray-600 rounded-full">
-                    {acc.type}
-                  </span>
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-xs font-medium px-2 py-1 bg-gray-100 text-gray-600 rounded-full">
+                      {acc.type}
+                    </span>
+                    <span className="text-[11px] font-bold px-2 py-1 bg-indigo-50 text-indigo-700 rounded-full">
+                      {acc.currency || "EUR"}
+                    </span>
+                  </div>
                 </div>
                 <h3 className="font-bold text-gray-700 truncate">{acc.name}</h3>
                 <p className={`text-xl font-bold mt-1 ${acc.balance >= 0 ? 'text-gray-900' : 'text-red-600'}`}>
-                  ${acc.balance.toFixed(2)}
+                  {formatCurrency(acc.balance, acc.currency)}
                 </p>
               </div>
             ))}
@@ -294,8 +324,8 @@ const Dashboard: React.FC = () => {
                   <BarChart data={monthlyStats} margin={{ top: 20, right: 30, left: 0, bottom: 5 }}>
                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
                     <XAxis dataKey="month" tick={{fontSize: 12}} axisLine={false} tickLine={false} />
-                    <YAxis tick={{fontSize: 12}} axisLine={false} tickLine={false} tickFormatter={(val) => `$${val}`} />
-                    <RechartsTooltip cursor={{fill: '#f9f9f9'}} formatter={(value: number | undefined) => [`$${Number(value || 0).toFixed(2)}`]} />
+                    <YAxis tick={{fontSize: 12}} axisLine={false} tickLine={false} tickFormatter={(val) => `${val} €`} />
+                    <RechartsTooltip cursor={{fill: '#f9f9f9'}} formatter={(value: number | undefined) => [formatCurrency(value, "EUR")]} />
                     <Legend />
                     <Bar name="Ingresos" dataKey="income" fill="#10b981" radius={[4, 4, 0, 0]} barSize={20} />
                     <Bar name="Gastos" dataKey="expense" fill="#ef4444" radius={[4, 4, 0, 0]} barSize={20} />
@@ -378,8 +408,8 @@ const Dashboard: React.FC = () => {
                                     </div>
                                 </div>
                                 <div className="text-right">
-                                    <div className="text-2xl font-bold text-gray-800">${b.spentAmount.toFixed(0)}</div>
-                                    <div className="text-xs text-gray-500">de ${b.limitAmount.toFixed(0)}</div>
+                                    <div className="text-2xl font-bold text-gray-800">{b.spentAmount.toFixed(0)} €</div>
+                                    <div className="text-xs text-gray-500">de {b.limitAmount.toFixed(0)} €</div>
                                 </div>
                             </div>
                             <div className="w-full bg-gray-100 rounded-full h-3 overflow-hidden">
@@ -438,8 +468,8 @@ const Dashboard: React.FC = () => {
                                 
                                 <h3 className="text-lg font-bold text-gray-800 mb-1">{g.name}</h3>
                                 <div className="flex justify-between items-end mb-2">
-                                    <div className="text-3xl font-bold text-gray-800">${g.currentAmount.toFixed(0)}</div>
-                                    <div className="text-sm text-gray-400 font-medium mb-1"> / ${g.targetAmount.toFixed(0)}</div>
+                                    <div className="text-3xl font-bold text-gray-800">{g.currentAmount.toFixed(0)} €</div>
+                                    <div className="text-sm text-gray-400 font-medium mb-1"> / {g.targetAmount.toFixed(0)} €</div>
                                 </div>
                                 <div className="text-xs font-bold text-green-600 uppercase tracking-wider">
                                     {percent.toFixed(0)}% Completado
@@ -491,13 +521,30 @@ const Dashboard: React.FC = () => {
                     <input type="text" required disabled={isSubmittingAccount} value={newAccount.name} onChange={(e) => setNewAccount({ ...newAccount, name: e.target.value })} className="w-full border border-gray-200 rounded-lg p-3 pl-10 outline-none focus:ring-2 focus:ring-indigo-500 disabled:bg-gray-50" placeholder="Ej: Ahorros"/>
                 </div>
               </div>
-              <div>
-                <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Tipo</label>
-                <div className="relative">
-                    <Landmark className="absolute left-3 top-3 text-gray-400" size={18}/>
-                    <select disabled={isSubmittingAccount} className="w-full border border-gray-200 rounded-lg p-3 pl-10 outline-none focus:ring-2 focus:ring-indigo-500 bg-white disabled:bg-gray-50" value={newAccount.type} onChange={(e) => setNewAccount({ ...newAccount, type: e.target.value })}>
-                        <option value="Banco">Banco</option><option value="Efectivo">Efectivo</option><option value="Tarjeta">Tarjeta Crédito</option><option value="Ahorro">Ahorro</option><option value="Inversión">Inversión</option>
-                    </select>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Tipo</label>
+                  <div className="relative">
+                      <Landmark className="absolute left-3 top-3 text-gray-400" size={18}/>
+                      <select disabled={isSubmittingAccount} className="w-full border border-gray-200 rounded-lg p-3 pl-10 outline-none focus:ring-2 focus:ring-indigo-500 bg-white disabled:bg-gray-50" value={newAccount.type} onChange={(e) => setNewAccount({ ...newAccount, type: e.target.value })}>
+                          <option value="Banco">Banco</option><option value="Efectivo">Efectivo</option><option value="Tarjeta">Tarjeta Crédito</option><option value="Ahorro">Ahorro</option><option value="Inversión">Inversión</option>
+                      </select>
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Divisa</label>
+                  <select
+                    disabled={isSubmittingAccount}
+                    className="w-full border border-gray-200 rounded-lg p-3 outline-none focus:ring-2 focus:ring-indigo-500 bg-white disabled:bg-gray-50 font-semibold"
+                    value={newAccount.currency}
+                    onChange={(e) => setNewAccount({ ...newAccount, currency: e.target.value })}
+                  >
+                    {SUPPORTED_CURRENCIES.map(curr => (
+                      <option key={curr.code} value={curr.code}>
+                        {curr.code} ({curr.symbol})
+                      </option>
+                    ))}
+                  </select>
                 </div>
               </div>
               <div>

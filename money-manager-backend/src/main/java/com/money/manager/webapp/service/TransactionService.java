@@ -66,10 +66,15 @@ public class TransactionService {
             transactionDate = LocalDateTime.now();
         }
 
+        String accountCurrency = (account.getCurrency() != null && !account.getCurrency().isBlank())
+                ? account.getCurrency().toUpperCase()
+                : "EUR";
+
         Transaction transaction = Transaction.builder()
                 .description(request.getDescription())
                 .amount(request.getAmount())
                 .type(request.getType())
+                .currency(accountCurrency)
                 .date(transactionDate)
                 .account(account)
                 .categoryId(request.getCategoryId())
@@ -110,11 +115,16 @@ public class TransactionService {
     }
 
     private TransactionResponse mapToResponse(Transaction t) {
+        String resolvedCurrency = (t.getCurrency() != null && !t.getCurrency().isBlank())
+                ? t.getCurrency()
+                : (t.getAccount() != null && t.getAccount().getCurrency() != null ? t.getAccount().getCurrency() : "EUR");
+
         return TransactionResponse.builder()
                 .id(t.getId())
                 .description(t.getDescription())
                 .amount(t.getAmount())
                 .type(t.getType())
+                .currency(resolvedCurrency)
                 .date(t.getDate())
                 .accountName(t.getAccount().getName())
                 .categoryId(t.getCategoryId())

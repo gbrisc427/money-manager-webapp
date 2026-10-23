@@ -15,6 +15,7 @@ import type { Transaction, TransactionRequest, RecurringTransaction } from "../s
 import { getCategories, createCategory } from "../services/categoryService";
 import type { Category } from "../services/categoryService";
 import { Button } from "../components/ui/Button";
+import { SUPPORTED_CURRENCIES, formatCurrency } from "../utils/currency";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -30,6 +31,7 @@ const AccountDetail: React.FC = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [editName, setEditName] = useState("");
   const [editType, setEditType] = useState("");
+  const [editCurrency, setEditCurrency] = useState("EUR");
   const [searchTerm, setSearchTerm] = useState("");
 
   // Estados de carga de acciones CRUD
@@ -76,6 +78,7 @@ const AccountDetail: React.FC = () => {
       setAccount(accData);
       setEditName(accData.name);
       setEditType(accData.type);
+      setEditCurrency(accData.currency || "EUR");
       setTransactions(txData.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()));
       setCategories(catData);
       
@@ -168,9 +171,15 @@ const AccountDetail: React.FC = () => {
     if (isUpdatingAccount) return;
     setIsUpdatingAccount(true);
     try {
-      const updated = await updateAccount(accountId, { ...account!, name: editName, type: editType });
+      const updated = await updateAccount(accountId, {
+        ...account!,
+        name: editName,
+        type: editType,
+        currency: editCurrency
+      });
       setAccount(updated);
       setIsEditing(false);
+      await loadData();
     } catch (error) {
       console.error(error);
     } finally {
@@ -262,6 +271,8 @@ const AccountDetail: React.FC = () => {
 
   if (!account) return <div className="p-6">Cargando...</div>;
 
+  const currentAccountCurrency = account.currency || "EUR";
+
   return (
     <div className="h-screen bg-[#f9f9f6] p-6 flex flex-col overflow-hidden">
       
@@ -313,26 +324,51 @@ const AccountDetail: React.FC = () => {
                     onChange={e => setEditName(e.target.value)} 
                     placeholder="Nombre"
                   />
-                  <select 
-                    disabled={isUpdatingAccount}
-                    className="w-full border p-2 rounded focus:ring-2 focus:ring-blue-500 outline-none disabled:bg-gray-50" 
-                    value={editType} 
-                    onChange={e => setEditType(e.target.value)}
-                  >
-                    <option value="Efectivo">Efectivo</option>
-                    <option value="Banco">Banco</option>
-                    <option value="Tarjeta">Tarjeta</option>
-                    <option value="Ahorro">Ahorro</option>
-                  </select>
+                  <div className="grid grid-cols-2 gap-2">
+                    <select 
+                      disabled={isUpdatingAccount}
+                      className="w-full border p-2 rounded focus:ring-2 focus:ring-blue-500 outline-none disabled:bg-gray-50 bg-white" 
+                      value={editType} 
+                      onChange={e => setEditType(e.target.value)}
+                    >
+                      <option value="Efectivo">Efectivo</option>
+                      <option value="Banco">Banco</option>
+                      <option value="Tarjeta">Tarjeta</option>
+                      <option value="Ahorro">Ahorro</option>
+                      <option value="Inversión">Inversión</option>
+                    </select>
+                    <select
+                      disabled={isUpdatingAccount}
+                      className="w-full border p-2 rounded focus:ring-2 focus:ring-blue-500 outline-none disabled:bg-gray-50 bg-white font-semibold"
+                      value={editCurrency}
+                      onChange={e => setEditCurrency(e.target.value)}
+                    >
+                      {SUPPORTED_CURRENCIES.map(curr => (
+                        <option key={curr.code} value={curr.code}>
+                          {curr.code} ({curr.symbol})
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  {editCurrency !== currentAccountCurrency && (
+                    <p className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-lg p-2">
+                      Al guardar, el saldo actual y todos los movimientos de esta cuenta se convertirán automáticamente de {currentAccountCurrency} a {editCurrency} según el tipo de cambio oficial actual.
+                    </p>
+                  )}
                 </div>
               ) : (
                 <>
                   <h1 className="text-2xl font-bold text-gray-800">{account.name}</h1>
-                  <span className="inline-block bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded-full mt-2 mb-4 w-max">{account.type}</span>
+                  <div className="flex items-center gap-2 mt-2 mb-4">
+                    <span className="inline-block bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded-full w-max">{account.type}</span>
+                    <span className="inline-block bg-indigo-50 text-indigo-700 text-xs font-bold px-2.5 py-1 rounded-full w-max">
+                      {currentAccountCurrency}
+                    </span>
+                  </div>
                   <div className="pt-4 border-t">
                     <p className="text-gray-500 text-sm">Saldo Actual</p>
                     <p className={`text-3xl font-mono font-bold ${account.balance >= 0 ? 'text-gray-800' : 'text-red-600'}`}>
-                      ${account.balance.toFixed(2)}
+                      {formatCurrency(account.balance, currentAccountCurrency)}
                     </p>
                   </div>
                 </>
@@ -398,7 +434,7 @@ const AccountDetail: React.FC = () => {
                         </div>
                       </td>
                       <td className={`p-4 text-right font-bold whitespace-nowrap ${tx.type === 'INCOME' ? 'text-green-600' : 'text-red-600'}`}>
-                        {tx.type === 'INCOME' ? '+' : '-'}${typeof tx.amount === 'number' ? tx.amount.toFixed(2) : tx.amount}
+                        {tx.type === 'INCOME' ? '+' : '-'}{formatCurrency(tx.amount, tx.currency || currentAccountCurrency)}
                       </td>
                       <td className="p-4 text-right w-14">
                         <button 
@@ -446,7 +482,7 @@ const AccountDetail: React.FC = () => {
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
           <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden animate-fade-in relative">
             <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50">
-              <h3 className="text-xl font-bold text-gray-800">Añadir a {account.name}</h3>
+              <h3 className="text-xl font-bold text-gray-800">Añadir a {account.name} ({currentAccountCurrency})</h3>
               <button onClick={() => !isSubmittingTx && setIsModalOpen(false)} className="text-gray-400 hover:text-gray-600">✕</button>
             </div>
 
@@ -500,7 +536,7 @@ const AccountDetail: React.FC = () => {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                    <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Importe</label>
+                    <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Importe ({currentAccountCurrency})</label>
                     <input
                     type="number"
                     step="0.01"
@@ -672,7 +708,7 @@ const AccountDetail: React.FC = () => {
                                     </td>
                                     <td className="py-4 text-right font-bold">
                                         <span className={rec.type === 'INCOME' ? 'text-green-600' : 'text-red-500'}>
-                                            {rec.type === 'INCOME' ? '+' : '-'}${Math.abs(rec.amount).toFixed(2)}
+                                            {rec.type === 'INCOME' ? '+' : '-'}{formatCurrency(Math.abs(rec.amount), rec.currency || currentAccountCurrency)}
                                         </span>
                                     </td>
                                     <td className="py-4 text-center">

@@ -1,9 +1,9 @@
 package com.money.manager.webapp.repository;
 
-
 import com.money.manager.webapp.dto.CategoryStatRequest;
 import com.money.manager.webapp.model.Transaction;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -15,6 +15,12 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     List<Transaction> findByUserId(Long userId);
     List<Transaction> findByAccountIdAndUserId(Long accountId, Long userId);
     List<Transaction> findByCategoryId(Long categoryId);
+
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    @Query(value = "UPDATE transactions SET amount = ROUND(amount * :rate, 2), currency = :currency WHERE account_id = :accountId", nativeQuery = true)
+    void convertTransactionsByAccountId(@Param("accountId") Long accountId,
+                                        @Param("rate") BigDecimal rate,
+                                        @Param("currency") String currency);
 
     @Query("SELECT new com.money.manager.webapp.dto.CategoryStatRequest(t.category.name, t.category.color, SUM(t.amount)) " +
             "FROM Transaction t " +

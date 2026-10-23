@@ -23,6 +23,10 @@ public class RecurringTransaction {
     @Enumerated(EnumType.STRING)
     private TransactionType type; // INCOME o EXPENSE
 
+    @Column(nullable = false, length = 3, columnDefinition = "varchar(3) default 'EUR'")
+    @Builder.Default
+    private String currency = "EUR";
+
     private LocalDate startDate;
     private LocalDate nextPaymentDate;
 

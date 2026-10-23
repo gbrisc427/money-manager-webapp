@@ -20,6 +20,9 @@ public class Account {
     @Column(nullable = false)
     private BigDecimal balance = BigDecimal.ZERO;
 
+    @Column(nullable = false, length = 3, columnDefinition = "varchar(3) default 'EUR'")
+    private String currency = "EUR";
+
     @Column(nullable = false)
     private Long userId; // Relación con el usuario propietario
 
@@ -34,6 +37,9 @@ public class Account {
 
     public BigDecimal getBalance() { return balance; }
     public void setBalance(BigDecimal balance) { this.balance = balance; }
+
+    public String getCurrency() { return currency; }
+    public void setCurrency(String currency) { this.currency = currency; }
 
     public Long getUserId() { return userId; }
     public void setUserId(Long userId) { this.userId = userId; }

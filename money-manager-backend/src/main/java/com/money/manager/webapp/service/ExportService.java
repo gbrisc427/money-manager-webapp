@@ -45,7 +45,7 @@ public class ExportService {
             headerFont.setBold(true);
             headerStyle.setFont(headerFont);
 
-            String[] headers = {"ID", "Fecha", "Concepto", "Tipo", "Categoría", "Cuenta", "Importe"};
+            String[] headers = {"ID", "Fecha", "Concepto", "Tipo", "Categoría", "Cuenta", "Importe", "Divisa"};
             Row headerRow = sheet.createRow(0);
             for (int i = 0; i < headers.length; i++) {
                 Cell cell = headerRow.createCell(i);
@@ -57,6 +57,10 @@ public class ExportService {
             for (Transaction t : transactions) {
                 Row row = sheet.createRow(rowIdx++);
 
+                String txCurrency = (t.getCurrency() != null && !t.getCurrency().isBlank())
+                        ? t.getCurrency()
+                        : (t.getAccount() != null && t.getAccount().getCurrency() != null ? t.getAccount().getCurrency() : "EUR");
+
                 row.createCell(0).setCellValue(t.getId());
                 row.createCell(1).setCellValue(t.getDate().toLocalDate().toString());
                 row.createCell(2).setCellValue(t.getDescription());
@@ -64,6 +68,7 @@ public class ExportService {
                 row.createCell(4).setCellValue(t.getCategoryId());
                 row.createCell(5).setCellValue(t.getAccount().getName());
                 row.createCell(6).setCellValue(t.getAmount().doubleValue());
+                row.createCell(7).setCellValue(txCurrency);
             }
 
             for (int i = 0; i < headers.length; i++) {

@@ -86,9 +86,14 @@ public class TransactionController {
         Category category = categoryRepository.findById(req.getCategoryId())
                 .orElseThrow(() -> new RuntimeException("Categoría no encontrada"));
 
+        String accountCurrency = (account.getCurrency() != null && !account.getCurrency().isBlank())
+                ? account.getCurrency().trim().toUpperCase()
+                : "EUR";
+
         RecurringTransaction rec = RecurringTransaction.builder()
                 .description(req.getDescription())
                 .amount(req.getAmount())
+                .currency(accountCurrency)
                 .type(req.getType())
                 .account(account)
                 .category(category)
