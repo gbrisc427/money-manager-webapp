@@ -23,14 +23,14 @@ jobs:
   backend-ci:
     name: Build & Test Backend (Java 21)
     runs-on: ubuntu-latest
-    # Selecciona el Environment 'production' si apunta a main, o 'staging' para staging/develop
-    environment: ${{ (github.ref == 'refs/heads/main' || github.base_ref == 'main') && 'production' || 'staging' }}
+    # Entorno unico de despliegue ('production')
+    environment: production
     defaults:
       run:
         working-directory: money-manager-backend
 
     env:
-      SPRING_PROFILES_ACTIVE: ${{ (github.ref == 'refs/heads/main' || github.base_ref == 'main') && 'prod' || 'staging' }}
+      SPRING_PROFILES_ACTIVE: prod
       DB_URL: ${{ secrets.DB_URL }}
       DB_USERNAME: ${{ secrets.DB_USERNAME }}
       DB_PASSWORD: ${{ secrets.DB_PASSWORD }}

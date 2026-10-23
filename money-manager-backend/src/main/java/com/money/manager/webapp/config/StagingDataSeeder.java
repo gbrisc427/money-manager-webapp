@@ -29,11 +29,12 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 /**
- * Seeder automatico e idempotente exclusivo para el entorno de Preproduccion (staging).
- * Nunca se instancia ni ejecuta en desarrollo ('dev') ni en produccion ('prod').
+ * Seeder automatico e idempotente para el despliegue en la nube (prod / staging).
+ * Garantiza que el usuario de demostracion (demo@moneymanager.com) exista en el esquema
+ * public de Supabase sin afectar ni sobrescribir usuarios reales registrados.
  */
 @Component
-@Profile("staging")
+@Profile({"prod", "staging"})
 public class StagingDataSeeder implements CommandLineRunner {
 
     private static final Logger log = LoggerFactory.getLogger(StagingDataSeeder.class);
