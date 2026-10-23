@@ -4,7 +4,7 @@ export const handleResponse = async (response: Response) => {
     const text = await response.text();
     try {
       return text ? JSON.parse(text) : {};
-    } catch (err) {
+    } catch {
       return { message: text };
     }
   }
@@ -15,7 +15,8 @@ export const handleResponse = async (response: Response) => {
   try {
     const jsonError = JSON.parse(errorText);
     errorMessage = jsonError.message || jsonError.error || errorMessage;
-  } catch (e) {
+  } catch {
+    // El cuerpo de error no es JSON valido; se conserva errorText
   }
 
   if (!errorMessage || errorMessage.trim() === "") {
@@ -29,7 +30,7 @@ export const handleResponse = async (response: Response) => {
         response.url.includes("/auth");
 
     if (!isAuthRequest) {
-      console.error("⛔ Sesión expirada en ruta protegida.");
+      console.error("Sesion expirada en ruta protegida.");
       
       localStorage.removeItem("userEmail");
       localStorage.removeItem("userName");

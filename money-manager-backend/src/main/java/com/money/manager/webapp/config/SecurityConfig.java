@@ -25,6 +25,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 
 
+import org.springframework.beans.factory.annotation.Value;
+import java.util.Arrays;
 import java.util.List;
 
 @Configuration
@@ -36,6 +38,9 @@ public class SecurityConfig {
     private final TokenBlacklistService tokenBlacklistService;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final UserDetailsService userDetailsService;
+
+    @Value("${cors.allowed-origins}")
+    private String allowedOrigins;
 
     public SecurityConfig(CustomUserDetailsService uds, JwtUtils jwtProvider, TokenBlacklistService tokenBlacklistService, JwtAuthenticationFilter jwtAuthenticationFilter, UserDetailsService userDetailsService){
         this.uds = uds;
@@ -58,6 +63,7 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/user/**").permitAll()
+                        .requestMatchers("/api/health").permitAll()
                         .requestMatchers("/error").permitAll()
                         .requestMatchers("/api/**").authenticated()
                         .anyRequest().permitAll()
@@ -80,7 +86,11 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        configuration.setAllowedOriginPatterns(List.of("http://localhost:5173"));
+        List<String> origins = Arrays.stream(allowedOrigins.split(","))
+                .map(String::trim)
+                .filter(origin -> !origin.isEmpty())
+                .toList();
+        configuration.setAllowedOriginPatterns(origins);
 
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         configuration.setAllowedHeaders(List.of("*"));

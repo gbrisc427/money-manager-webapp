@@ -3,7 +3,19 @@ target/
 .mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
+
+### Environment Variables & Secrets ###
 .env
+.env.*
+**/.env
+**/.env.*
+!.env.example
+!**/.env.example
+
+### Frontend Dependencies & Build ###
+node_modules/
+dist/
+dist-ssr/
 
 ### STS ###
 .apt_generated

@@ -38,6 +38,8 @@ export interface RecurringTransaction {
   active: boolean;
   nextPaymentDate: string;
   type: "INCOME" | "EXPENSE";
+  account?: { id: number };
+  accountId?: number;
 }
 
 export const getTransactions = async (): Promise<Transaction[]> => {
