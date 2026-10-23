@@ -20,32 +20,26 @@ export const apiClient = async (endpoint: string, options: RequestInit = {}) => 
     credentials: "include" as RequestCredentials, 
   };
 
-try {
-    let response = await fetch(url, config);
+  let response = await fetch(url, config);
 
-    if (response.status === 403) {
-      
-      if (!isRefreshing) {
-        isRefreshing = true;
-        refreshPromise = fetch(`${API_URL}/user/refresh-token`, {
-          method: "POST",
-          credentials: "include",
-        }).then(res => {
-          isRefreshing = false;
-          return res;
-        });
-      }
-
-      const refreshResponse = await refreshPromise;
-
-      if (refreshResponse && refreshResponse.ok) {
-        response = await fetch(url, config);
-      }
+  if (response.status === 403) {
+    if (!isRefreshing) {
+      isRefreshing = true;
+      refreshPromise = fetch(`${API_URL}/user/refresh-token`, {
+        method: "POST",
+        credentials: "include",
+      }).then(res => {
+        isRefreshing = false;
+        return res;
+      });
     }
-    
-    return handleResponse(response);
 
-  } catch (error) {
-    throw error;
+    const refreshResponse = await refreshPromise;
+
+    if (refreshResponse && refreshResponse.ok) {
+      response = await fetch(url, config);
+    }
   }
+  
+  return handleResponse(response);
 };

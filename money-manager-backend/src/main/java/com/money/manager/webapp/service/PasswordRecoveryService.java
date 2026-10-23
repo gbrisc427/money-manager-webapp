@@ -5,12 +5,8 @@ import com.money.manager.webapp.repository.PasswordRecoveryRepository;
 import com.money.manager.webapp.repository.UserRepository;
 import com.money.manager.webapp.model.User;
 import jakarta.transaction.Transactional;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
 
 import java.time.LocalDateTime;
 import java.util.Random;
@@ -21,18 +17,17 @@ public class PasswordRecoveryService {
     private final PasswordRecoveryRepository recoveryRepo;
     private final UserRepository userRepo;
     private final PasswordEncoder passwordEncoder;
-
-    @Autowired
-    private JavaMailSender mailSender;
+    private final EmailService emailService;
 
     public PasswordRecoveryService(PasswordRecoveryRepository recoveryRepo,
                                    UserRepository userRepo,
-                                   PasswordEncoder passwordEncoder) {
+                                   PasswordEncoder passwordEncoder,
+                                   EmailService emailService) {
         this.recoveryRepo = recoveryRepo;
         this.userRepo = userRepo;
         this.passwordEncoder = passwordEncoder;
+        this.emailService = emailService;
     }
-
 
     @Transactional
     public void requestRecovery(String email) {
@@ -40,7 +35,6 @@ public class PasswordRecoveryService {
             throw new RuntimeException("Email no registrado");
         }
 
-        // Borro códigos anteriores
         recoveryRepo.deleteByEmail(email);
 
         String code = String.valueOf(new Random().nextInt(900000) + 100000); // 6 dígitos
@@ -57,26 +51,9 @@ public class PasswordRecoveryService {
     }
 
     private void sendEmail(String to, String code) {
-        try {
-            SimpleMailMessage message = new SimpleMailMessage();
-            message.setFrom("noreply@moneymanager.com"); // O tu correo real
-            message.setTo(to);
-            message.setSubject("Recuperación de Contraseña - Money Manager");
-            message.setText("Hola,\n\n" +
-                    "Has solicitado restablecer tu contraseña.\n" +
-                    "Tu código de verificación es: " + code + "\n\n" +
-                    "Este código expira en 10 minutos.\n" +
-                    "Si no has sido tú, ignora este mensaje.");
-
-            mailSender.send(message);
-            System.out.println("Correo enviado a " + to);
-        } catch (Exception e) {
-            System.err.println("Error enviando correo: " + e.getMessage());
-            throw new RuntimeException("Error al enviar el correo de recuperación");
-        }
+        emailService.sendRecoveryEmail(to, code);
     }
 
-    // Paso 2: Verificar código
     public void verifyCode(String email, String code) {
         PasswordRecovery recovery = recoveryRepo.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("No hay solicitud de recuperación activa"));

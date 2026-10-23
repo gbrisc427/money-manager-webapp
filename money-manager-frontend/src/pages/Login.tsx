@@ -23,10 +23,10 @@ const Login: React.FC = () => {
       
       setTimeout(() => navigate("/dashboard"), 1000);
       
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error(error);
       
-      setMessage(error.message || "Error: credenciales incorrectas ");
+      setMessage(error instanceof Error ? error.message : "Error: Credenciales incorrectas ");
     }
   };
 

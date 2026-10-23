@@ -15,3 +15,9 @@ export async function updateUserName(newName: string) {
     body: JSON.stringify({ newName }), 
   });
 }
+
+export const deleteUserAccount = async () => {
+  return apiClient("/user/me", {
+    method: "DELETE",
+  });
+};

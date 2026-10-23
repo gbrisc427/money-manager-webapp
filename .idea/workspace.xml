@@ -4,13 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f7de1767-9991-481f-8d5b-6733416d9fb1" name="Changes" comment="Corrección de errores">
+    <list default="true" id="f7de1767-9991-481f-8d5b-6733416d9fb1" name="Changes" comment="Correccion de errores">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/MoneyManagerWebappApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/MoneyManagerWebappApplication.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/config/SecurityConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/controller/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/controller/UserController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/security/JwtAuthenticationFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/money-manager-backend/src/main/java/com/money/manager/webapp/security/JwtAuthenticationFilter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/money-manager-frontend/src/pages/Login.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/money-manager-frontend/src/pages/Login.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -365,7 +360,103 @@
       <option name="project" value="LOCAL" />
       <updated>1769862554960</updated>
     </task>
-    <option name="localTasksCounter" value="30" />
+    <task id="LOCAL-00030" summary="Correcciones finales, V.1 TERMINADA CON ÉXITO">
+      <option name="closed" value="true" />
+      <created>1769873787178</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1769873787178</updated>
+    </task>
+    <task id="LOCAL-00031" summary="Correo de bienvenida al registrarse">
+      <option name="closed" value="true" />
+      <created>1770068285297</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1770068285297</updated>
+    </task>
+    <task id="LOCAL-00032" summary="Mejora correo recuperación de contraseña">
+      <option name="closed" value="true" />
+      <created>1770068587991</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1770068587991</updated>
+    </task>
+    <task id="LOCAL-00033" summary="Mejora del DahBoard - Llamadas al backend">
+      <option name="closed" value="true" />
+      <created>1770149955588</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1770149955588</updated>
+    </task>
+    <task id="LOCAL-00034" summary="Mejora del DahBoard - Corrección de Errores">
+      <option name="closed" value="true" />
+      <created>1770201133656</created>
+      <option name="number" value="00034" />
+      <option name="presentableId" value="LOCAL-00034" />
+      <option name="project" value="LOCAL" />
+      <updated>1770201133656</updated>
+    </task>
+    <task id="LOCAL-00035" summary="Implementación transacciones recurrentes +  Cambios visuales">
+      <option name="closed" value="true" />
+      <created>1770285063678</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1770285063678</updated>
+    </task>
+    <task id="LOCAL-00036" summary="Implementación presupuestos de gastos">
+      <option name="closed" value="true" />
+      <created>1770285814324</created>
+      <option name="number" value="00036" />
+      <option name="presentableId" value="LOCAL-00036" />
+      <option name="project" value="LOCAL" />
+      <updated>1770285814324</updated>
+    </task>
+    <task id="LOCAL-00037" summary="Implementación metas de ahorro">
+      <option name="closed" value="true" />
+      <created>1770286432308</created>
+      <option name="number" value="00037" />
+      <option name="presentableId" value="LOCAL-00037" />
+      <option name="project" value="LOCAL" />
+      <updated>1770286432308</updated>
+    </task>
+    <task id="LOCAL-00038" summary="Cambios para añadir categorías">
+      <option name="closed" value="true" />
+      <created>1770287210244</created>
+      <option name="number" value="00038" />
+      <option name="presentableId" value="LOCAL-00038" />
+      <option name="project" value="LOCAL" />
+      <updated>1770287210244</updated>
+    </task>
+    <task id="LOCAL-00039" summary="Implemetación Exportar Datos">
+      <option name="closed" value="true" />
+      <created>1770308114719</created>
+      <option name="number" value="00039" />
+      <option name="presentableId" value="LOCAL-00039" />
+      <option name="project" value="LOCAL" />
+      <updated>1770308114719</updated>
+    </task>
+    <task id="LOCAL-00040" summary="Implemetación Eliminar Cuenta">
+      <option name="closed" value="true" />
+      <created>1770312668698</created>
+      <option name="number" value="00040" />
+      <option name="presentableId" value="LOCAL-00040" />
+      <option name="project" value="LOCAL" />
+      <updated>1770312668698</updated>
+    </task>
+    <task id="LOCAL-00041" summary="Correccion de errores">
+      <option name="closed" value="true" />
+      <created>1770313648182</created>
+      <option name="number" value="00041" />
+      <option name="presentableId" value="LOCAL-00041" />
+      <option name="project" value="LOCAL" />
+      <updated>1770313648182</updated>
+    </task>
+    <option name="localTasksCounter" value="42" />
     <servers />
   </component>
   <component name="UnknownFeatures">
@@ -373,18 +464,6 @@
     <option featureType="com.intellij.fileTypeFactory" implementationName=".env" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Entidad Usuario Creada" />
-    <MESSAGE value="Registro de Usuarios - MMW - 8" />
-    <MESSAGE value="Validar formato del correo y fuerza de la contraseña - MMW - 13" />
-    <MESSAGE value="Modificación para intento de registro con email ya registrado de status 400 - MMW - 14" />
-    <MESSAGE value="Estructura inicial FrontEnd" />
-    <MESSAGE value="Inicio Sprint 2: Bloque Login Back-End&#10;Errores: Da fallo con la seguridad, bloquea el puerto 8081 del localhsot con el msg 403 Forbidden. Tampco detecta el JWD_SECRET del .env y no se despliega el backend (a menos que lo ponga directamente en `propierties)" />
-    <MESSAGE value="Login con JWT terminado" />
-    <MESSAGE value="LogOut + BlackList Token Rest Api TERMINADO" />
-    <MESSAGE value="Resetear Contraseña Rest Api TERMINADO" />
-    <MESSAGE value="Cambiar Nombre+ Obtener info del perfil Rest Api TERMINADO" />
-    <MESSAGE value="Implemntacion Login en el FRONTEND" />
-    <MESSAGE value="FrontEnd Estructura basica casi terminada" />
     <MESSAGE value="FrontEnd GESTIÓN USUARIOS TERMINADO&#10;FIN SPRINT 3" />
     <MESSAGE value="CRUD de Cuentas Bancarias (Crear, Modificar, Listar y Eliminar)" />
     <MESSAGE value="CRUD de Cuentas Bancarias (Crear, Modificar, Listar y Eliminar) TERMINADO" />
@@ -398,6 +477,18 @@
     <MESSAGE value="Patrón Access Token + Refresh Token." />
     <MESSAGE value="Cambios para reset de passw con correo" />
     <MESSAGE value="Corrección de errores" />
-    <option name="LAST_COMMIT_MESSAGE" value="Corrección de errores" />
+    <MESSAGE value="Correcciones finales, V.1 TERMINADA CON ÉXITO" />
+    <MESSAGE value="Correo de bienvenida al registrarse" />
+    <MESSAGE value="Mejora correo recuperación de contraseña" />
+    <MESSAGE value="Mejora del DahBoard - Llamadas al backend" />
+    <MESSAGE value="Mejora del DahBoard - Corrección de Errores" />
+    <MESSAGE value="Implementación transacciones recurrentes +  Cambios visuales" />
+    <MESSAGE value="Implementación presupuestos de gastos" />
+    <MESSAGE value="Implementación metas de ahorro" />
+    <MESSAGE value="Cambios para añadir categorías" />
+    <MESSAGE value="Implemetación Exportar Datos" />
+    <MESSAGE value="Implemetación Eliminar Cuenta" />
+    <MESSAGE value="Correccion de errores" />
+    <option name="LAST_COMMIT_MESSAGE" value="Correccion de errores" />
   </component>
 </project>

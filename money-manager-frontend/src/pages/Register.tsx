@@ -24,7 +24,7 @@ const Register: React.FC = () => {
   // 🔹 Validación de contraseña
   const validatePassword = (pwd: string) => {
     const regex =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/;
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=[{};':"\\|,.<>/?\]]).{8,}$/;
     return regex.test(pwd);
   };
 
@@ -64,8 +64,8 @@ const Register: React.FC = () => {
       await registerUser({ fullName, email, password });
       setSuccess("Registro exitoso. Puedes iniciar sesión.");
       setTimeout(() => navigate("/login"), 1500);
-    } catch (err: any) {
-      setError(err.message || "Error al registrar");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Error al registrar");
     }
   };
 

@@ -9,6 +9,7 @@ import Categories from './pages/Categories';
 import Transactions from './pages/Transactions'; 
 import Accounts from './pages/Accounts';
 import AccountDetail from './pages/AccountDetail';
+import ExportData from "./pages/ExportData"; 
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
       <Route path="/transactions" element={<Transactions />} /> 
       <Route path="/accounts" element={<Accounts/>} />
       <Route path="/accounts/:id" element={<AccountDetail />} />
+      <Route path="/export" element={<ExportData />} /> 
     </Routes>
   );
 }
